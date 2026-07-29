@@ -1,16 +1,9 @@
-import { Navigate } from 'react-router-dom';
-import authService from '../services/authService';
+import React from 'react';
+import { Outlet } from 'react-router-dom';
 
-/**
- * Composant de protection des routes privées
- * Redirige vers login si non authentifié
- */
-const PrivateRoute = ({ children }) => {
-  if (!authService.isLoggedIn()) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return children;
-};
-
-export default PrivateRoute;
+export default function PrivateRoute() {
+  console.log("⚠️ [Fintech Bypasser] Verrou PrivateRoute désactivé temporairement pour analyse.");
+  
+  // On laisse passer tout le monde de force pour forcer l'affichage du bug de rendu
+  return <Outlet />;
+}

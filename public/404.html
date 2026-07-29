@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>404 - Douceur introuvable | M-DELICE</title>
+  <title>404 - Page Introuvable | DRC Assurances</title>
   
-  <!-- Chargement des polices de la marque M-DELICE -->
-  <link rel="preconnect" href="https://googleapis.com">
-  <link rel="preconnect" href="https://gstatic.com" crossorigin>
-  <link href="https://googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+  <!-- 🟢 CORRIGÉ : Liens de confiance Google Fonts valides (Bypass les blocages CSP) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://googleapis.com" rel="stylesheet" />
 
   <style>
     * {
@@ -18,8 +18,8 @@
     }
 
     body {
-      background: #fafaf9; /* Fond crème doux assorti à la vitrine */
-      color: #44403c;
+      background: #fafaf9; /* Fond crème doux assorti à la vitrine d'assurance */
+      color: #1e293b;
       font-family: 'Inter', sans-serif;
       display: flex;
       flex-direction: column;
@@ -36,53 +36,59 @@
     }
 
     h1 {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Inter', sans-serif;
       font-size: 7rem;
       font-weight: 900;
       line-height: 1;
-      background: linear-gradient(to right, #78350f, #ea580c); /* Dégradé Chocolat/Orange */
+      /* 🟢 CORRIGÉ : Dégradé aux couleurs officielles de la RDC et de la marque */
+      background: linear-gradient(to right, #00A3E0, #0C1E36); 
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 1rem;
     }
 
     h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.75rem;
-      color: #451a03; /* Couleur chocolat intense */
+      font-family: 'Inter', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #0c1e36; /* Bleu marine corporate */
       margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: -0.025em;
     }
 
     p {
-      font-size: 1rem;
-      color: #78716c;
+      font-size: 0.95rem;
+      color: #64748b;
       line-height: 1.6;
       margin-bottom: 2.5rem;
     }
 
     .btn-home {
       display: inline-block;
-      background-color: #78350f; /* Couleur de la marque M-DELICE */
+      background-color: #00A3E0; /* Bleu ciel officiel DRC Assurances */
       color: #ffffff;
       text-decoration: none;
-      font-weight: 600;
-      font-size: 0.875rem;
+      font-weight: 700;
+      font-size: 0.825rem;
       text-transform: uppercase;
-      tracking-widest: 0.1em;
-      padding: 1rem 2.25rem;
-      border-radius: 9999px; /* Bouton arrondi style pilule */
-      box-shadow: 0 10px 15px -3px rgba(120, 53, 15, 0.2);
-      transition: all 0.3s ease;
+      letter-spacing: 0.1em;
+      padding: 1.1rem 2.5rem;
+      border-radius: 12px; /* Coins adoucis style carte d'assuré moderne */
+      box-shadow: 0 10px 15px -3px rgba(0, 163, 224, 0.3);
+      border-bottom: 4px solid #006180;
+      transition: all 0.2s ease;
     }
 
     .btn-home:hover {
-      background-color: #ea580c; /* Changement vers l'orange au survol */
+      background-color: #0082B3;
       transform: translateY(-2px);
-      box-shadow: 0 20px 25px -5px rgba(234, 88, 12, 0.3);
+      box-shadow: 0 20px 25px -5px rgba(0, 130, 179, 0.4);
     }
 
     .btn-home:active {
       transform: translateY(0);
+      border-bottom-width: 2px;
     }
   </style>
 </head>
@@ -92,13 +98,13 @@
     <!-- Code erreur stylisé -->
     <h1>404</h1>
     
-    <!-- Message contextuel pâtisserie -->
-    <h2>Oups, la recette a échoué !</h2>
+    <!-- 🟢 CORRIGÉ : Message contextuel réaligné sur l'AssurTech -->
+    <h2>Document ou Route Introuvable</h2>
     
-    <p>Le gâteau ou la page que vous recherchez n'est pas encore sorti du four ou a été déplacé vers une autre vitrine.</p>
+    <p>L'attestation, le contrat ou la page d'assurance que vous recherchez n'est pas répertorié sur ce serveur ou a été déplacé vers une autre branche du réseau réglementaire.</p>
     
-    <!-- Redirection vers la page d'accueil de la vitrine -->
-    <a href="/" class="btn-home">Retourner à l'accueil</a>
+    <!-- Redirection vers la page d'accueil de la plateforme -->
+    <a href="/" class="btn-home">Retourner à la plateforme</a>
   </div>
 
 </body>

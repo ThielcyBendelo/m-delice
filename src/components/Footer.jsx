@@ -1,107 +1,117 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaLinkedin, FaEnvelope, FaInstagram, FaFacebook, FaWhatsapp } from 'react-icons/fa';
-import { contact } from '../assets/assets.js';
+import { 
+  FaLinkedin, FaEnvelope, FaInstagram, 
+  FaFacebook, FaWhatsapp, FaShieldAlt, FaArrowUp 
+} from 'react-icons/fa';
+
+// Réseaux officiels de DRC Assurances
+const contactLinks = [
+  { label: 'Email', link: 'mailto:contact@drcassurancescom', icon: <FaEnvelope /> },
+  { label: 'WhatsApp', link: 'https://wame/votre_numero', icon: <FaWhatsapp /> },
+  { label: 'LinkedIn', link: 'https://linkedincom/company/drc-assurances', icon: <FaLinkedin /> },
+  { label: 'Facebook', link: 'https://facebookcom/drcassurances', icon: <FaFacebook /> }
+];
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
-  const socialIcons = {
-    Email: FaEnvelope,
-    LinkedIn: FaLinkedin,
-    Instagram: FaInstagram,
-    Facebook: FaFacebook,
-    WhatsApp: FaWhatsapp,
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <footer className="bg-stone-50 dark:bg-stone-900 text-stone-600 dark:text-stone-300 py-16 mt-auto border-t border-stone-200 dark:border-stone-800 transition-colors duration-500">
+    <footer className="bg-white text-slate-900 pt-24 pb-12 font-sans relative overflow-hidden border-t border-slate-100 w-full relative overflow-hidden transition-all duration-500 ease-out hover:z-10 hover:border-red-100 hover:shadow-[0_25px_60px_-15px_rgba(206,17,38,0.12)]">
+      
+      {/* Signature Visuelle (Bande tricolore RDC très fine en haut) */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#AE] via-[#CE] to-[#FDD] opacity-50" />
+
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-16 mb-20">
           
-          {/* Bloc 1: Identité & Slogan */}
-          <div className="col-span-1">
-            <h3 className="text-2xl font-black mb-4">
-              <span className="bg-gradient-to-r from-amber-800 to-orange-500 dark:from-amber-400 dark:to-orange-400 text-transparent bg-clip-text font-serif tracking-wide uppercase">
-                M-DELICE
-              </span>
+          {/* Bloc 1 : Identité Corporate (Police Antonio) */}
+          <div className="md:col-span-4 space-y-8">
+            <h3 className="text-3xl font-black tracking-tighter uppercase font-serif">
+              DRC <span className="text-red-600">Assurances</span>
             </h3>
-            <p className="text-sm text-stone-500 dark:text-stone-400 leading-relaxed italic">
-              "L'art de la haute gourmandise et des créations d'exception pour sublimer vos plus beaux événements."
+            <p className="text-lg text-slate-500 font-medium leading-relaxed max-w-sm">
+              L'écosystème numérique de confiance qui connecte la diaspora à la protection de leurs proches en RDC.
             </p>
-            <div className="mt-6 flex gap-3">
-              <div className="h-1 w-8 bg-orange-500 rounded-full"></div>
-              <div className="h-1 w-2 bg-amber-500 rounded-full"></div>
+            <div className="flex gap-4">
+              {contactLinks.map((item) => (
+                <a 
+                  key={item.label} 
+                  href={item.link} 
+                  className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-red-600 hover:border-red-100 hover:bg-red-50 transition-all duration-300"
+                  title={item.label}
+                >
+                  {item.icon}
+                </a>
+              ))}
             </div>
           </div>
 
-          {/* Bloc 2: Navigation Restaurant & Back-office */}
-          <div className="text-left">
-            <h4 className="text-amber-950 dark:text-white font-black mb-6 uppercase text-xs tracking-[0.2em]">Navigation</h4>
-            <ul className="space-y-3 text-sm font-medium">
-              <li><Link to="/" className="hover:text-orange-500 dark:hover:text-amber-400 transition-colors">Accueil</Link></li>
-              <li><Link to="/vitrine" className="hover:text-orange-500 dark:hover:text-amber-400 transition-colors">Notre Vitrine</Link></li>
-              <li><Link to="/sur-mesure" className="hover:text-orange-500 dark:hover:text-amber-400 transition-colors">Cake Design</Link></li>
-              <li><Link to="/stock" className="hover:text-orange-500 dark:hover:text-amber-400 transition-colors">Gestion Stock</Link></li>
-              <li><Link to="/finances" className="hover:text-orange-500 dark:hover:text-amber-400 transition-colors">Finances</Link></li>
+          {/* Bloc 2 : Navigation (Style Bento Grid épuré) */}
+          <div className="md:col-span-2 space-y-6">
+            <h4 className="text-[px] font-black uppercase tracking-[em] text-red-600">Plateforme</h4>
+            <ul className="space-y-4 text-[px] font-bold uppercase tracking-widest text-slate-400">
+              <li><Link to="/" className="hover:text-slate-900 transition-colors">Accueil</Link></li>
+              <li><Link to="/formules" className="hover:text-slate-900 transition-colors">Offres</Link></li>
+              <li><Link to="/simulateur" className="hover:text-slate-900 transition-colors">Tarificateur</Link></li>
+              <li><Link to="/reseau-soins" className="hover:text-slate-900 transition-colors">Réseau Soins</Link></li>
             </ul>
           </div>
 
-          {/* Bloc 3: Contact & Atelier */}
-          <div className="text-left">
-            <h4 className="text-amber-950 dark:text-white font-black mb-6 uppercase text-xs tracking-[0.2em]">Atelier</h4>
-            <ul className="space-y-3 text-sm font-medium">
-              <li className="flex items-center gap-3">
-                <div className="text-orange-500"><FaEnvelope /></div>
-                <span className="text-stone-600 dark:text-stone-300 break-all">contact@m-delice.com</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <div className="text-amber-600"><FaWhatsapp /></div>
-                <span className="text-stone-600 dark:text-stone-300">Abidjan, Côte d'Ivoire</span>
-              </li>
-              <li className="mt-4">
-                <Link to="/sur-mesure" className="inline-block px-4 py-2 bg-amber-800 dark:bg-orange-500 text-white rounded-xl font-bold text-xs hover:scale-105 transition-transform shadow-md">
-                  Commander un gâteau →
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Bloc 4: Réseaux Sociaux & Réputation */}
-          <div className="text-left md:text-right">
-            <h4 className="text-amber-950 dark:text-white font-black mb-6 uppercase text-xs tracking-[0.2em]">Suivre nos créations</h4>
-            <div className="flex justify-start md:justify-end gap-3">
-              {contact && contact.map((item) => {
-                const Icon = socialIcons[item.label];
-                if (!Icon) return null;
-                return (
-                  <a 
-                    key={item.label} 
-                    href={item.link} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="w-10 h-10 rounded-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 flex items-center justify-center text-stone-800 dark:text-white shadow-sm hover:bg-orange-500 hover:text-white dark:hover:bg-amber-500 dark:hover:text-stone-950 transition-all duration-300" 
-                    title={item.label} 
-                  >
-                    <Icon size={18} />
-                  </a>
-                );
-              })}
+          {/* Bloc 3 : Support & Localisation */}
+          <div className="md:col-span-3 space-y-6 text-left">
+            <h4 className="text-[px] font-black uppercase tracking-[em] text-red-600">Hub Kinshasa</h4>
+            <div className="space-y-4">
+              <div className="group">
+                <p className="text-[px] uppercase text-slate-400 font-bold mb-1">Expertise Directe</p>
+                <p className="text-sm font-bold text-slate-800">contact@drcassurances.com</p>
+              </div>
+              <div className="group">
+                <p className="text-[px] uppercase text-slate-400 font-bold mb-1">Siège Social</p>
+                <p className="text-sm font-bold text-slate-800 italic">Gombe, Kinshasa, RD Congo</p>
+              </div>
             </div>
-            <p className="mt-6 text-[10px] text-stone-400 dark:text-stone-500 uppercase font-bold tracking-widest">
-              Plus de 500 événements sublimés à Abidjan.
-            </p>
+          </div>
+
+          {/* Bloc 4 : Accréditation ARCA (Confiance) */}
+          <div className="md:col-span-3 bg-slate-50 p-8 rounded-3xl border border-slate-100 relative group overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-red-600/5 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-150 duration-700" />
+            <div className="relative z-10 space-y-4">
+              <div className="flex items-center gap-2 text-red-600">
+                <FaShieldAlt size={20} />
+                <span className="text-[px] font-black uppercase tracking-widest">Agrément ARCA</span>
+              </div>
+              <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                Toutes nos opérations sont certifiées conformes au Code des Assurances en vigueur en République Démocratique du Congo.
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Barre de Copyright Finale */}
-        <div className="pt-8 border-t border-stone-200 dark:border-stone-800 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-[10px] text-stone-400 dark:text-stone-500 font-bold tracking-[0.2em] uppercase text-center md:text-left leading-relaxed">
-            © {currentYear} M-DELICE <span className="mx-2 hidden md:inline">|</span> <br className="md:hidden" /> Haute Pâtisserie & Cake Design Sur Mesure
-          </p>
-          <div className="flex gap-6 text-[10px] uppercase tracking-widest font-black text-stone-400 dark:text-stone-600">
-            <button className="hover:text-orange-500 dark:hover:text-amber-400 transition-colors">Mentions Légales</button>
-            <button className="hover:text-orange-500 dark:hover:text-amber-400 transition-colors">Confidentialité</button>
+        {/* Barre de Copyright Finale (Style Minimaliste) */}
+        <div className="pt-12 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="space-y-1">
+            <p className="text-[px] text-slate-400 font-bold tracking-[em] uppercase">
+              © {currentYear} DRC Assurances | Fintech & Micro-Assurances
+            </p>
+            <p className="text-[px] text-slate-300 uppercase tracking-widest">
+              L'inclusion financière au service du peuple congolais.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-8 text-[px] uppercase tracking-[em] font-black text-slate-400">
+            <Link to="/mentions" className="hover:text-red-600 transition-colors">Légal</Link>
+            <Link to="/confidentialite" className="hover:text-red-600 transition-colors">Privacy</Link>
+            <button 
+              onClick={scrollToTop}
+              className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center hover:bg-red-600 transition-all shadow-xl active:scale-95"
+            >
+              <FaArrowUp size={12} />
+            </button>
           </div>
         </div>
       </div>

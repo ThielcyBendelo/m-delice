@@ -1,31 +1,31 @@
 {
-  "name": "Ir Bendelo - Portfolio Développeur Web",
-  "short_name": "Ir Bendelo",
-  "description": "Portfolio professionnel de Thielcy Bendelo - Développeur Web Full Stack spécialisé en React, Node.js et applications modernes",
+  "name": "DRC Assurances - Écosystème Numérique",
+  "short_name": "DRC Assurances",
+  "description": "Plateforme d'inclusion financière et de micro-assurance transfrontalière pour la diaspora et les bénéficiaires en RD Congo.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f0f0f",
-  "theme_color": "#8b5cf6",
+  "background_color": "#0c1e36",
+  "theme_color": "#00a3e0",
   "orientation": "portrait-primary",
   "scope": "/",
-  "categories": ["business", "productivity", "utilities"],
+  "categories": ["business", "finance", "utilities"],
   "lang": "fr-FR",
   "dir": "ltr",
   "icons": [
     {
-      "src": "/icon-192x192.png",
+      "src": "/logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/icon-512x512.png",
+      "src": "/logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/icon-apple-touch.png",
+      "src": "/logo.png",
       "sizes": "180x180",
       "type": "image/png"
     }
@@ -33,25 +33,25 @@
   "screenshots": [],
   "shortcuts": [
     {
-      "name": "Services",
-      "short_name": "Services",
-      "description": "Découvrir mes services de développement",
-      "url": "/#services",
-      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+      "name": "Simulateur de Tarifs",
+      "short_name": "Simulateur",
+      "description": "Calculer la prime d'assurance en ligne",
+      "url": "/simulateur",
+      "icons": [{ "src": "/logo.png", "sizes": "192x192" }]
     },
     {
-      "name": "Projets",
-      "short_name": "Projets",
-      "description": "Voir mes réalisations",
-      "url": "/#projects",
-      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+      "name": "Nos Formules",
+      "short_name": "Formules",
+      "description": "Découvrir nos packs de micro-assurance",
+      "url": "/formules",
+      "icons": [{ "src": "/logo.png", "sizes": "192x192" }]
     },
     {
-      "name": "Contact",
-      "short_name": "Contact",
-      "description": "Me contacter pour un projet",
-      "url": "/#contact",
-      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+      "name": "Espace Client",
+      "short_name": "Connexion",
+      "description": "Se connecter à la console de gestion",
+      "url": "/login",
+      "icons": [{ "src": "/logo.png", "sizes": "192x192" }]
     }
   ],
   "related_applications": [],

@@ -1,84 +1,103 @@
 import React, { Suspense } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Blog from './pages/Blog.jsx';
 import { Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext.jsx';
+
+// =========================================================================
+// 1. PORTAIL PUBLIC : VITRINE & TUNNELS (Dossier src/pages/)
+// =========================================================================
 import Home from './pages/Home';
-import ServicesPage from './pages/ServicesPage';
-import ContactPage from './pages/ContactPage';
-import ExperiencePage from './pages/ExperiencePage';
-import ProjectsPage from './pages/ProjectsPage';
-import SkillsPage from './pages/SkillsPage';
-import TestimonialsPage from './pages/TestimonialsPage';
+import FormulesPage from './pages/ServicesPage';         
+import PacksMicroPage from './pages/BoutiquePage';       
+import SimulateurTarifPage from './pages/WorkPage';       
+import ClaimsDeclarationPage from './pages/SkillsPage';   
+import NetworkPartnersPage from './pages/ProjectsPage';   
+import ComplianceArcaPage from './pages/ExperiencePage';  
+import BeneficiaryRegistrationPage from './pages/ClientRegistrationPage'; 
+import CheckoutPage from './pages/PaymentPage';           
+import ContactSupportPage from './pages/ContactPage';     
+import TestimonialsPage from './pages/TestimonialsPage'; 
+import BlogPreventionPage from './pages/Blog.jsx';       
 import DashboardPage from './pages/DashboardPage';
-import PaymentPage from './pages/PaymentPage';
-import WorkPage from './pages/WorkPage';
+
+// =========================================================================
+// 2. SÉCURITÉ & AUTHENTIFICATION (Dossier src/components/)
+// =========================================================================
 import PrivateRoute from './components/PrivateRoute';
-import ClientRegistrationPage from './pages/ClientRegistrationPage';
 import ProfessionalSplashScreen from './components/ProfessionalSplashScreen';
 import SecureLogin from './components/SecureLogin';
 import SecureRegister from './components/SecureRegister';
-import BoutiquePage from './pages/BoutiquePage';
 
-// Dashboard imports
-import {
-  Login,
-  AdminHome,
-  Clients,
-  Subscribers,
-  PaymentManagement,
-  InvoiceManagement,
-  Analytics,
-  Projects,
-  Messaging,
-  Profile,
-  ProtectedRoute,
-} from './dashboard';
-import FinanceDashboard from './dashboard/FinanceDashboard';
+// =========================================================================
+// 3. ESPACE PRIVÉ & BACK-OFFICE (Dossier src/dashboard/)
+// =========================================================================
 import AdminLayout from './dashboard/components/AdminLayout';
+import AdminHome from './dashboard/AdminHome';
+import BeneficiariesTable from './dashboard/Clients';       
+import BuyersDiasporaTable from './dashboard/Subscribers'; 
+import TransactionsJournal from './dashboard/PaymentManagement'; 
+import QuittancesGenerator from './dashboard/InvoiceManagement';  
+import RiskAnalytics from './dashboard/Analytics';         
+import SystemMessaging from './dashboard/Messaging';       
+import AccountProfile from './dashboard/Profile';         
+import ForexFinanceDashboard from './dashboard/FinanceDashboard'; 
 
 const App = () => {
   const [splashDone, setSplashDone] = React.useState(false);
+
   return (
     <ThemeProvider>
       {!splashDone && (
         <ProfessionalSplashScreen onComplete={() => setSplashDone(true)} />
       )}
+      
       {splashDone && (
-        <div>
+        <div className="min-h-screen bg-white dark:bg-slate-950 font-sans antialiased text-slate-900 dark:text-slate-100 transition-colors duration-300 font-['Saira']">
+          
           <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
-          <Suspense fallback={<div>Chargement...</div>}>
+          
+          <Suspense fallback={
+            <div className="flex h-screen w-screen flex-col items-center justify-center bg-slate-50 dark:bg-slate-950">
+              <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#00A3E0] border-t-transparent"></div>
+              <p className="mt-4 text-sm font-bold text-[#00A3E0] tracking-wide animate-pulse">Initialisation de l'écosystème DRC Assurances...</p>
+            </div>
+          }>
             <Routes>
-              {/* Route principale du site */}
+              {/* --- PORTAIL ASSURÉ PUBLIC --- */}
               <Route path="/" element={<Home />} />
-              {/* Route Boutique */}
-              <Route path="/boutique" element={<BoutiquePage />} /> 
-              {/* Route Services */}
-              <Route path="/services" element={<ServicesPage />} />
-              {/* Route Contact */}
-              <Route path="/contact" element={<ContactPage />} />
-              {/* Route Experience */}
-              <Route path="/experience" element={<ExperiencePage />} />
-              {/* Route Projects */}
-              <Route path="/projects" element={<ProjectsPage />} />
-              {/* Route Skills */}
-              <Route path="/skills" element={<SkillsPage />} />
-              {/* Route Work */}
-              <Route path="/work" element={<WorkPage />} />
-              {/* Route Testimonials */}
-              <Route path="/testimonials" element={<TestimonialsPage />} />
-              {/* Route Payment */}
-              <Route path="/paiement" element={<PaymentPage />} />
-              {/* Route d'enregistrement des clients */}
-              <Route path="/clients" element={<ClientRegistrationPage />} />
-              {/* Route de connexion utilisateur (formulaire sécurisé) */}
+              <Route path="/formules" element={<FormulesPage />} />
+              <Route path="/packs-micro" element={<PacksMicroPage />} />
+              <Route path="/simulateur" element={<SimulateurTarifPage />} />
+              <Route path="/declaration-sinistre" element={<ClaimsDeclarationPage />} />
+              <Route path="/reseau-soins" element={<NetworkPartnersPage />} />
+              <Route path="/conformite-arca" element={<ComplianceArcaPage />} />
+              <Route path="/inscription-beneficiaire" element={<BeneficiaryRegistrationPage />} />
+              <Route path="/passerelle-paiement" element={<CheckoutPage />} />
+              <Route path="/urgences-contact" element={<ContactSupportPage />} />
+              <Route path="/temoignages" element={<TestimonialsPage />} />
+              <Route path="/guide-prevention" element={<BlogPreventionPage />} />
+              
+              {/* --- ACCÈS SÉCURISÉS --- */}
               <Route path="/login" element={<SecureLogin />} />
-              {/* Route d'inscription utilisateur */}
               <Route path="/register" element={<SecureRegister />} />
-              {/* Blog route */}
-              <Route path="/blog" element={<Blog />} />
-              {/* Routes du dashboard avec layout admin */}
+              
+              {/* --- ALIAS DE COMPATIBILITÉ --- */}
+              <Route path="/services" element={<FormulesPage />} />
+              <Route path="/boutique" element={<PacksMicroPage />} />
+              <Route path="/work" element={<SimulateurTarifPage />} />
+              <Route path="/skills" element={<ClaimsDeclarationPage />} />
+              <Route path="/projects" element={<NetworkPartnersPage />} />
+              <Route path="/experience" element={<ComplianceArcaPage />} />
+              <Route path="/clients" element={<BeneficiaryRegistrationPage />} />
+              <Route path="/paiement" element={<CheckoutPage />} />
+              <Route path="/contact" element={<ContactSupportPage />} />
+              <Route path="/blog" element={<BlogPreventionPage />} />
+              <Route path="/dashboard-page" element={<DashboardPage />} />
+
+              {/* =========================================================================
+                  4. ESPACE PRIVÉ ET GESTION (Layout Admin avec contrôle d'accès)
+                 ========================================================================= */}
               <Route
                 path="/dashboard"
                 element={
@@ -88,17 +107,16 @@ const App = () => {
                 }
               >
                 <Route index element={<AdminHome />} />
-                <Route path="clients" element={<Clients />} />
-                <Route path="subscribers" element={<Subscribers />} />
-                <Route path="payments" element={<PaymentManagement />} />
-                <Route path="invoices" element={<InvoiceManagement />} />
-                <Route path="analytics" element={<Analytics />} />
-                <Route path="projects" element={<Projects />} />
-                <Route path="messages" element={<Messaging />} />
-                <Route path="profile" element={<Profile />} />
-                <Route path="finance" element={<FinanceDashboard />} />
+                <Route path="clients" element={<BeneficiariesTable />} />
+                <Route path="subscribers" element={<BuyersDiasporaTable />} />
+                <Route path="payments" element={<TransactionsJournal />} />
+                <Route path="invoices" element={<QuittancesGenerator />} />
+                <Route path="analytics" element={<RiskAnalytics />} />
+                <Route path="messages" element={<SystemMessaging />} />
+                <Route path="profile" element={<AccountProfile />} />
+                <Route path="finance" element={<ForexFinanceDashboard />} />
               </Route>
-              {/* Route catch-all pour les chemins inconnus */}
+              
               <Route path="*" element={<Home />} />
             </Routes>
           </Suspense>
@@ -106,6 +124,6 @@ const App = () => {
       )}
     </ThemeProvider>
   );
-}
+};
 
 export default App;

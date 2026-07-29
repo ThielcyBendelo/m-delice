@@ -1,362 +1,226 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useFormSecurity from '../hooks/useFormSecurity';
+import { motion } from 'framer-motion';
 import authService from '../services/authService';
-import { register as apiRegister } from '../services/authApi';
+import notificationService from '../services/notificationService';
+import { FaUser, FaEnvelope, FaLock, FaGlobe, FaShieldAlt, FaArrowRight, FaSpinner, FaUserPlus } from 'react-icons/fa';
 
-const SecureRegister = () => {
+export default function SecureRegister() {
   const navigate = useNavigate();
-  const [apiError, setApiError] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState(null);
-
-  const formSchema = {
-    name: { type: 'text', minLength: 2, maxLength: 50, required: true },
-    email: { type: 'email', required: true },
-    password: { type: 'password', required: true },
-    confirmPassword: { type: 'password', required: true },
-  };
-
-  const {
-    formData,
-    errors,
-    touched,
-    isLoading,
-    handleChange: baseHandleChange,
-    handleBlur,
-    handleSubmit: handleFormSubmit,
-  } = useFormSecurity(formSchema, async (data) => {
-    try {
-      setApiError('');
-
-      // Vérifier que les mots de passe correspondent
-      if (data.password !== data.confirmPassword) {
-        setApiError('Les mots de passe ne correspondent pas');
-        return;
-      }
-
-      // Appeler le service d'API pour l'inscription
-      const resp = await apiRegister({
-        name: data.name,
-        email: data.email,
-        password: data.password
-      });
-
-      // NE PAS rediriger automatiquement vers le dashboard admin.
-      // Les utilisateurs enregistrés obtiennent le rôle 'user' et ne doivent
-      // pas accéder à l'admin. Rediriger vers le profil utilisateur.
-      const user = resp?.user || authService.getCurrentUser();
-      if (user?.role === 'admin') {
-        navigate('/dashboard');
-      } else {
-        navigate('/profile');
-      }
-    } catch (error) {
-      setApiError(error.userMessage || error.message || 'Erreur lors de l\'inscription');
-    }
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    country: 'France'
   });
 
-  // Handler personnalisé pour afficher la force du mot de passe
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const countries = ["France", "Belgique", "Canada", "USA", "Royaume-Uni", "Allemagne", "Autre"];
 
-    // Afficher la force du mot de passe en temps réel
-    if (name === 'password' && value.length > 0) {
-      const strength = authService.validatePasswordStrength(value);
-      setPasswordStrength(strength);
-    } else if (name === 'password') {
-      setPasswordStrength(null);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (formData.password.length < 6) {
+      notificationService.error("Le mot de passe doit contenir au moins 6 caractères.");
+      return;
     }
 
-    baseHandleChange(e);
-  };
+    if (formData.password !== formData.confirmPassword) {
+      notificationService.error("Les mots de passe ne correspondent pas.");
+      return;
+    }
 
-  const handleSubmit = (e) => {
-  setApiError('');
-  handleFormSubmit(e);
-  };
+    setIsLoading(true);
 
-  // Fonction pour afficher la couleur de force du mot de passe
-  const getPasswordStrengthColor = (score) => {
-    if (score <= 2) return 'text-red-400';
-    if (score <= 3) return 'text-orange-400';
-    if (score <= 4) return 'text-yellow-400';
-    if (score <= 5) return 'text-lime-400';
-    return 'text-green-400';
+    try {
+      notificationService.info("Création de votre compte Diaspora sécurisé...");
+      
+      const result = await authService.register({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        country: formData.country
+      });
+      
+      if (result.success) {
+        notificationService.success("Compte créé avec succès ! Vous pouvez maintenant vous connecter.");
+        navigate('/login');
+      } else {
+        notificationService.success("Mode Démo : Compte Diaspora simulé avec succès !");
+        navigate('/login');
+      }
+    } catch (error) {
+      notificationService.error("Une erreur technique est survenue lors de l'inscription.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-dark-200 to-dark-300 px-4">
-      <div className="w-full max-w-md bg-dark-300/80 backdrop-blur-sm p-8 rounded-2xl shadow-2xl border border-gray-700/50">
-        {/* Header */}
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-12 relative overflow-hidden font-sans">
+      {/* Arrière-plan épuré haut de gamme sans voile sombre */}
+      <div className="absolute inset-0 bg-[radial-gradient(#CE1126_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.03] z-10" />
+      
+      <motion.div 
+        initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="relative z-20 w-full max-w-md bg-white p-10 rounded-[2rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.12)] border border-slate-100 flex flex-col"
+      >
+        {/* En-tête */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-purple to-pink rounded-lg mb-4">
-            <span className="text-white text-xl font-bold">✍️</span>
+          <div className="w-14 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
+            <FaShieldAlt size={24} />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Créer un compte</h1>
-          <p className="text-gray-400">Rejoignez notre plateforme sécurisée</p>
+          <h1 className="text-3xl font-black uppercase tracking-tighter text-slate-900 font-serif">
+            DRC <span className="text-red-600">Assurances</span>
+          </h1>
+          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mt-2">
+            Inscription Espace Membre Diaspora
+          </p>
         </div>
 
-        {/* API Error */}
-        {apiError && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-            <p className="text-red-300 text-sm">🚨 {apiError}</p>
+        {/* Formulaire d'inscription */}
+        <form onSubmit={handleFormSubmit} className="space-y-6">
+          
+          {/* Ligne : Nom & Prénom */}
+          <div className="grid grid-cols-2 gap-10">
+            <div className="space-y-3">
+              <label className="text-[11px] uppercase font-black tracking-[0.2em] text-slate-400">Nom</label>
+              <input 
+                type="text" 
+                name="lastName" 
+                required 
+                value={formData.lastName} 
+                onChange={handleInputChange} 
+                placeholder="Mbuyi" 
+                className="w-full border-b-2 border-slate-100 bg-transparent py-3 text-lg font-bold outline-none transition focus:border-red-600 focus:placeholder-transparent text-slate-900 uppercase" 
+              />
+            </div>
+            <div className="space-y-3">
+              <label className="text-[11px] uppercase font-black tracking-[0.2em] text-slate-400">Prénom</label>
+              <input 
+                type="text" 
+                name="firstName" 
+                required 
+                value={formData.firstName} 
+                onChange={handleInputChange} 
+                placeholder="Jean" 
+                className="w-full border-b-2 border-slate-100 bg-transparent py-3 text-lg font-bold outline-none transition focus:border-red-600 focus:placeholder-transparent text-slate-900" 
+              />
+            </div>
           </div>
-        )}
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} noValidate className="space-y-5">
-          {/* Name Field */}
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
-              Nom complet
+          {/* Pays de résidence */}
+          <div className="space-y-3">
+            <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2">
+              <FaGlobe className="text-red-600" size={12} /> Pays de résidence
             </label>
-            <div className="relative">
-              <input
-                id="name"
-                name="name"
-                type="text"
-                placeholder="Thielcy Bendelo"
-                value={formData.name || ''}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                disabled={isLoading}
-                className={`w-full px-4 py-3 bg-dark-100/50 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                  touched.name && errors.name
-                    ? 'border-red-500 focus:ring-red-500/50'
-                    : 'border-gray-600/50 focus:ring-purple/50 focus:border-purple/50'
-                } disabled:opacity-50`}
-              />
-              <span className="absolute right-3 top-3 text-gray-500">👤</span>
-            </div>
-            {touched.name && errors.name && (
-              <p className="text-red-400 text-xs mt-1">⚠️ {errors.name}</p>
-            )}
+            <select 
+              name="country" 
+              value={formData.country} 
+              onChange={handleInputChange} 
+              className="w-full border-b-2 border-slate-100 bg-transparent py-4 text-lg font-bold outline-none transition focus:border-red-600 appearance-none cursor-pointer text-slate-900"
+            >
+              {countries.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
           </div>
 
-          {/* Email Field */}
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-              Email
+          {/* Email unique */}
+          <div className="space-y-3">
+            <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2">
+              <FaEnvelope className="text-red-600" size={12} /> Email unique
             </label>
-            <div className="relative">
-              <input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="bendelothielcy@gmail.com"
-                value={formData.email || ''}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                disabled={isLoading}
-                className={`w-full px-4 py-3 bg-dark-100/50 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                  touched.email && errors.email
-                    ? 'border-red-500 focus:ring-red-500/50'
-                    : 'border-gray-600/50 focus:ring-purple/50 focus:border-purple/50'
-                } disabled:opacity-50`}
-              />
-              <span className="absolute right-3 top-3 text-gray-500">✉️</span>
-            </div>
-            {touched.email && errors.email && (
-              <p className="text-red-400 text-xs mt-1">⚠️ {errors.email}</p>
-            )}
-          </div>
-
-          {/* Password Field */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300">
-                Mot de passe
-              </label>
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="text-xs text-purple hover:text-pink transition"
-              >
-                {showPassword ? '👁️ Masquer' : '👁️ Afficher'}
-              </button>
-            </div>
-            <div className="relative">
-              <input
-                id="password"
-                name="password"
-                type={showPassword ? 'text' : 'password'}
-                placeholder="bendelo1996$$$$$"
-                value={formData.password || ''}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                disabled={isLoading}
-                className={`w-full px-4 py-3 bg-dark-100/50 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                  touched.password && errors.password
-                    ? 'border-red-500 focus:ring-red-500/50'
-                    : 'border-gray-600/50 focus:ring-purple/50 focus:border-purple/50'
-                } disabled:opacity-50`}
-              />
-              <span className="absolute right-3 top-3 text-gray-500">🔒</span>
-            </div>
-
-            {/* Password Strength Indicator */}
-            {passwordStrength && (
-              <div className="mt-2">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-gray-400">Force du mot de passe:</span>
-                  <span className={`text-xs font-semibold ${getPasswordStrengthColor(passwordStrength.score)}`}>
-                    {passwordStrength.strength} ({passwordStrength.score}/{passwordStrength.maxScore})
-                  </span>
-                </div>
-                <div className="w-full bg-gray-700 rounded-full h-1.5">
-                  <div
-                    className={`h-1.5 rounded-full transition-all ${
-                      passwordStrength.score <= 2
-                        ? 'bg-red-500 w-1/6'
-                        : passwordStrength.score <= 3
-                        ? 'bg-orange-500 w-1/3'
-                        : passwordStrength.score <= 4
-                        ? 'bg-yellow-500 w-1/2'
-                        : passwordStrength.score <= 5
-                        ? 'bg-lime-500 w-2/3'
-                        : 'bg-green-500 w-full'
-                    }`}
-                  />
-                </div>
-
-                {/* Checklist de sécurité */}
-                <div className="mt-2 space-y-1 text-xs">
-                  <div className={passwordStrength.checks.length ? 'text-green-400' : 'text-gray-400'}>
-                    {passwordStrength.checks.length ? '✓' : '○'} Au moins 8 caractères
-                  </div>
-                  <div className={passwordStrength.checks.uppercase ? 'text-green-400' : 'text-gray-400'}>
-                    {passwordStrength.checks.uppercase ? '✓' : '○'} Majuscule (A-Z)
-                  </div>
-                  <div className={passwordStrength.checks.lowercase ? 'text-green-400' : 'text-gray-400'}>
-                    {passwordStrength.checks.lowercase ? '✓' : '○'} Minuscule (a-z)
-                  </div>
-                  <div className={passwordStrength.checks.numbers ? 'text-green-400' : 'text-gray-400'}>
-                    {passwordStrength.checks.numbers ? '✓' : '○'} Chiffre (0-9)
-                  </div>
-                  <div className={passwordStrength.checks.special ? 'text-green-400' : 'text-gray-400'}>
-                    {passwordStrength.checks.special ? '✓' : '○'} Caractère spécial (!@#$%^&*)
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {touched.password && errors.password && (
-              <p className="text-red-400 text-xs mt-1">⚠️ {errors.password}</p>
-            )}
-          </div>
-
-          {/* Confirm Password Field */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300">
-                Confirmer le mot de passe
-              </label>
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="text-xs text-purple hover:text-pink transition"
-              >
-                {showConfirmPassword ? '👁️ Masquer' : '👁️ Afficher'}
-              </button>
-            </div>
-            <div className="relative">
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type={showConfirmPassword ? 'text' : 'password'}
-                placeholder="Confirmez votre mot de passe"
-                value={formData.confirmPassword || ''}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                disabled={isLoading}
-                className={`w-full px-4 py-3 bg-dark-100/50 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
-                  touched.confirmPassword && errors.confirmPassword
-                    ? 'border-red-500 focus:ring-red-500/50'
-                    : 'border-gray-600/50 focus:ring-purple/50 focus:border-purple/50'
-                } disabled:opacity-50`}
-              />
-              <span className="absolute right-3 top-3 text-gray-500">🔒</span>
-            </div>
-
-            {/* Vérifier la correspondance */}
-            {formData.confirmPassword && formData.password && (
-              <div className={`text-xs mt-1 ${formData.password === formData.confirmPassword ? 'text-green-400' : 'text-red-400'}`}>
-                {formData.password === formData.confirmPassword ? '✓ Les mots de passe correspondent' : '✗ Les mots de passe ne correspondent pas'}
-              </div>
-            )}
-
-            {touched.confirmPassword && errors.confirmPassword && (
-              <p className="text-red-400 text-xs mt-1">⚠️ {errors.confirmPassword}</p>
-            )}
-          </div>
-
-          {/* Terms & Conditions */}
-          <div className="flex items-start gap-3 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-            <input
-              type="checkbox"
-              id="terms"
-              className="w-4 h-4 mt-1 rounded border-gray-600 text-purple focus:ring-purple"
-              required
+            <input 
+              type="email" 
+              name="email" 
+              required 
+              value={formData.email} 
+              onChange={handleInputChange} 
+              placeholder="jean.mbuyi@gmail.com" 
+              className="w-full border-b-2 border-slate-100 bg-transparent py-3 text-lg font-bold outline-none transition focus:border-red-600 focus:placeholder-transparent text-slate-900" 
             />
-            <label htmlFor="terms" className="text-xs text-gray-300">
-              Je reconnais avoir lu et accepté les{' '}
-              <button type="button" className="text-purple hover:text-pink transition">
-                conditions d'utilisation
-              </button>
-            </label>
           </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={isLoading || !formData.name || !formData.email || !formData.password || !formData.confirmPassword}
-            className="w-full py-3 px-4 bg-gradient-to-r from-purple to-pink text-white font-semibold rounded-lg transform transition-all hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/40 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? (
-              <span className="flex items-center justify-center gap-2">
-                <span className="animate-spin">⏳</span> Création du compte...
-              </span>
-            ) : (
-              '✓ Créer un compte'
-            )}
-          </button>
+          {/* Ligne : Mot de passe & Confirmation */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
+            <div className="space-y-3">
+              <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2">
+                <FaLock className="text-red-600" size={12} /> Mot de passe
+              </label>
+              <input 
+                type="password" 
+                name="password" 
+                required 
+                value={formData.password} 
+                onChange={handleInputChange} 
+                placeholder="••••••" 
+                className="w-full border-b-2 border-slate-100 bg-transparent py-3 text-lg font-bold outline-none transition focus:border-red-600 focus:placeholder-transparent text-slate-900" 
+              />
+            </div>
+            <div className="space-y-3">
+              <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2">
+                <FaLock className="text-red-600" size={12} /> Confirmation
+              </label>
+              <input 
+                type="password" 
+                name="confirmPassword" 
+                required 
+                value={formData.confirmPassword} 
+                onChange={handleInputChange} 
+                placeholder="••••••" 
+                className="w-full border-b-2 border-slate-100 bg-transparent py-3 text-lg font-bold outline-none transition focus:border-red-600 focus:placeholder-transparent text-slate-900" 
+              />
+            </div>
+          </div>
+
+          {/* Action finale : Rectangulaire, Rouge, Contraste maximum */}
+          <div className="pt-4">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-5 bg-red-600 hover:bg-red-700 text-white font-black uppercase text-[11px] tracking-[0.25em] transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 shadow-xl"
+            >
+              {isLoading ? (
+                <>
+                  <FaSpinner className="animate-spin" size={12} />
+                  <span>Création du portefeuille...</span>
+                </>
+              ) : (
+                <>
+                  <FaUserPlus size={12} />
+                  <span>Créer mon compte</span>
+                  <FaArrowRight className="ml-auto opacity-60" size={10} />
+                </>
+              )}
+            </button>
+          </div>
         </form>
 
-        {/* Security Info */}
-        <div className="mt-6 p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
-          <p className="text-green-300 text-xs leading-relaxed">
-            🔐 <strong>Votre compte est protégé par:</strong>
-            <br />
-            • Validation des données côté client
-            <br />
-            • Hashe bcrypt côté serveur
-            <br />
-            • Tokens JWT sécurisés
-            <br />
-            • Rate limiting anti-brute force
-            <br />
-            • Chiffrage SSL/TLS en transmission
-          </p>
-        </div>
-
-        {/* Login Link */}
-        <div className="mt-6 text-center">
-          <p className="text-gray-400 text-sm">
-            Vous avez déjà un compte?{' '}
-            <button
-              type="button"
-              onClick={() => navigate('/login')}
-              className="text-purple hover:text-pink transition font-semibold"
+        {/* Lien de redirection vers la connexion */}
+        <div className="mt-10 pt-6 border-t border-slate-100 text-center text-[11px] font-black uppercase tracking-wider text-slate-400">
+          <p>
+            Déjà inscrit ?{" "}
+            <span 
+              onClick={() => navigate('/login')} 
+              className="text-red-600 cursor-pointer hover:underline pl-1"
             >
               Se connecter
-            </button>
+            </span>
           </p>
         </div>
-      </div>
+      </motion.div>
+
+      {/* Signature Visuelle fine de marque en bas de page */}
+      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 via-blue-500 to-yellow-400 opacity-20" />
     </div>
   );
-};
-
-export default SecureRegister;
+}

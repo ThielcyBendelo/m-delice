@@ -4,44 +4,39 @@ import './index.css';
 import App from './App.jsx';
 import { BrowserRouter } from 'react-router-dom';
 
-// ===== 🛡️ SÉCURITÉ =====
-// Initialiser la sécurité CSP et les validations
+// ===== 🛡️ SÉCURITÉ INSTITUTIONNELLE =====
+// Initialiser la sécurité CSP et les validations d'infrastructure
 import { applyCSPMeta, setupCSPViolationReporting } from './utils/cspConfig';
 import secureAPIClient from './utils/secureAPIClient';
 
-// Appliquer Content Security Policy
+// Appliquer Content Security Policy (Protection contre les injections)
 applyCSPMeta();
 
-// Logger les violations de sécurité
+// Logger les violations de sécurité sur les tunnels de paiement
 setupCSPViolationReporting();
 
-// Initialiser le client API sécurisé
+// Initialiser le client API sécurisé pour SQL Server & Fintech
 secureAPIClient.initialize();
 
-console.log('🛡️ Frontend Security initialized');
+console.log('🛡️ Infrastructure de sécurité DRC Assurances initialisée');
 
-// ===== SERVICES =====
-// Initialiser le service de webhook PayPal
-import paypalWebhookService from './dashboard/services/paypalWebhookService.js';
-
-// Initialiser le service au démarrage de l'application
-console.log('🚀 Service PayPal Webhook initialisé:', paypalWebhookService);
-
-// Using createRoot method
+// ===== INITIALISATION DE L'APPLICATION =====
 createRoot(document.getElementById('root')).render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
+  <StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </StrictMode>
 );
 
-// ===== SERVICE WORKER =====
-// Désactiver le service worker en développement
+// ===== SERVICE WORKER (PWA Mobile-First) =====
+// Active le cache hors-ligne pour les réseaux instables en RDC en production
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').then(registration => {
-      console.log('SW registered: ', registration);
+      console.log('SW PWA connecté avec succès : ', registration);
     }).catch(registrationError => {
-      console.log('SW registration failed: ', registrationError);
+      console.log('Échec de la connexion du SW : ', registrationError);
     });
   });
 }

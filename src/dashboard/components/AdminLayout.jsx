@@ -1,166 +1,141 @@
-import { useState, useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
-// eslint-disable-next-line no-unused-vars
-import { motion, AnimatePresence } from 'framer-motion';
-import ModernDesktopSidebar from './ModernDesktopSidebar';
-import ModernMobileSidebar from './ModernMobileSidebar';
-import ModernMobileHeader from './ModernMobileHeader';
+import React, { useState } from 'react';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import authService from '../../services/authService';
+import { 
+  FaTachometerAlt, FaUsers, FaUserShield, FaCreditCard, 
+  FaFileInvoiceDollar, FaChartBar, FaWhatsapp, FaUserCircle, 
+  FaSignOutAlt, FaBars, FaTimes, FaCoins 
+} from 'react-icons/fa';
 
 export default function AdminLayout() {
-  const [isMobile, setIsMobile] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
   const location = useLocation();
-
-  // Détection responsive
-  useEffect(() => {
-    const checkScreenSize = () => {
-      setIsMobile(window.innerWidth < 1024);
-      if (window.innerWidth >= 1024) {
-        setMobileMenuOpen(false);
-      }
-    };
-
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    return () => window.removeEventListener('resize', checkScreenSize);
-  }, []);
-
-  // Fermer menu mobile lors du changement de route
-  useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [location]);
-
-  // Animation de transition entre pages
-  const pageVariants = {
-    initial: { opacity: 0, x: 20 },
-    in: { opacity: 1, x: 0 },
-    out: { opacity: 0, x: -20 },
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  const currentUser = authService.getCurrentUser() || {
+    firstName: "Utilisateur",
+    lastName: "Diaspora",
+    role: "Diaspora"
   };
 
-  const pageTransition = {
-    type: 'tween',
-    ease: 'anticipate',
-    duration: 0.4,
+  // Liste des menus du tableau de bord calqués sur vos sous-routes d'assurance
+  const menuItems = [
+    { path: '/dashboard', label: 'Vue d’ensemble', icon: <FaTachometerAlt /> },
+    { path: '/dashboard/clients', label: 'Bénéficiaires RDC', icon: <FaUsers /> },
+    { path: '/dashboard/subscribers', label: 'Acheteurs Diaspora', icon: <FaUserShield /> },
+    { path: '/dashboard/payments', label: 'Flux Transactions', icon: <FaCreditCard /> },
+    { path: '/dashboard/invoices', label: 'Quittances ARCA', icon: <FaFileInvoiceDollar /> },
+    { path: '/dashboard/analytics', label: 'Analyses Risques', icon: <FaChartBar /> },
+    { path: '/dashboard/messages', label: 'Logs WhatsApp', icon: <FaWhatsapp /> },
+    { path: '/dashboard/finance', label: 'Contrôle Forex', icon: <FaCoins /> },
+  ];
+
+  const handleLogout = () => {
+    authService.logout();
+    navigate('/login');
   };
 
   return (
-    <div className="admin-layout min-h-screen bg-gradient-to-br from-white via-gray-100 to-white">
-      {/* Version Desktop */}
-      {!isMobile ? (
-        <div className="flex">
-          {/* Sidebar Desktop */}
-          <ModernDesktopSidebar />
+    // 🟢 CORRIGÉ : Alignement forcé en ligne (flex-row) dès l'affichage sur ordinateur (lg:flex-row)
+    <div style={{ display: 'flex', flexDirection: window.innerWidth > 1024 ? 'row' : 'column' }} className="min-h-screen bg-slate-100 dark:bg-slate-950 antialiased font-sans text-slate-800 dark:text-slate-100">
 
-          {/* Main Content */}
-          <div className="flex-1 min-h-screen">
-            <main className="relative overflow-hidden">
-              {/* Background Pattern */}
-              <div className="absolute inset-0 opacity-5">
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpolygon points='50 0 60 40 100 50 60 60 50 100 40 60 0 50 40 40'/%3E%3C/g%3E%3C/svg%3E")`,
-                  }}
-                />
-              </div>
-
-              {/* Content avec animation */}
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={location.pathname}
-                  initial="initial"
-                  animate="in"
-                  exit="out"
-                  variants={pageVariants}
-                  transition={pageTransition}
-                  className="relative z-10"
-                >
-                  <Outlet />
-                </motion.div>
-              </AnimatePresence>
-            </main>
-          </div>
+      {/* 📱 BARRE DE NAVIGATION MOBILE (Masquée sur PC) */}
+      {/* 🟢 CORRIGÉ : Nettoyage du doublon accidentel pour restaurer le bandeau mobile corporate de DRC Assurances */}
+      <div className="lg:hidden bg-slate-900 text-white p-4 flex justify-between items-center border-b border-[#00A3E0]/20 sticky top-0 z-50">
+        <div className="flex flex-col">
+          <span className="text-lg font-black text-white">DRC Assurances</span>
+          <span className="text-[8px] text-[#00A3E0] uppercase font-bold tracking-widest">Console de Gestion</span>
         </div>
-      ) : (
-        /* Version Mobile */
-        <div className="flex flex-col min-h-screen">
-          {/* Header Mobile */}
-          <ModernMobileHeader
-            onMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)}
-            isMenuOpen={mobileMenuOpen}
-          />
+        <button 
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+          className="text-white text-xl focus:outline-none"
+        >
+          {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
+        </button>
+      </div>
 
-          {/* Sidebar Mobile */}
-          <ModernMobileSidebar
-            isOpen={mobileMenuOpen}
-            onClose={() => setMobileMenuOpen(false)}
-          />
+      {/* 💻 SIDEBAR PRINCIPALE (PC & Mobile déplié) */}
+      <aside style={{ display: window.innerWidth > 1024 ? 'flex' : (isMobileMenuOpen ? 'flex' : 'none'), width: '256px', minWidth: '256px' }} className="bg-slate-900 text-slate-300 flex-shrink-0 flex-col justify-between border-r border-slate-800 h-screen sticky top-0">
 
-          {/* Main Content Mobile */}
-          <div className="flex-1 pt-16">
-            <main className="relative overflow-hidden min-h-full">
-              {/* Background Pattern Mobile */}
-              <div className="absolute inset-0 opacity-5">
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='1.5'/%3E%3C/g%3E%3C/svg%3E")`,
-                  }}
-                />
-              </div>
+        <div>
+          {/* Logo / Marque */}
+          {/* 🟢 CORRIGÉ : Modification du point de rupture hidden en lg:block pour correspondre à l'aside */}
+          <div style={{ display: window.innerWidth > 1024 ? 'block' : 'none' }} className="p-6 border-b border-slate-800">
 
-              {/* Content avec animation */}
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={location.pathname}
-                  initial="initial"
-                  animate="in"
-                  exit="out"
-                  variants={pageVariants}
-                  transition={pageTransition}
-                  className="relative z-10"
-                >
-                  <Outlet />
-                </motion.div>
-              </AnimatePresence>
-            </main>
+            <span className="text-xl font-black bg-gradient-to-r from-[#00A3E0] via-[#CE1126] to-[#FDD100] text-transparent bg-clip-text font-serif tracking-wide block uppercase">
+              DRC Assurances
+            </span>
+            <span className="text-[8px] uppercase tracking-[2px] text-slate-400 font-bold block mt-1">
+              Espace Administration
+            </span>
           </div>
+
+          {/* Profil utilisateur connecté */}
+          <div className="p-4 bg-slate-950/40 border-b border-slate-800/60 flex items-center gap-3">
+            <FaUserCircle className="text-[#00A3E0] shrink-0" size={32} />
+            <div className="overflow-hidden">
+              <h4 className="text-xs font-bold text-white truncate">{currentUser.firstName} {currentUser.lastName}</h4>
+              <span className="text-[10px] text-[#FDD100] font-medium tracking-wide uppercase px-2 py-0.5 rounded bg-[#FDD100]/10 inline-block mt-0.5">
+                {currentUser.role}
+              </span>
+            </div>
+          </div>
+
+          {/* Liste des onglets de navigation */}
+          <nav className="p-4 space-y-1 overflow-y-auto max-h-[calc(100vh-220px)]">
+            {menuItems.map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <button
+                  key={item.path}
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    navigate(item.path);
+                  }}
+                  className={`w-full px-4 py-3 flex items-center gap-3 text-xs lg:text-sm font-bold rounded-xl transition-all ${
+                    isActive
+                      ? 'bg-[#00A3E0] text-white shadow-md'
+                      : 'hover:bg-slate-800 hover:text-white text-slate-400'
+                  }`}
+                >
+                  <span className={isActive ? 'text-white' : 'text-[#00A3E0]'}>{item.icon}</span>
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
         </div>
+
+        {/* Pied de la Sidebar */}
+        <div className="p-4 border-t border-slate-800 bg-slate-950/20">
+          <button
+            onClick={handleLogout}
+            className="w-full px-4 py-3 flex items-center gap-3 text-xs lg:text-sm font-bold text-red-400 hover:bg-red-500/10 hover:text-red-500 rounded-xl transition-colors"
+          >
+            <FaSignOutAlt />
+            <span>Déconnexion</span>
+          </button>
+        </div>
+
+      </aside>
+
+      {/* OVERLAY SOMBRE MOBILE */}
+      {isMobileMenuOpen && (
+        <div 
+          onClick={() => setIsMobileMenuOpen(false)} 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+        />
       )}
 
-      {/* Scroll to Top Button */}
-      <motion.button
-        initial={{ opacity: 0, scale: 0 }}
-        animate={{ opacity: 1, scale: 1 }}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="fixed bottom-6 right-6 w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center z-40"
-      >
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5 10l7-7m0 0l7 7m-7-7v18"
-          />
-        </svg>
-      </motion.button>
-
-      {/* Footer Credit */}
-      <div className="fixed bottom-2 left-2 opacity-20 hover:opacity-60 transition-opacity pointer-events-none">
-        <div className="flex items-center space-x-2 text-slate-300 text-xs">
-          <div className="w-6 h-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-            <span className="text-white text-xs font-bold">IR</span>
-          </div>
-          <span>Ir Bendelo Dashboard Pro © 2024</span>
+      {/* 🚀 CONTENU DYNAMIQUE CENTRAL */}
+      {/* 🟢 CORRIGÉ : Ajustement de l'espacement pour s'aligner de manière fluide à côté du menu permanent */}
+      <main className="flex-grow p-4 lg:p-8 overflow-y-auto h-screen bg-slate-50 dark:bg-slate-950">
+        <div className="max-w-7xl mx-auto">
+          <Outlet />
         </div>
-      </div>
+      </main>
+
     </div>
   );
 }
