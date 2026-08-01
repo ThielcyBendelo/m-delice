@@ -49,7 +49,7 @@ function FAQSection() {
             Foire Aux <span className="text-red-600 italic">Questions</span>
           </h2>
           
-          <p className="text-lg text-slate-500 max-w-2xl mx-auto font-light leading-relaxed">
+          <p className="text-lg text-slate-950 max-w-3xl mx-auto font-bold leading-relaxed">
             Tout ce que vous devez savoir sur la protection de vos proches en RDC.
           </p>
         </div>
@@ -65,7 +65,7 @@ function FAQSection() {
                 onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
                 className="w-full py-8 flex items-center justify-between text-left group"
               >
-                <span className={`text-xl md:text-2xl font-black tracking-tight uppercase transition-colors ${openIndex === idx ? 'text-red-600' : 'text-slate-900'}`}>
+                <span className={`text-xl md:text-1xl font-black tracking-tight uppercase transition-colors ${openIndex === idx ? 'text-red-600' : 'text-slate-900'}`}>
                   {faq.question}
                 </span>
                 <motion.div 

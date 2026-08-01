@@ -110,7 +110,7 @@ export default function InscriptionBeneficiairePage() {
             </div>
             <div>
               <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">Bénéficiaire en RD Congo</h3>
-              <p className="text-sm text-slate-400 font-medium">Renseignez la personne qui utilisera les garanties sur place.</p>
+              <p className="text-sm text-slate-950 font-medium">Renseignez la personne qui utilisera les garanties sur place.</p>
             </div>
           </div>
 

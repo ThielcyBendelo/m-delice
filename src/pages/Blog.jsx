@@ -65,7 +65,7 @@ export default function Blog() {
         <div className="relative z-20 max-w-6xl mx-auto px-6 py-20 pt-32 text-center flex flex-col items-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 w-full flex flex-col items-center">
             
-            <span className="px-4 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 border-l-2 border-[#CE1126]">
+            <span className="px-4 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-slate-950 border-l-2 border-[#CE1126]">
               <FaBookOpen className="inline mr-1" /> Guide de l'Assuré & Prévention
             </span>
             
@@ -74,7 +74,7 @@ export default function Blog() {
               <span className="text-[#CE1126] italic">en RD Congo</span>
             </h1>
             
-            <p className="max-w-2xl mx-auto text-slate-500 text-lg md:text-xl leading-relaxed font-light">
+            <p className="max-w-2xl mx-auto text-slate-950 text-lg md:text-xl leading-relaxed font-bold">
               Comprenez vos droits, optimisez vos contrats d'assurance et découvrez comment protéger au mieux vos proches restés au pays.
             </p>
 

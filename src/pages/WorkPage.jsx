@@ -6,7 +6,7 @@ import Footer from '../components/Footer';
 import notificationService from '../services/notificationService';
 import { 
   FaCalculator, FaShieldAlt, FaHeartbeat, FaCar, 
-  FaGraduationCap, FaUsers, FaArrowRight, FaInfoCircle, FaCheckCircle 
+  FaGraduationCap, FaUsers, FaArrowRight, FaInfoCircle, FaCheckCircle, FaPlaneDeparture
 } from 'react-icons/fa';
 
 export default function WorkPage() {
@@ -26,6 +26,7 @@ export default function WorkPage() {
     if (insuranceType === 'health') basePrice = 30;
     if (insuranceType === 'auto') basePrice = 20;
     if (insuranceType === 'student') basePrice = 12;
+    if (insuranceType === 'voyage') basePrice = 50;
 
     if (coverageLevel === 'essentiel') multiplier = 0.8;
     if (coverageLevel === 'confort') multiplier = 1.0;
@@ -49,7 +50,7 @@ export default function WorkPage() {
     }
 
     const simulatedPack = {
-      id: insuranceType === 'health' ? 1 : insuranceType === 'auto' ? 2 : 3,
+      id: insuranceType === 'health' ? 1 : insuranceType === 'auto' ? 2 : 4,
       name: `Pack ${insuranceType.charAt(0).toUpperCase() + insuranceType.slice(1)} - ${coverageLevel.toUpperCase()}`,
       price: estimatedPrice,
       coverageLimit: coverageLevel === 'premium' ? "Plafond annuel : 7 500 USD" : "Plafond annuel : 3 500 USD"
@@ -66,13 +67,13 @@ export default function WorkPage() {
       <header className="relative flex flex-col bg-white overflow-hidden border-b border-slate-100">
         <div className="relative z-20 max-w-6xl mx-auto px-6 py-20 pt-32 text-center flex flex-col items-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-            <span className="px-4 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 border-l-2 border-[#CE1126]">
+            <span className="px-4 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-slate-950 border-l-2 border-[#CE1126]">
               Outil d'Aide à la Décision
             </span>
             <h1 className="text-4xl md:text-7xl font-black text-slate-900 tracking-tight leading-none">
               Tarificateur <span className="text-[#CE1126] italic">En Ligne</span>
             </h1>
-            <p className="max-w-2xl mx-auto text-slate-500 text-lg md:text-xl leading-relaxed font-light">
+            <p className="max-w-3xl mx-auto text-slate-950 text-lg md:text-xl leading-relaxed font-bold">
               Calculez instantanément le montant de la prime pour votre famille en RDC. Obtenez un devis transparent et traçable en quelques clics.
             </p>
           </motion.div>
@@ -91,12 +92,13 @@ export default function WorkPage() {
           >
             {/* Étape 1 : Branche d'assurance */}
             <div className="space-y-4">
-              <label className="block text-[11px] font-black uppercase text-slate-400 tracking-[0.2em]">1. Choisissez la formule</label>
-              <div className="grid grid-cols-3 gap-4">
+              <label className="block text-[11px] font-black uppercase text-slate-950 tracking-[0.2em]">1. Choisissez la formule</label>
+              <div className="grid grid-cols-4 gap-4">
                 {[
                   { id: 'health', label: 'Santé / Médical', icon: <FaHeartbeat /> },
                   { id: 'auto', label: 'RC Automobile', icon: <FaCar /> },
-                  { id: 'student', label: 'Scolarité', icon: <FaGraduationCap /> }
+                  { id: 'student', label: 'Scolarité', icon: <FaGraduationCap /> },
+                  { id: 'voyage', label: 'Voyage', icon: <FaPlaneDeparture /> }
                 ].map((type) => (
                   <button
                     key={type.id}
@@ -105,7 +107,7 @@ export default function WorkPage() {
                     className={`p-5 rounded-2xl border-2 flex flex-col items-center gap-3 font-extrabold text-[11px] uppercase tracking-wider transition-all ${
                       insuranceType === type.id 
                         ? 'border-[#CE1126] bg-red-50/50 text-[#CE1126]' 
-                        : 'border-slate-100 bg-slate-50/40 text-slate-400 hover:border-slate-200'
+                        : 'border-slate-100 bg-slate-50/40 text-slate-950 hover:border-slate-200'
                     }`}
                   >
                     <span className="text-xl">{type.icon}</span>
@@ -117,14 +119,14 @@ export default function WorkPage() {
 
             {/* Étape 2 : Bénéficiaires */}
             <div className="space-y-4">
-              <label className="block text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] flex items-center justify-between">
+              <label className="block text-[11px] font-black uppercase text-slate-950 tracking-[0.2em] flex items-center justify-between">
                 <span>2. Nombre de bénéficiaires en RDC</span>
-                <span className="text-[#CE1126] font-mono text-xs font-black bg-red-50 px-3 py-1 rounded-md">
+                <span className="text-slate-950 font-bold text-xs font-black bg-red-50 px-3 py-1 rounded-md">
                   {beneficiariesCount} {beneficiariesCount > 1 ? 'Membres' : 'Membre'}
                 </span>
               </label>
-              <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                <FaUsers className="text-slate-400 text-lg" />
+              <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-850">
+                <FaUsers className="text-slate-950 text-lg" />
                 <input
                   type="range"
                   min="1"
@@ -143,7 +145,7 @@ export default function WorkPage() {
 
             {/* Étape 3 : Niveau de couverture (Sécurisé et refermé) */}
             <div className="space-y-4">
-              <label className="block text-[11px] font-black uppercase text-slate-400 tracking-[0.2em]">3. Niveau de garanties</label>
+              <label className="block text-[11px] font-black uppercase text-slate-950 tracking-[0.2em]">3. Niveau de garanties</label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
                   { id: 'essentiel', title: 'Essentiel', desc: 'Couverture basique de crise' },
@@ -160,10 +162,10 @@ export default function WorkPage() {
                         : 'border-slate-100 bg-slate-50/40 hover:border-slate-200'
                     }`}
                   >
-                    <span className={`text-xs font-black uppercase tracking-wider ${coverageLevel === lvl.id ? 'text-[#CE1126]' : 'text-slate-900'}`}>
+                    <span className={`text-xs font-white uppercase tracking-wider ${coverageLevel === lvl.id ? 'text-[#CE1126]' : 'text-slate-900'}`}>
                       {lvl.title}
                     </span>
-                    <span className="text-[11px] text-slate-400 font-medium leading-tight">
+                    <span className="text-[11px] text-slate-950 font-medium leading-tight">
                       {lvl.desc}
                     </span>
                   </button>
@@ -174,27 +176,32 @@ export default function WorkPage() {
           </motion.div>
         </div>
 
-        {/* BLOC DROIT : PANNEAU DU RECAP & DEVIS FINTECH (COL 5 - NOIR CONCORDANCE) */}
-        <div className="lg:col-span-5">
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="bg-slate-950 p-10 rounded-[2rem] text-white shadow-2xl space-y-8 relative overflow-hidden"
-          >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/10 blur-3xl rounded-full" />
-            
-            <div className="border-b border-white/10 pb-6">
-              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-red-600">Estimation Devis</span>
-              <h2 className="text-3xl font-black uppercase tracking-tighter italic mt-2">Votre Cotisation</h2>
-            </div>
+{/* BLOC DROIT : PANNEAU DU RECAP & DEVIS FINTECH (COL 5 - NOIR CONCORDANCE) */}
+<div className="lg:col-span-5">
+  <motion.div 
+    initial={{ opacity: 0, x: 20 }}
+    animate={{ opacity: 1, x: 0 }}
+    className="bg-slate-950 p-10 rounded-none text-white shadow-2xl space-y-8 relative overflow-hidden" 
+    /* 🟢 'rounded-none' rend la carte strictement rectangulaire */
+  >
+    <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/10 blur-3xl rounded-full" />
+    
+    <div className="border-b border-white/10 pb-6">
+      <span className="text-[11px] font-black uppercase tracking-[0.2em] text-red-600">Estimation Devis</span>
+      {/* 🟢 Ajout de 'text-white' pour la description */}
+      <h2 className="text-3xl font-bold text-white uppercase tracking-tighter italic mt-2">
+        Votre Cotisation
+      </h2>
+    </div>
 
-            {/* AFFICHEUR DU PRIX MASSIVEMENT ACCENTUÉ */}
-            <div className="py-4 flex items-baseline gap-2">
-              <span className="text-6xl md:text-7xl font-black tracking-tighter text-white">
-                {estimatedPrice}
-              </span>
-              <span className="text-xl font-bold uppercase text-red-600 tracking-widest">USD / Mois</span>
-            </div>
+    {/* AFFICHEUR DU PRIX MASSIVEMENT ACCENTUÉ */}
+    <div className="py-4 flex items-baseline gap-2">
+      <span className="text-6xl md:text-7xl font-black tracking-tighter text-white">
+        {estimatedPrice}
+      </span>
+      <span className="text-xl font-bold uppercase text-red-600 tracking-widest">USD / Mois</span>
+</div>
+
 
                         {/* Liste de réassurance */}
             <div className="space-y-4 pt-4 border-t border-white/10 text-sm font-medium text-slate-400">

@@ -63,7 +63,7 @@ export default function ContactPage() {
               Centre de <span className="text-[#CE1126] italic">Relation Client</span>
             </h1>
             
-            <p className="max-w-xl mx-auto text-slate-500 text-lg md:text-xl leading-relaxed font-light">
+            <p className="max-w-xl mx-auto text-slate-950 text-lg md:text-2xl leading-relaxed font-bold">
               Une question sur un contrat, une urgence médicale ou un besoin d'assistance immédiate à Kinshasa ? Nos équipes sont là pour vous.
             </p>
 
@@ -71,47 +71,49 @@ export default function ContactPage() {
         </div>
       </header>
 
-      {/* ================= 2. CORE INTERFACE D'ASSISTANCE ================= */}
+{/* ================= 2. CORE INTERFACE D'ASSISTANCE ================= */}
       <main className="flex-grow max-w-7xl mx-auto px-6 py-16 w-full grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
-        
-        {/* BLOC ACCÈS RAPIDES & URGENCES RDC (COL 4) */}
-        <div className="lg:col-span-4 space-y-8">
-          
-          {/* Ligne d'urgence médicale rouge */}
-          <div className="bg-white p-8 rounded-[2rem] border-t-4 border-[#CE1126] shadow-md space-y-4">
-            <div className="flex items-center gap-3 text-[#CE1126]">
-              <FaHospitalSymbol size={22} />
-              <h3 className="font-black text-base uppercase tracking-tight">Urgence Médicale RDC</h3>
-            </div>
-            <p className="text-sm text-slate-500 font-medium leading-relaxed">
-              Pour une prise en charge immédiate dans nos cliniques partenaires au pays sans avance de fonds.
-            </p>
-            <a 
-              href="tel:+243810000000" 
-              className="w-full py-4 bg-[#CE1126] hover:bg-red-700 text-white font-extrabold uppercase text-[11px] tracking-[0.2em] text-center block transition-all shadow-lg active:scale-95"
-            >
-              Appeler le +243 810 000 000
-            </a>
-          </div>
 
-          {/* Ligne Canal Diaspora WhatsApp vert */}
-          <div className="bg-white p-8 rounded-[2rem] border-t-4 border-green-500 shadow-md space-y-4">
-            <div className="flex items-center gap-3 text-green-600">
-              <FaWhatsapp size={22} />
-              <h3 className="font-black text-base uppercase tracking-tight">Ligne Client Diaspora</h3>
-            </div>
-            <p className="text-sm text-slate-500 font-medium leading-relaxed">
-              Discutez en direct avec un conseiller technique pour la gestion de vos prélèvements et activations.
-            </p>
-            <a 
-              href="https://wa.me" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="w-full py-4 bg-green-600 hover:bg-green-700 text-white font-extrabold uppercase text-[11px] tracking-[0.2em] text-center flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95"
-            >
-              <FaWhatsapp size={14} /> Ouvrir WhatsApp Support
-            </a>
-          </div>
+{/* ================= BLOC ACCÈS RAPIDES & URGENCES RDC (RECTANGLE STRICT) ================= */}
+<div className="lg:col-span-4 space-y-8 w-full">
+  
+  {/* Ligne d'urgence médicale rouge - Angles 100% droits */}
+  <div className="bg-white p-6 md:p-8 border border-slate-100 border-t-4 border-t-[#CE1126] shadow-md space-y-4 rounded-none">
+    <div className="flex items-center gap-3 text-[#CE1126]">
+      <FaHospitalSymbol size={22} />
+      <h3 className="font-black text-base uppercase tracking-tight">Urgence Médicale RDC</h3>
+    </div>
+    <p className="text-xs md:text-sm text-slate-600 font-semibold leading-relaxed">
+      Pour une prise en charge immédiate dans nos cliniques partenaires au pays sans avance de fonds.
+    </p>
+    <a 
+      href="tel:+243810000000" 
+      className="w-full py-4 bg-[#CE1126] hover:bg-red-700 text-white font-extrabold uppercase text-[10px] md:text-[11px] tracking-[0.2em] text-center block transition-all shadow-md active:scale-95 rounded-none"
+    >
+      Appeler le +243 810 000 000
+    </a>
+  </div>
+
+  {/* Ligne Canal Diaspora WhatsApp vert - Angles 100% droits */}
+  <div className="bg-white p-6 md:p-8 border border-slate-100 border-t-4 border-t-green-500 shadow-md space-y-4 rounded-none">
+    <div className="flex items-center gap-3 text-green-600">
+      <FaWhatsapp size={22} />
+      <h3 className="font-black text-base uppercase tracking-tight">Ligne Client Diaspora</h3>
+    </div>
+    <p className="text-xs md:text-sm text-slate-600 font-semibold leading-relaxed">
+      Discutez en direct avec un conseiller technique pour la gestion de vos prélèvements et activations.
+    </p>
+    <a 
+      href="https://wa.me" 
+      target="_blank" 
+      rel="noopener noreferrer" 
+      className="w-full py-4 bg-green-600 hover:bg-green-700 text-white font-extrabold uppercase text-[10px] md:text-[11px] tracking-[0.2em] text-center flex items-center justify-center gap-2 transition-all shadow-md active:scale-95 rounded-none"
+    >
+      <FaWhatsapp size={14} /> Ouvrir WhatsApp Support
+    </a>
+  </div>
+
+
 
           {/* Coordonnées Institutionnelles */}
           <div className="bg-slate-50 p-8 rounded-[2rem] border border-slate-100 shadow-sm space-y-6 text-sm font-semibold text-slate-600">
@@ -121,7 +123,7 @@ export default function ContactPage() {
               <FaMapMarkerAlt className="text-red-600 flex-shrink-0 mt-0.5" size={14} />
               <div>
                 <p className="font-black text-slate-900 uppercase text-xs tracking-wider mb-0.5">Siège Social Kinshasa</p>
-                <p className="font-medium text-slate-500">Avenue de la Justice, Gombe, RD Congo</p>
+                <p className="font-medium text-slate-950">Avenue de la Justice, Gombe, RD Congo</p>
               </div>
             </div>
 
@@ -129,7 +131,7 @@ export default function ContactPage() {
               <FaEnvelope className="text-red-600 flex-shrink-0 mt-0.5" size={14} />
               <div>
                 <p className="font-black text-slate-900 uppercase text-xs tracking-wider mb-0.5">Support Mail</p>
-                <p className="font-medium text-slate-500 break-all">assistance@drcassurances.com</p>
+                <p className="font-medium text-slate-950 break-all">assistance@drcassurances.com</p>
               </div>
             </div>
 
@@ -137,7 +139,7 @@ export default function ContactPage() {
               <FaShieldAlt className="text-red-600 flex-shrink-0 mt-0.5" size={14} />
               <div>
                 <p className="font-black text-slate-900 uppercase text-xs tracking-wider mb-0.5">Agrément Courtier ARCA</p>
-                <p className="font-mono text-xs text-slate-500">N° ARCA/RDC/2026-XXXX</p>
+                <p className="font-mono text-xs text-slate-950">N° ARCA/RDC/2026-XXXX</p>
               </div>
             </div>
           </div>
@@ -153,14 +155,14 @@ export default function ContactPage() {
           >
             <div>
               <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Envoyer une demande écrite</h2>
-              <p className="text-sm text-slate-400 font-medium mt-1">Pour toute réclamation, demande de devis sur-mesure ou envoi de documents administratifs.</p>
+              <p className="text-2xl text-slate-950 font-medium mt-1">Pour toute réclamation, demande de devis sur-mesure ou envoi de documents administratifs.</p>
             </div>
 
             <form onSubmit={handleFormSubmit} className="space-y-8">
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
                 <div className="space-y-3">
-                  <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Votre Nom complet</label>
+                  <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-950">Votre Nom complet</label>
                   <input
                     type="text"
                     name="name"
@@ -172,7 +174,7 @@ export default function ContactPage() {
                   />
                 </div>
                 <div className="space-y-3">
-                  <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Adresse Email</label>
+                  <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-950">Adresse Email</label>
                   <input
                     type="email"
                     name="email"
@@ -187,7 +189,7 @@ export default function ContactPage() {
 
               {/* ─── 🟢 CORRIGÉ : Liste déroulante des sujets complétée et refermée proprement */}
               <div className="space-y-3">
-                <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Nature de la demande</label>
+                <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-950">Nature de la demande</label>
                 <select
                   name="subject"
                   value={emailData.subject}
@@ -202,7 +204,7 @@ export default function ContactPage() {
               </div>
 
               <div className="space-y-3">
-                <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Message / Détails de la demande</label>
+                <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-950">Message / Détails de la demande</label>
                 <textarea
                   name="message"
                   required

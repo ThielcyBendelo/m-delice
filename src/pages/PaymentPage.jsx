@@ -97,7 +97,7 @@ export default function PaymentPage() {
             </div>
 
             <div className="py-4 border-b border-slate-200 space-y-3">
-              <p className="text-[11px] font-black uppercase text-slate-400 tracking-wider">Bénéficiaire en RD Congo</p>
+              <p className="text-[11px] font-black uppercase text-slate-950 tracking-wider">Bénéficiaire en RD Congo</p>
               <p className="text-sm font-bold text-slate-800 flex items-center gap-2">
                 <FaUser className="text-red-600 flex-shrink-0" /> {beneficiaryData.beneficiaryFirstName} {beneficiaryData.beneficiaryLastName}
               </p>

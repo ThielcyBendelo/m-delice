@@ -3,7 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import authService from '../services/authService';
 import notificationService from '../services/notificationService';
-import { FaEnvelope, FaLock, FaShieldAlt, FaArrowRight, FaSpinner, FaUserCheck } from 'react-icons/fa';
+import { 
+  FaEnvelope, FaLock, FaShieldAlt, FaArrowRight, FaSpinner, FaUserCheck, 
+  FaGoogle, FaGithub, FaApple 
+} from 'react-icons/fa';
 
 export default function SecureLogin() {
   const navigate = useNavigate();
@@ -15,6 +18,20 @@ export default function SecureLogin() {
     setCredentials(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleSocialLogin = async (provider) => {
+    notificationService.info(`Connexion via ${provider} en cours...`);
+    try {
+      const result = await authService.loginWithProvider(provider.toLowerCase());
+      if (result) {
+        notificationService.success(`Bienvenue via ${provider} !`);
+        window.location.href = '/dashboard';
+      }
+    } catch (error) {
+      console.error(`[Social Auth Error - ${provider}]`, error);
+      notificationService.error(`Échec de l'authentification avec ${provider}.`);
+    }
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (!credentials.email.includes('@') || credentials.password.length < 6) {
@@ -23,120 +40,116 @@ export default function SecureLogin() {
     }
 
     setIsLoading(true);
-
     try {
       notificationService.info("Chiffrement de la session et vérification ARCA...");
-      
-      const result = await authService.login(credentials.email, credentials.password);
+      await authService.login(credentials.email, credentials.password);
       notificationService.success("Connexion validée avec succès !");
-      
-      // Force l'aiguillage pour valider le passage de PrivateRoute
       window.location.href = '/dashboard';
-
     } catch (error) {
-      console.error("[Fintech Login Error]", error);
-      notificationService.success("Session active détectée. Redirection...");
-      window.location.href = '/dashboard';
+      if (authService.isLoggedIn()) {
+        notificationService.success("Session active détectée. Redirection...");
+        window.location.href = '/dashboard';
+      } else {
+        notificationService.error("Identifiants incorrects ou serveur indisponible.");
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
+  const socialLogins = [
+    { id: 'google', name: 'Google', icon: <FaGoogle />, color: 'hover:bg-red-50 hover:text-red-600 hover:border-red-200' },
+    { id: 'github', name: 'GitHub', icon: <FaGithub />, color: 'hover:bg-slate-900 hover:text-white hover:border-slate-900' },
+    { id: 'apple', name: 'Apple', icon: <FaApple />, color: 'hover:bg-black hover:text-white hover:border-black' },
+  ];
+
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 relative overflow-hidden font-sans">
-      {/* 🟢 CORRIGÉ : Arrière-plan épuré haut de gamme sans voile bleu sombre */}
+      {/* Arrière-plan technique discret */}
       <div className="absolute inset-0 bg-[radial-gradient(#CE1126_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.03] z-10" />
       
       <motion.div 
-        initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="relative z-20 w-full max-w-md bg-white p-10 rounded-[2rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.12)] border border-slate-100 flex flex-col"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="relative z-20 w-full max-w-[440px] bg-white p-8 md:p-12 shadow-2xl border border-slate-100 flex flex-col rounded-none"
       >
+        {/* En-tête ESNAs */}
         <div className="text-center mb-10">
-          <div className="w-14 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
-            <FaShieldAlt size={24} />
+          <div className="w-12 h-12 bg-red-600 text-white flex items-center justify-center mx-auto mb-6 shadow-lg rounded-none">
+            <FaShieldAlt size={20} />
           </div>
-          <h1 className="text-3xl font-black uppercase tracking-tighter text-slate-900 font-serif">
-            DRC <span className="text-red-600">Assurances</span>
+          <h1 className="text-2xl font-black uppercase tracking-tighter text-slate-900 leading-none">
+            ESNAs <span className="text-red-600">DRC</span>
           </h1>
-          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mt-2">
-            Connexion sécurisée à l'Espace Privé
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mt-3">
+            Authentification Sécurisée ARCA
           </p>
         </div>
 
-        <form onSubmit={handleFormSubmit} className="space-y-8">
-          {/* Champ Email */}
-          <div className="space-y-3">
-            <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2">
-              <FaEnvelope className="text-red-600" size={12} /> Adresse Email
-            </label>
+        {/* Authentification Sociale */}
+        <div className="grid grid-cols-3 gap-3 mb-8">
+          {socialLogins.map((social) => (
+            <button
+              key={social.id}
+              type="button"
+              onClick={() => handleSocialLogin(social.name)}
+              className={`flex items-center justify-center py-3 border border-slate-200 text-slate-600 transition-all duration-300 rounded-none text-lg ${social.color}`}
+            >
+              {social.icon}
+            </button>
+          ))}
+        </div>
+
+        <div className="relative flex py-2 items-center mb-8">
+          <div className="flex-grow border-t border-slate-100"></div>
+          <span className="flex-shrink mx-4 text-[9px] font-black text-slate-300 uppercase tracking-widest">Ou via email</span>
+          <div className="flex-grow border-t border-slate-100"></div>
+        </div>
+
+        <form onSubmit={handleFormSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">Email</label>
             <input 
-              type="email" 
-              name="email" 
-              required 
-              value={credentials.email} 
-              onChange={handleInputChange} 
-              placeholder="ex: jean.mbuyi@gmail.com" 
-              className="w-full border-b-2 border-slate-100 bg-transparent py-3 text-lg font-bold outline-none transition focus:border-red-600 focus:placeholder-transparent text-slate-900" 
+              type="email" name="email" required value={credentials.email} onChange={handleInputChange}
+              placeholder="votre@email.com" 
+              className="w-full border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-red-600 focus:bg-white text-slate-900 rounded-none" 
             />
           </div>
 
-          {/* Champ Mot de passe */}
-          <div className="space-y-3">
-            <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2">
-              <FaLock className="text-red-600" size={12} /> Mot de passe
-            </label>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">Mot de passe</label>
             <input 
-              type="password" 
-              name="password" 
-              required 
-              value={credentials.password} 
-              onChange={handleInputChange} 
+              type="password" name="password" required value={credentials.password} onChange={handleInputChange}
               placeholder="••••••••" 
-              className="w-full border-b-2 border-slate-100 bg-transparent py-3 text-lg font-bold outline-none transition focus:border-red-600 focus:placeholder-transparent text-slate-900" 
+              className="w-full border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-red-600 focus:bg-white text-slate-900 rounded-none" 
             />
           </div>
 
-          {/* 🟢 CORRIGÉ : Action finale avec bouton rectangulaire, rouge gras et lettrage espacé */}
           <div className="pt-4">
             <button 
-              type="submit" 
-              disabled={isLoading} 
-              className="w-full py-5 bg-red-600 hover:bg-red-700 text-white font-black uppercase text-[11px] tracking-[0.25em] transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 shadow-xl"
+              type="submit" disabled={isLoading}
+              className="w-full py-4 bg-slate-900 hover:bg-red-600 text-white font-black uppercase text-[10px] tracking-[0.2em] transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 shadow-lg rounded-none"
             >
-              {isLoading ? (
-                <>
-                  <FaSpinner className="animate-spin" size={12} />
-                  <span>Validation...</span>
-                </>
-              ) : (
-                <>
-                  <FaUserCheck size={12} />
-                  <span>S'authentifier</span>
-                  <FaArrowRight className="ml-auto opacity-60" size={10} />
-                </>
+              {isLoading ? <FaSpinner className="animate-spin" size={14} /> : (
+                <><span>Se connecter</span><FaArrowRight size={10} /></>
               )}
             </button>
           </div>
         </form>
 
-        {/* Lien de redirection vers l'inscription */}
-        <div className="mt-10 pt-6 border-t border-slate-100 text-center text-[11px] font-black uppercase tracking-wider text-slate-400">
-          <p>
-            Pas encore inscrit ?{" "}
-            <span 
-              onClick={() => navigate('/register')} 
-              className="text-red-600 cursor-pointer hover:underline pl-1"
-            >
-              Créer un compte Diaspora
+        <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+            Nouveau sur la plateforme ?
+            <span onClick={() => navigate('/register')} className="text-red-600 cursor-pointer hover:text-red-700 pl-2 underline underline-offset-4">
+              Créer un compte
             </span>
           </p>
         </div>
       </motion.div>
 
-      {/* Signature Visuelle fine de marque en bas de page */}
-      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 via-blue-500 to-yellow-400 opacity-20" />
+      {/* Signature tricolore RDC fine */}
+      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#00A3E0] via-[#CE1126] to-[#FDD100] opacity-30" />
     </div>
   );
 }

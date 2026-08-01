@@ -54,7 +54,7 @@ export default function ClaimsDeclarationPage() {
           <h1 className="text-4xl md:text-7xl font-black tracking-tighter text-slate-900 uppercase leading-none mb-6">
             Déclaration de <span className="text-red-600 italic">Sinistre</span>
           </h1>
-          <p className="max-w-2xl text-lg md:text-xl text-slate-500 font-light leading-relaxed">
+          <p className="max-w-3xl text-lg md:text-xl text-slate-950 font-bold leading-relaxed">
             Remplissez ce formulaire pour activer votre prise en charge immédiate. Nos experts ARCA analysent votre dossier sous 24 à 48 heures.
           </p>
         </div>
@@ -70,7 +70,7 @@ export default function ClaimsDeclarationPage() {
           >
             <div className="grid gap-10 sm:grid-cols-2">
               <div className="space-y-3">
-                <label className="text-[px] font-black uppercase tracking-[em] text-slate-400 flex items-center gap-2">
+                <label className="text-[px] font-black uppercase tracking-[em] text-slate-950 flex items-center gap-2">
                   <FaShieldAlt className="text-red-600" /> Numéro de police
                 </label>
                 <input
@@ -85,7 +85,7 @@ export default function ClaimsDeclarationPage() {
               </div>
 
               <div className="space-y-3">
-                <label className="text-[px] font-black uppercase tracking-[em] text-slate-400 flex items-center gap-2">
+                <label className="text-[px] font-black uppercase tracking-[em] text-slate-950 flex items-center gap-2">
                   <FaUser className="text-red-600" /> Nom de l'Assuré
                 </label>
                 <input
@@ -102,7 +102,7 @@ export default function ClaimsDeclarationPage() {
 
             <div className="grid gap-10 sm:grid-cols-2">
               <div className="space-y-3">
-                <label className="text-[px] font-black uppercase tracking-[em] text-slate-400 flex items-center gap-2">
+                <label className="text-[px] font-black uppercase tracking-[em] text-slate-950 flex items-center gap-2">
                   <FaCalendarAlt className="text-red-600" /> Date du sinistre
                 </label>
                 <input
@@ -116,7 +116,7 @@ export default function ClaimsDeclarationPage() {
               </div>
 
               <div className="space-y-3">
-                <label className="text-[px] font-black uppercase tracking-[em] text-slate-400 flex items-center gap-2">
+                <label className="text-[px] font-black uppercase tracking-[em] text-slate-950 flex items-center gap-2">
                   <FaClipboardList className="text-red-600" /> Branche Concernée
                 </label>
                 <select
@@ -136,7 +136,7 @@ export default function ClaimsDeclarationPage() {
             </div>
 
             <div className="space-y-3">
-              <label className="text-[px] font-black uppercase tracking-[em] text-slate-400 flex items-center gap-2">
+              <label className="text-[px] font-black uppercase tracking-[em] text-slate-950 flex items-center gap-2">
                 <FaMoneyBillWave className="text-red-600" /> Montant Estimé (Facultatif)
               </label>
               <input
@@ -150,7 +150,7 @@ export default function ClaimsDeclarationPage() {
             </div>
 
             <div className="space-y-3">
-              <label className="text-[px] font-black uppercase tracking-[em] text-slate-400 flex items-center gap-2">
+              <label className="text-[px] font-black uppercase tracking-[em] text-slate-950 flex items-center gap-2">
                 Circonstances du Sinistre
               </label>
               <textarea
@@ -166,7 +166,7 @@ export default function ClaimsDeclarationPage() {
 
             <div className="grid gap-10 sm:grid-cols-2">
               <div className="space-y-3">
-                <label className="text-[px] font-black uppercase tracking-[em] text-slate-400 flex items-center gap-2">
+                <label className="text-[px] font-black uppercase tracking-[em] text-slate-950 flex items-center gap-2">
                   <FaPhoneAlt className="text-red-600" /> Contact Téléphone
                 </label>
                 <input
@@ -181,7 +181,7 @@ export default function ClaimsDeclarationPage() {
               </div>
 
               <div className="space-y-3">
-                <label className="text-[px] font-black uppercase tracking-[em] text-slate-400 flex items-center gap-2">
+                <label className="text-[px] font-black uppercase tracking-[em] text-slate-950 flex items-center gap-2">
                   <FaEnvelope className="text-red-600" /> Adresse Email
                 </label>
                 <input
@@ -214,9 +214,10 @@ export default function ClaimsDeclarationPage() {
             
             <div className="space-y-6">
               <span className="text-[px] font-black uppercase tracking-[em] text-red-600">Engagement DRC</span>
-              <h2 className="text-3xl font-black tracking-tighter uppercase italic leading-none">
-                Prise en charge <br /> Garantie.
-              </h2>
+              <h2 className="text-3xl font-black tracking-tighter uppercase italic leading-none text-white">
+  Prise en charge <br /> Garantie.
+</h2>
+
               <p className="text-slate-400 font-medium leading-relaxed">
                 Chaque déclaration est traitée en priorité absolue pour garantir une réponse rapide à vos bénéficiaires.
               </p>

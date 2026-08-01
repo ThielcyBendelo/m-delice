@@ -93,89 +93,94 @@ export default function ServicesPage() {
       <header className="relative flex flex-col bg-white overflow-hidden border-b border-slate-100">
         <div className="relative z-20 max-w-6xl mx-auto px-6 py-20 pt-32 text-center flex flex-col items-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-            <span className="px-4 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 border-l-2 border-[#CE1126]">
+            <span className="px-4 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-slate-950 border-l-2 border-[#CE1126]">
               Catalogue Officiel des Garanties
             </span>
-            <h1 className="text-4xl md:text-7xl font-black text-slate-900 tracking-tight leading-none">
+            <h1 className="text-4xl md:text-7xl font-black text-slate-950 tracking-tight leading-none">
               Nos Solutions de <span className="text-[#CE1126] italic">Protection</span>
             </h1>
-            <p className="max-w-2xl mx-auto text-slate-500 text-lg md:text-xl leading-relaxed font-light">
+            <p className="max-w-3xl mx-auto text-slate-950 text-lg md:text-xl leading-relaxed font-bold">
               Découvrez le détail technique de nos formules agréées. Des contrats transparents conçus pour apporter une sérénité totale à la diaspora et à leurs bénéficiaires locaux en RDC.
             </p>
           </motion.div>
         </div>
       </header>
 
-      {/* ================= 2. GRILLE DES FORMULES D'ASSURANCE ================= */}
-      <main className="flex-grow max-w-7xl mx-auto px-6 py-16 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {formulas.map((formula, idx) => (
-            <motion.div
-              key={formula.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: idx * 0.05 }}
-              className={`bg-white rounded-[2rem] overflow-hidden shadow-md flex flex-col justify-between hover:shadow-2xl transition-all duration-500 border border-slate-100 group ${formula.color}`}
-            >
-              <div>
-                {/* Zone Image locale (Assets) */}
-                {formula.image && (
-                  <div className="relative w-full h-56 md:h-64 overflow-hidden bg-slate-950">
-                    <img 
-                      src={formula.image} 
-                      alt={formula.title} 
-                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-40 z-10" />
-                  </div>
-                )}
+{/* ================= 2. GRILLE DES FORMULES D'ASSURANCE (RECTANGLE STRICT) ================= */}
+<main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-16 w-full">
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
+    {formulas.map((formula, idx) => (
+      <motion.div
+        key={formula.id}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: idx * 0.05 }}
+        className="bg-white overflow-hidden shadow-lg flex flex-col justify-between hover:shadow-2xl transition-all duration-500 border border-slate-100 group rounded-none"
+      >
+        <div>
+          {/* Zone Image : 100% nette, format rectangulaire strict */}
+          {formula.image && (
+            <div className="relative w-full h-60 md:h-72 overflow-hidden bg-slate-900 rounded-none">
+              <img 
+                src={formula.image} 
+                alt={formula.title} 
+                className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-105"
+                loading="lazy"
+              />
+              {/* Overlay léger pour le contraste sans masquer l'image */}
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent z-10" />
+            </div>
+          )}
 
-                {/* Contenu textuel interne */}
-                <div className="p-8 md:p-10 pb-0">
-                  <div className={`w-14 h-14 ${formula.bgIcon} rounded-2xl flex items-center justify-center mb-6 shadow-sm`}>
-                    {formula.icon}
-                  </div>
+          {/* Contenu textuel interne */}
+          <div className="p-6 md:p-10 pb-4">
+            {/* Icône carrée */}
+            <div className={`w-14 h-14 ${formula.bgIcon} rounded-none flex items-center justify-center mb-6 shadow-md`}>
+              {formula.icon}
+            </div>
 
-                  <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tight mb-4 leading-tight">
-                    {formula.title}
-                  </h3>
-                  <p className="text-base text-slate-500 leading-relaxed font-medium mb-8">
-                    {formula.description}
-                  </p>
+            <h3 className="text-2xl md:text-3xl font-black text-slate-900 uppercase tracking-tighter mb-4 leading-tight">
+              {formula.title}
+            </h3>
+            
+            <p className="text-slate-700 text-base md:text-lg leading-relaxed font-bold mb-8">
+              {formula.description}
+            </p>
 
-                  {/* Garanties incluses */}
-                  <div className="space-y-4 mb-8">
-                    <h4 className="text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] flex items-center gap-2 mb-4">
-                      <FaHospitalSymbol className="text-[#CE1126]" /> Garanties Clés Incluses :
-                    </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {formula.guarantees.map((guarantee, gIdx) => (
-                        <div key={gIdx} className="flex items-start gap-3 text-sm text-slate-700 font-semibold leading-tight">
-                          <FaCheckCircle className="text-red-600 mt-0.5 flex-shrink-0" size={14} />
-                          <span>{guarantee}</span>
-                        </div>
-                      ))}
-                    </div>
+            {/* Liste des Garanties */}
+            <div className="space-y-4 mb-6">
+              <h4 className="text-[10px] md:text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] flex items-center gap-2 mb-4">
+                <FaHospitalSymbol className="text-[#CE1126]" /> Garanties Clés Incluses :
+              </h4>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
+                {formula.guarantees.map((guarantee, gIdx) => (
+                  <div key={gIdx} className="flex items-start gap-3 text-sm text-slate-800 font-semibold leading-tight">
+                    <FaCheckCircle className="text-[#CE1126] mt-0.5 flex-shrink-0" size={14} />
+                    <span>{guarantee}</span>
                   </div>
-                </div>
+                ))}
               </div>
-
-              {/* 🟢 CORRIGÉ & SÉCURISÉ : Zone d'action finale complétée avec boutons rectangulaires haute visibilité */}
-              <div className="p-8 md:p-10 pt-6 border-t border-slate-50 bg-slate-50/50">
-                <button
-                  onClick={() => navigate('/simulateur')}
-                  className="w-full py-4 border-2 border-[#CE1126] bg-white text-black font-extrabold uppercase text-[11px] tracking-[0.25em] shadow-sm transition-all hover:bg-[#CE1126] hover:text-white flex items-center justify-center gap-2"
-                >
-                  Souscrire cette formule <FaArrowRight size={11} />
-                </button>
-              </div>
-
-            </motion.div>
-          ))}
+            </div>
+          </div>
         </div>
-      </main>
+
+        {/* Zone d'action : Bouton rectangulaire haute visibilité */}
+        <div className="p-6 md:p-10 pt-6 border-t border-slate-50 bg-slate-50/30">
+          <button
+            onClick={() => navigate('/simulateur')}
+            className="w-full py-5 border-2 border-[#CE1126] bg-white text-black font-extrabold uppercase text-[10px] md:text-[11px] tracking-[0.25em] shadow-md transition-all hover:bg-[#CE1126] hover:text-white flex items-center justify-center gap-3 rounded-none active:scale-[0.98]"
+          >
+            Souscrire cette formule <FaArrowRight size={12} />
+          </button>
+        </div>
+
+      </motion.div>
+    ))}
+  </div>
+</main>
+
 
       <Footer />
     </div>

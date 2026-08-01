@@ -90,7 +90,7 @@ export default function ProjectsPage() {
               Réseau de Prestataires <br />
               <span className="text-[#CE1126] italic">Agréés ARCA</span>
             </h1>
-            <p className="max-w-2xl mx-auto text-slate-500 text-lg md:text-xl leading-relaxed font-light">
+            <p className="max-w-3xl mx-auto text-slate-950 text-lg md:text-xl leading-relaxed font-bold">
               Pas d'avance de frais au pays. Présentez simplement la carte virtuelle ou le code QR reçu par WhatsApp pour activer la prise en charge immédiate.
             </p>
 
@@ -130,7 +130,7 @@ export default function ProjectsPage() {
       {/* ================= 2. GRILLE DU RÉSEAU NATIONAL ================= */}
       <main className="flex-grow max-w-7xl mx-auto px-6 py-16 w-full">
         {filteredPartners.length === 0 ? (
-          <div className="text-center py-16 text-slate-400 font-bold uppercase tracking-wider text-sm">
+          <div className="text-center py-16 text-slate-950 font-bold uppercase tracking-wider text-sm">
             Aucun prestataire ne correspond à vos critères dans cette zone.
           </div>
         ) : (

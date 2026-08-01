@@ -8,13 +8,15 @@ import Footer from '../components/Footer';
 import FAQSection from '../components/FAQSection';
 
 // Icônes
-import { FaShieldAlt, FaArrowRight, FaUserCheck, FaHandHoldingHeart } from 'react-icons/fa';
+import { FaShieldAlt, FaArrowRight, FaUserCheck, FaHandHoldingHeart, FaHeartbeat, FaCar, FaGraduationCap, FaPlaneDeparture } from 'react-icons/fa';
 
 // Assets (Vérifiez bien que ces fichiers existent dans src/assets/)
 import background1 from '../assets/background_drc.jpeg';
 import background2 from '../assets/logo_drc.jpeg';
-import tiers from '../assets/tiers_payant.jpeg';
-import notif from '../assets/not_what.jpeg';
+import santé from '../assets/santé.jpeg';
+import auto from '../assets/auto.jpeg';
+import scolarité from '../assets/scolarité.jpeg';
+import voyage from '../assets/voyage.jpeg';
 
 // Variantes d'animations
 const fadeInUp = {
@@ -40,7 +42,7 @@ export default function Home() {
   }, [backgrounds.length]);
 
   return (
-    <div className="min-h-screen w-full bg-[#CE1126] flex flex-col antialiased font-sans text-slate-900 transition-colors duration-300 py-20">
+    <div className="min-h-screen w-full bg-[#CE1126] flex flex-col antialiased font-sans text-slate-900 transition-colors duration-300 py-21">
       <NavbarSecured />
 
 {/* ================= 1. SECTION HERO ================= */}
@@ -136,93 +138,94 @@ export default function Home() {
 
 {/* ================= 2. SECTION COMMERCIALE AMÉLIORÉE ================= */}
 <section className="py-16 md:py-24 bg-white overflow-hidden font-sans border-t border-slate-100 w-full transition-all duration-500 ease-out hover:z-10 hover:border-red-100 hover:shadow-[0_25px_60px_-15px_rgba(206,17,38,0.12)]">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6">
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-12 md:space-y-16">
+    
+    {/* ZONE DE TEXTE UNIQUE CENTRÉE */}
+    <div className="space-y-4 md:space-y-6 flex flex-col items-center text-center">
+      <h3 className="text-xl md:text-2xl font-black uppercase italic tracking-tighter text-[#CE1126]">
+        Bâtir un pont de confiance.
+      </h3>
+      <h2 className="text-3xl md:text-6xl font-black text-slate-900 tracking-tighter uppercase leading-none">
+        Un écosystème <span className="text-[#CE1126]">traçable.</span>
+      </h2>
+      <p className="text-lg md:text-xl text-slate-800 leading-relaxed font-bold max-w-2xl">
+        Garantissez que chaque dollar versé est converti en protection réelle, transparente et instantanée pour vos bénéficiaires en RDC.
+      </p>
+    </div>
+
+    {/* GRILLE DES 4 PRODUITS COMMERCIAUX (Angles droits et rectilignes) */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 w-full">
       
-      {/* BLOC GAUCHE : IMAGE PRINCIPALE (Rectangle strict) */}
-      <motion.div 
-        initial={{ opacity: 0, x: -50 }} 
-        whileInView={{ opacity: 1, x: 0 }} 
-        viewport={{ once: true }} 
-        transition={{ duration: 0.8 }}
-        className="lg:col-span-5 w-full"
-      >
-        <div className="relative z-10 overflow-hidden shadow-2xl border-8 border-slate-50 group bg-slate-100 rounded-none">
-          <img 
-            src={background1} 
-            alt="Inclusion" 
-            className="w-full h-[400px] md:h-[600px] object-cover transition-transform duration-1000 group-hover:scale-105" 
-          />
-          {/* Dégradé léger uniquement pour le contraste du texte blanc */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-6 md:p-10 text-white">
-            <h3 className="text-2xl md:text-3xl font-black uppercase italic leading-tight tracking-tighter">
-              Bâtir un pont <br /> de confiance.
-            </h3>
+      {/* PRODUIT 1 : SANTE MÉDICALE */}
+      <motion.div whileHover={{ y: -6 }} className="group flex flex-col w-full text-left">
+        <div className="relative h-44 md:h-48 w-full overflow-hidden shadow-lg mb-4 md:mb-6 border border-slate-100 rounded-none">
+          <img src={santé} alt="Santé Médicale" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-transparent" />
+          <div className="absolute top-4 left-4 w-10 h-10 bg-[#CE1126] text-white flex items-center justify-center shadow-lg rounded-none">
+            <FaHeartbeat size={18} />
           </div>
+        </div>
+        <div className="px-1">
+          <h4 className="text-lg md:text-xl font-black uppercase mb-2 text-slate-900 tracking-tight">Santé Médicale</h4>
+          <p className="text-lg md:text-sm text-slate-950 leading-relaxed font-semibold">
+            Prise en charge directe en clinique via QR Code. Vos proches ne déboursent rien sur place.
+          </p>
         </div>
       </motion.div>
 
-      {/* BLOC DROIT : TEXTE & GRILLE DE CARTES DROITES */}
-      <div className="lg:col-span-7 space-y-10 md:space-y-12 text-left w-full">
-        <div className="space-y-4 md:space-y-6">
-          <h2 className="text-3xl md:text-6xl font-black text-slate-900 tracking-tighter uppercase leading-none">
-            Un écosystème <span className="text-[#CE1126]">traçable.</span>
-          </h2>
-          <p className="text-lg md:text-xl text-slate-800 leading-relaxed font-bold max-w-2xl">
-            Garantissez que chaque dollar versé est converti en soins réels pour vos bénéficiaires en RDC.
+      {/* PRODUIT 2 : AUTOMOBILE */}
+      <motion.div whileHover={{ y: -6 }} className="group flex flex-col w-full text-left">
+        <div className="relative h-44 md:h-48 w-full overflow-hidden shadow-lg mb-4 md:mb-6 border border-slate-100 rounded-none">
+          <img src={auto} alt="Assurance Automobile" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-transparent" />
+          <div className="absolute top-4 left-4 w-10 h-10 bg-slate-900 text-white flex items-center justify-center shadow-lg rounded-none">
+            <FaCar size={18} />
+          </div>
+        </div>
+        <div className="px-1">
+          <h4 className="text-lg md:text-xl font-black uppercase mb-2 text-slate-900 tracking-tight">Automobile</h4>
+          <p className="text-lg md:text-sm text-slate-950 leading-relaxed font-semibold">
+            Garanties complètes pour vos véhicules au pays. Gestion et constatation rapides des sinistres.
           </p>
         </div>
+      </motion.div>
 
-        {/* Grille des fonctionnalités */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
-          
-          {/* CARTE 1 : TIERS-PAYANT (Carré/Rectangle droit) */}
-          <motion.div 
-            whileHover={{ y: -6 }}
-            className="group flex flex-col w-full"
-          >
-            <div className="relative h-44 md:h-48 w-full overflow-hidden shadow-lg mb-4 md:mb-6 border border-slate-100 rounded-none">
-              <img src={tiers} alt="Tiers-Payant" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-transparent" />
-              
-              {/* Icône flottante carrée */}
-              <div className="absolute top-4 left-4 w-10 h-10 bg-[#CE1126] text-white flex items-center justify-center shadow-lg rounded-none">
-                <FaUserCheck size={18} />
-              </div>
-            </div>
-            <div className="px-1">
-              <h4 className="text-lg md:text-xl font-black uppercase mb-2 text-slate-900 tracking-tight">Tiers-Payant</h4>
-              <p className="text-xs md:text-sm text-slate-600 leading-relaxed font-semibold">
-                Prise en charge directe en clinique via QR Code. Vos proches ne déboursent rien.
-              </p>
-            </div>
-          </motion.div>
-
-          {/* CARTE 2 : ALERTE INSTANTANÉE (Carré/Rectangle droit) */}
-          <motion.div 
-            whileHover={{ y: -6 }}
-            className="group flex flex-col w-full"
-          >
-            <div className="relative h-44 md:h-48 w-full overflow-hidden shadow-lg mb-4 md:mb-6 border border-slate-100 rounded-none">
-              <img src={notif} alt="Alerte WhatsApp" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-transparent" />
-              
-              {/* Icône flottante carrée */}
-              <div className="absolute top-4 left-4 w-10 h-10 bg-slate-900 text-white flex items-center justify-center shadow-lg rounded-none">
-                <FaHandHoldingHeart size={18} />
-              </div>
-            </div>
-            <div className="px-1">
-              <h4 className="text-lg md:text-xl font-black uppercase mb-2 text-slate-900 tracking-tight">Alerte Instantanée</h4>
-              <p className="text-xs md:text-sm text-slate-600 leading-relaxed font-semibold">
-                Notification WhatsApp automatique au pays dès validation du paiement.
-              </p>
-            </div>
-          </motion.div>
-
+      {/* PRODUIT 3 : SCOLARITÉ */}
+      <motion.div whileHover={{ y: -6 }} className="group flex flex-col w-full text-left">
+        <div className="relative h-44 md:h-48 w-full overflow-hidden shadow-lg mb-4 md:mb-6 border border-slate-100 rounded-none">
+          <img src={scolarité} alt="Assurance Scolarité" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-transparent" />
+          <div className="absolute top-4 left-4 w-10 h-10 bg-[#CE1126] text-white flex items-center justify-center shadow-lg rounded-none">
+            <FaGraduationCap size={18} />
+          </div>
         </div>
-      </div>
+        <div className="px-1">
+          <h4 className="text-lg md:text-xl font-black uppercase mb-2 text-slate-900 tracking-tight">Scolarité</h4>
+          <p className="text-lg md:text-sm text-slate-950 leading-relaxed font-semibold">
+            Financement et sécurité du parcours scolaire de vos enfants restés au pays en cas de coup dur.
+          </p>
+        </div>
+      </motion.div>
+
+      {/* PRODUIT 4 : VOYAGE */}
+      <motion.div whileHover={{ y: -6 }} className="group flex flex-col w-full text-left">
+        <div className="relative h-44 md:h-48 w-full overflow-hidden shadow-lg mb-4 md:mb-6 border border-slate-100 rounded-none">
+          <img src={voyage} alt="Assurance Voyage" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-transparent" />
+          <div className="absolute top-4 left-4 w-10 h-10 bg-slate-900 text-white flex items-center justify-center shadow-lg rounded-none">
+            <FaPlaneDeparture size={18} />
+          </div>
+        </div>
+        <div className="px-1">
+          <h4 className="text-lg md:text-xl font-black uppercase mb-2 text-slate-900 tracking-tight">Voyage</h4>
+          <p className="text-lg md:text-sm text-slate-950 leading-relaxed font-semibold">
+            Couverture médicale internationale et assistance bagages pour vos déplacements vers ou depuis la RDC.
+          </p>
+        </div>
+      </motion.div>
+
     </div>
+
   </div>
 </section>
 
@@ -235,24 +238,36 @@ export default function Home() {
     transition={{ duration: 0.8 }}
     className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-8"
   >
-    {/* Conteneur d'icône - Parfaitement carré, sans aucune courbe */}
+    {/* Conteneur d'icône - Parfaitement carré */}
     <div className="inline-flex p-5 bg-white border border-slate-200 text-[#CE1126] shadow-sm rounded-none">
       <FaShieldAlt size={40} />
     </div>
 
-    {/* Titre percutant avec typographie rectiligne */}
+    {/* Titre percutant */}
     <h3 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-slate-900 leading-tight">
       Une couverture adossée à des <br />
       <span className="text-[#CE1126]">Leaders Internationaux</span>
     </h3>
 
-    {/* Description ajustée pour un contraste et une lisibilité maximale */}
-    <p className="text-base md:text-lg text-slate-700 font-semibold leading-relaxed max-w-2xl mx-auto">
+    {/* Description */}
+    <p className="text-base md:text-lg text-slate-950 font-semibold leading-relaxed max-w-3xl mx-auto">
       Nos polices sont co-assurées par des partenaires agréés ARCA et réassurées mondialement pour une sécurité financière absolue.
     </p>
 
+    {/* NOUVEAU BOUTON : Rectangulaire strict, redirection vers la page des partenaires */}
+    <div className="pt-4">
+      <button
+        onClick={() => navigate('/partenaires-garanties')}
+        className="inline-flex items-center gap-3 px-8 py-4 border-2 border-slate-950 bg-slate-950 text-white font-extrabold uppercase text-[11px] tracking-[0.25em] shadow-md hover:bg-transparent hover:text-slate-950 transition-all duration-300 rounded-none group"
+      >
+        Découvrir nos partenaires 
+        <FaArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+      </button>
+    </div>
+
   </motion.div>
-</section>      
+</section>
+
       <FAQSection />
       <Footer />
     </div>

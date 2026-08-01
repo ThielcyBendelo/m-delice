@@ -7,7 +7,7 @@ import Footer from '../components/Footer';
 import { 
   FaShieldAlt, FaHeartbeat, FaCar, FaGraduationCap, 
   FaPlane, FaCheckCircle, FaShoppingCart, FaInfoCircle,
-  FaTimes, FaLock, FaWhatsapp, FaDownload 
+  FaTimes, FaLock, FaWhatsapp, FaDownload, FaFilter 
 } from 'react-icons/fa';
 
 // Simulation de données des packs d'assurance disponibles
@@ -96,6 +96,7 @@ useEffect(() => {
 
   const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState("Tous");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // CONFIGURATION DES ÉTATS DE PILOTAGE POUR LA MODALE
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
@@ -118,12 +119,12 @@ useEffect(() => {
     <div className="min-h-screen bg-white text-slate-900 flex flex-col antialiased font-sans">
       <NavbarSecured />
 
-      {/* ================= 1. EN-TÊTE DU CATALOGUE ET FILTRES ÉPURÉS ================= */}
-      <header className="relative flex flex-col bg-white overflow-hidden border-b border-slate-100">
+            {/* ================= 1. EN-TÊTE DU CATALOGUE ET FILTRES ÉPURÉS ================= */}
+      <header className="relative flex flex-col bg-white overflow-hidden border-b border-slate-100 rounded-none">
         <div className="relative z-20 max-w-6xl mx-auto px-6 py-20 pt-32 text-center flex flex-col items-center w-full">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 w-full flex flex-col items-center">
             
-            <span className="px-4 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-red-600 bg-red-50 border border-red-100 flex items-center gap-2">
+            <span className="px-4 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-red-600 bg-red-50 border border-red-100 flex items-center gap-2 rounded-none">
               <FaShoppingCart size={11} /> Souscription Immédiate
             </span>
             
@@ -131,20 +132,80 @@ useEffect(() => {
               Packs <span className="text-[#CE1126] italic">Micro-Assurance</span>
             </h1>
             
-            <p className="max-w-2xl mx-auto text-slate-500 text-lg md:text-xl leading-relaxed font-light">
+            <p className="max-w-2xl mx-auto text-slate-950 text-lg md:text-xl leading-relaxed font-bold">
               Sélectionnez une formule claire, ajustée aux réalités locales de la RD Congo. Pas de frais cachés, résiliation libre à tout moment.
             </p>
 
-            {/* Boutons de filtrage dynamiques style FinTech épuré */}
-            <div className="mt-8 flex flex-wrap justify-center gap-3">
+            {/* ================= DESKTOP & TABLET : Barre sur une seule ligne défilante ================= */}
+            <div className="hidden sm:flex mt-8 w-full overflow-x-auto no-scrollbar justify-center pb-2">
+              <div className="flex gap-4 whitespace-nowrap px-4">
+                {categories.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveFilter(cat)}
+                    className={`px-6 py-3 text-[11px] font-black uppercase tracking-[0.15em] transition-all border-2 rounded-none ${
+                      activeFilter === cat
+                        ? "border-[#CE1126] bg-red-50/50 text-[#CE1126]"
+                        : "border-slate-200 bg-white text-slate-900 hover:border-slate-400"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* ================= MOBILE : Bouton intégré SOUS le texte (Non fixe, non flottant) ================= */}
+            <div className="sm:hidden mt-6 w-full px-4">
+              <button
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-slate-950 text-white font-black uppercase text-[11px] tracking-widest rounded-none active:scale-95 border border-slate-800"
+              >
+                <FaFilter size={12} className="text-[#CE1126]" />
+                <span>Filtrer ({activeFilter}) ↑</span>
+              </button>
+            </div>
+
+          </motion.div>
+        </div>
+      </header>
+
+      {/* ================= MOBILE : Menu DÉROULANT Plein Écran (Bento Fullscreen Drawer) ================= */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ type: 'spring', damping: 28, stiffness: 220 }}
+            className="sm:hidden fixed inset-0 z-[9999] bg-white flex flex-col h-screen w-screen rounded-none overflow-y-auto"
+          >
+            {/* Barre d'en-tête interne du menu */}
+            <div className="flex items-center justify-between px-6 h-20 border-b border-slate-100 bg-white shrink-0">
+              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-900">
+                Sélectionner une catégorie
+              </span>
+              <button 
+                onClick={() => setIsMobileMenuOpen(false)} 
+                className="p-3 text-slate-900 hover:text-[#CE1126] transition-colors rounded-none focus:outline-none"
+              >
+                <FaTimes size={20} />
+              </button>
+            </div>
+
+            {/* Liste verticale aérée des catégories */}
+            <div className="flex-grow px-6 py-8 space-y-4 bg-slate-50/50">
               {categories.map((cat) => (
                 <button
                   key={cat}
-                  onClick={() => setActiveFilter(cat)}
-                  className={`px-6 py-3 text-[11px] font-extrabold uppercase tracking-wider transition-all border-2 ${
+                  onClick={() => {
+                    setActiveFilter(cat);
+                    setIsMobileMenuOpen(false); // Ferme automatiquement après sélection
+                  }}
+                  className={`w-full py-5 px-6 text-[12px] font-black uppercase tracking-[0.15em] text-left border transition-all duration-200 rounded-none shadow-sm ${
                     activeFilter === cat
-                      ? "border-[#CE1126] bg-red-50/50 text-[#CE1126]"
-                      : "border-slate-100 bg-slate-50/40 text-slate-400 hover:border-slate-200"
+                      ? "border-[#CE1126] bg-red-50/80 text-[#CE1126] border-l-4"
+                      : "border-slate-200 bg-white text-slate-800 hover:border-slate-400"
                   }`}
                 >
                   {cat}
@@ -152,9 +213,16 @@ useEffect(() => {
               ))}
             </div>
 
+            {/* Pied décoratif minimaliste ESNAs */}
+            <div className="p-6 border-t border-slate-100 bg-white text-center shrink-0">
+              <div className="flex items-baseline justify-center font-black tracking-tight text-sm text-slate-400 uppercase select-none">
+                ESNA<span className="text-[#CE1126] lowercase font-extrabold -ml-[1px]">s</span>
+              </div>
+            </div>
           </motion.div>
-        </div>
-      </header>
+        )}
+      </AnimatePresence>
+
 
 {/* ================= 2. GRILLE DES OFFRES DE MICRO-ASSURANCE ================= */}
 <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-16 w-full">
@@ -187,7 +255,7 @@ useEffect(() => {
               {pack.icon}
             </div>
             {/* Badge de catégorie rectangulaire */}
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1.5 border border-slate-100/60 rounded-none">
+            <span className="text-[10px] font-black text-slate-950 uppercase tracking-widest bg-slate-50 px-3 py-1.5 border border-slate-100/60 rounded-none">
               {pack.category}
             </span>
           </div>
@@ -195,7 +263,7 @@ useEffect(() => {
           <h3 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight mb-1">
             {pack.name}
           </h3>
-          <p className="text-xs text-slate-400 font-medium italic mb-6">
+          <p className="text-xs text-slate-950 font-medium italic mb-6">
             {pack.tagline}
           </p>
           

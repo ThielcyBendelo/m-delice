@@ -61,7 +61,7 @@ export default function Footer() {
           {/* Bloc 2 : Navigation (Style Bento Grid épuré) */}
           <div className="md:col-span-2 space-y-6">
             <h4 className="text-[px] font-black uppercase tracking-[em] text-red-600">Plateforme</h4>
-            <ul className="space-y-4 text-[px] font-bold uppercase tracking-widest text-slate-400">
+            <ul className="space-y-4 text-[px] font-bold uppercase tracking-widest text-slate-950">
               <li><Link to="/" className="hover:text-slate-900 transition-colors">Accueil</Link></li>
               <li><Link to="/formules" className="hover:text-slate-900 transition-colors">Offres</Link></li>
               <li><Link to="/simulateur" className="hover:text-slate-900 transition-colors">Tarificateur</Link></li>
@@ -75,7 +75,7 @@ export default function Footer() {
             <div className="space-y-4">
               <div className="group">
                 <p className="text-[px] uppercase text-slate-400 font-bold mb-1">Expertise Directe</p>
-                <p className="text-sm font-bold text-slate-800">contact@drcassurances.com</p>
+                <p className="text-sm font-bold text-slate-800">contact@esnas.drc</p>
               </div>
               <div className="group">
                 <p className="text-[px] uppercase text-slate-400 font-bold mb-1">Siège Social</p>
@@ -92,7 +92,7 @@ export default function Footer() {
                 <FaShieldAlt size={20} />
                 <span className="text-[px] font-black uppercase tracking-widest">Agrément ARCA</span>
               </div>
-              <p className="text-xs text-slate-500 font-medium leading-relaxed">
+              <p className="text-xs text-slate-950 font-medium leading-relaxed">
                 Toutes nos opérations sont certifiées conformes au Code des Assurances en vigueur en République Démocratique du Congo.
               </p>
             </div>
@@ -106,7 +106,7 @@ export default function Footer() {
               © {currentYear} ESNAS
  | Fintech & Micro-Assurances
             </p>
-            <p className="text-[px] text-slate-300 uppercase tracking-widest">
+            <p className="text-[px] text-slate-950 uppercase tracking-widest">
               L'inclusion financière au service du peuple congolais.
             </p>
           </div>
