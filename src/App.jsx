@@ -60,7 +60,8 @@ const App = () => {
           <Suspense fallback={
             <div className="flex h-screen w-screen flex-col items-center justify-center bg-slate-50 dark:bg-slate-950">
               <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#00A3E0] border-t-transparent"></div>
-              <p className="mt-4 text-sm font-bold text-[#00A3E0] tracking-wide animate-pulse">Initialisation de l'écosystème DRC Assurances...</p>
+              <p className="mt-4 text-sm font-bold text-[#00A3E0] tracking-wide animate-pulse">Initialisation de l'écosystème ESNAS
+...</p>
             </div>
           }>
             <Routes>

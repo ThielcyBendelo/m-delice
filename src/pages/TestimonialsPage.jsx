@@ -11,12 +11,15 @@ export default function TestimonialsPage() {
       role: "Diaspora (Bruxelles)", 
       text: "Grâce au pack Santé Maman, ma maman est prise en charge à Kinshasa sans que je n'aie à envoyer d'argent en urgence par agence de transfert. Service irréprochable et instantané." 
     },
-    { 
-      name: "Sarah K.", 
+    {
+      name: "Anonyme", // Ajoutez un nom ou une variable correspondante ici
       role: "Assurée locale (Lubumbashi)", 
-      text: "J'ai présenté mon QR code WhatsApp à la clinique après mon accident de voiture. DRC Assurances a validé mon dossier et pris en charge mes frais en moins de 10 minutes." 
+      text: `J'ai présenté mon QR code WhatsApp à la clinique après mon accident de voiture. ESNAS a validé mon dossier et pris en charge mes frais en moins de 10 minutes.` 
     }
   ];
+
+
+
 
   return (
     <div className="min-h-screen bg-white text-slate-900 flex flex-col antialiased font-sans">

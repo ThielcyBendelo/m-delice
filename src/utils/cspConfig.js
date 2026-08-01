@@ -1,5 +1,6 @@
 /**
- * 🛡️ Content Security Policy (CSP) Configuration - DRC Assurances Fintech
+ * 🛡️ Content Security Policy (CSP) Configuration - ESNAS
+ Fintech
  * 
  * Cette configuration protège l'écosystème contre:
  * - Les attaques XSS (Cross-Site Scripting) sur les formulaires
@@ -77,7 +78,7 @@ export const applyCSPMeta = () => {
  */
 export const setupCSPViolationReporting = () => {
   document.addEventListener('securitypolicyviolation', (event) => {
-    console.warn('🚨 CSP Violation Detected dans l’écosystème DRC Assurances:', {
+    console.warn('🚨 CSP Violation Detected dans l’écosystème ESNAS:', {
       blockedURI: event.blockedURI,
       violatedDirective: event.violatedDirective,
       sourceFile: event.sourceFile,

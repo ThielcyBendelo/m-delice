@@ -5,7 +5,8 @@ import {
   FaFacebook, FaWhatsapp, FaShieldAlt, FaArrowUp 
 } from 'react-icons/fa';
 
-// Réseaux officiels de DRC Assurances
+// Réseaux officiels de ESNAS
+
 const contactLinks = [
   { label: 'Email', link: 'mailto:contact@drcassurancescom', icon: <FaEnvelope /> },
   { label: 'WhatsApp', link: 'https://wame/votre_numero', icon: <FaWhatsapp /> },
@@ -23,33 +24,39 @@ export default function Footer() {
   return (
     <footer className="bg-white text-slate-900 pt-24 pb-12 font-sans relative overflow-hidden border-t border-slate-100 w-full relative overflow-hidden transition-all duration-500 ease-out hover:z-10 hover:border-red-100 hover:shadow-[0_25px_60px_-15px_rgba(206,17,38,0.12)]">
       
-      {/* Signature Visuelle (Bande tricolore RDC très fine en haut) */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#AE] via-[#CE] to-[#FDD] opacity-50" />
+     {/* Signature Visuelle (Bande tricolore RDC très fine en haut) */}
+<div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#00A3E0] via-[#CE1126] to-[#FDD835] opacity-50" />
 
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-16 mb-20">
-          
-          {/* Bloc 1 : Identité Corporate (Police Antonio) */}
-          <div className="md:col-span-4 space-y-8">
-            <h3 className="text-3xl font-black tracking-tighter uppercase font-serif">
-              DRC <span className="text-red-600">Assurances</span>
-            </h3>
-            <p className="text-lg text-slate-500 font-medium leading-relaxed max-w-sm">
-              L'écosystème numérique de confiance qui connecte la diaspora à la protection de leurs proches en RDC.
-            </p>
-            <div className="flex gap-4">
-              {contactLinks.map((item) => (
-                <a 
-                  key={item.label} 
-                  href={item.link} 
-                  className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-red-600 hover:border-red-100 hover:bg-red-50 transition-all duration-300"
-                  title={item.label}
-                >
-                  {item.icon}
-                </a>
-              ))}
-            </div>
-          </div>
+<div className="max-w-7xl mx-auto px-4 sm:px-6">
+  <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 mb-20">
+    
+    {/* Bloc 1 : Identité Corporate ESNAs */}
+    <div className="md:col-span-4 space-y-8">
+      {/* Signature Typographique ESNAs Harmonisée */}
+      <div className="flex items-baseline font-black tracking-tight text-3xl text-slate-900 uppercase select-none">
+        ESNA
+        <span className="text-[#CE1126] lowercase font-extrabold -ml-[1px]">s</span>
+      </div>
+      
+      <p className="text-base md:text-lg text-slate-600 font-semibold leading-relaxed max-w-sm">
+        L'écosystème numérique de confiance qui connecte la diaspora à la protection de leurs proches en RDC.
+      </p>
+
+      {/* Icônes de Contact / Réseaux Sociaux - Entièrement Carrées */}
+      <div className="flex gap-4">
+        {contactLinks.map((item) => (
+          <a 
+            key={item.label} 
+            href={item.link} 
+            className="w-12 h-12 bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-red-600 hover:border-red-100 hover:bg-red-50 transition-all duration-300 rounded-none shadow-sm"
+            title={item.label}
+          >
+            {item.icon}
+          </a>
+        ))}
+      </div>
+    </div>
+
 
           {/* Bloc 2 : Navigation (Style Bento Grid épuré) */}
           <div className="md:col-span-2 space-y-6">
@@ -96,7 +103,8 @@ export default function Footer() {
         <div className="pt-12 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="space-y-1">
             <p className="text-[px] text-slate-400 font-bold tracking-[em] uppercase">
-              © {currentYear} DRC Assurances | Fintech & Micro-Assurances
+              © {currentYear} ESNAS
+ | Fintech & Micro-Assurances
             </p>
             <p className="text-[px] text-slate-300 uppercase tracking-widest">
               L'inclusion financière au service du peuple congolais.

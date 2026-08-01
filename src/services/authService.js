@@ -1,7 +1,8 @@
 import secureAPIClient from '../utils/secureAPIClient';
 
 /**
- * Service d'authentification et de gestion des rôles de l'écosystème — DRC Assurances
+ * Service d'authentification et de gestion des rôles de l'écosystème — ESNAS
+
  */
 const authService = {
   

@@ -8,7 +8,7 @@ import {
 } from 'react-icons/fa';
 
 // Importation de l'image de fond depuis vos assets
-import background1 from '../assets/background1.png';
+import background1 from '../assets/background_drc.jpeg';
 
 export default function ExperiencePage() {
   
@@ -64,7 +64,8 @@ export default function ExperiencePage() {
               <span className="text-red-600 italic">en RD Congo</span>
             </h1>
             <p className="max-w-2xl mx-auto text-slate-600 text-lg md:text-xl leading-relaxed font-light">
-              DRC Assurances apporte traçabilité et sécurité au marché congolais pour offrir à la diaspora un outil de protection fiable et certifié par l'ARCA.
+              ESNAS
+ apporte traçabilité et sécurité au marché congolais pour offrir à la diaspora un outil de protection fiable et certifié par l'ARCA.
             </p>
           </motion.div>
         </div>

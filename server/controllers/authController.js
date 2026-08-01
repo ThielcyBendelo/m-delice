@@ -3,7 +3,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 /**
- * Contrôleur de gestion des accès et de la sécurité d'authentification - DRC Assurances
+ * Contrôleur de gestion des accès et de la sécurité d'authentification - ESNAS
+
  */
 const authController = {
 

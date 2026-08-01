@@ -12,7 +12,8 @@ export default function FinanceDashboard() {
 
   const handleUpdateRate = () => {
     if (notificationService?.success) {
-      notificationService.success(`Le taux de change interne de DRC Assurances a été fixé à ${fixedRate} CDF pour 1 USD.`);
+      notificationService.success(`Le taux de change interne de ESNAS
+ a été fixé à ${fixedRate} CDF pour 1 USD.`);
     }
   };
 
@@ -96,7 +97,8 @@ export default function FinanceDashboard() {
             Couverture du Risque de Change Transfrontalier
           </h2>
           <p className="text-xs md:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-            Le modèle Fintech de DRC Assurances intègre un mécanisme de couverture automatique. Toutes les polices émises auprès de la diaspora en devises étrangères font l'objet d'un provisionnement réglementé indexé sur le dollar américain (USD) pour contrer l'inflation du marché congolais local.
+            Le modèle Fintech de ESNAS
+ intègre un mécanisme de couverture automatique. Toutes les polices émises auprès de la diaspora en devises étrangères font l'objet d'un provisionnement réglementé indexé sur le dollar américain (USD) pour contrer l'inflation du marché congolais local.
           </p>
         </div>
 

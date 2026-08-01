@@ -16,14 +16,17 @@ app.use(cors({
 
 app.use(express.json());
 
-// Guichet unique de l'API DRC Assurances
+// Guichet unique de l'API ESNAS
+
 app.use('/api', apiRoutes);
 
 app.get('/api/health', (req, res) => {
-    res.status(200).json({ status: "ONLINE", service: "DRC Assurances Gateway Core Engine" });
+    res.status(200).json({ status: "ONLINE", service: "ESNAS
+ Gateway Core Engine" });
 });
 
 app.listen(PORT, () => {
-    console.log(`\n🛡️  Serveur API DRC Assurances démarré avec succès sur le port ${PORT}`);
+    console.log(`\n🛡️  Serveur API ESNAS
+ démarré avec succès sur le port ${PORT}`);
     console.log(`🔗 Point d'accès local : http://localhost:${PORT}/api/health`);
 });

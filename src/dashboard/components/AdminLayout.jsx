@@ -41,10 +41,12 @@ export default function AdminLayout() {
     <div style={{ display: 'flex', flexDirection: window.innerWidth > 1024 ? 'row' : 'column' }} className="min-h-screen bg-slate-100 dark:bg-slate-950 antialiased font-sans text-slate-800 dark:text-slate-100">
 
       {/* 📱 BARRE DE NAVIGATION MOBILE (Masquée sur PC) */}
-      {/* 🟢 CORRIGÉ : Nettoyage du doublon accidentel pour restaurer le bandeau mobile corporate de DRC Assurances */}
+      {/* 🟢 CORRIGÉ : Nettoyage du doublon accidentel pour restaurer le bandeau mobile corporate de ESNAS
+ */}
       <div className="lg:hidden bg-slate-900 text-white p-4 flex justify-between items-center border-b border-[#00A3E0]/20 sticky top-0 z-50">
         <div className="flex flex-col">
-          <span className="text-lg font-black text-white">DRC Assurances</span>
+          <span className="text-lg font-black text-white">ESNAS
+</span>
           <span className="text-[8px] text-[#00A3E0] uppercase font-bold tracking-widest">Console de Gestion</span>
         </div>
         <button 
@@ -64,7 +66,8 @@ export default function AdminLayout() {
           <div style={{ display: window.innerWidth > 1024 ? 'block' : 'none' }} className="p-6 border-b border-slate-800">
 
             <span className="text-xl font-black bg-gradient-to-r from-[#00A3E0] via-[#CE1126] to-[#FDD100] text-transparent bg-clip-text font-serif tracking-wide block uppercase">
-              DRC Assurances
+              ESNAS
+
             </span>
             <span className="text-[8px] uppercase tracking-[2px] text-slate-400 font-bold block mt-1">
               Espace Administration

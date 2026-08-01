@@ -1,5 +1,6 @@
 /**
- * 🛡️ CLIENT API SÉCURISÉ — DRC ASSURANCES FINTECH
+ * 🛡️ CLIENT API SÉCURISÉ — ESNAS
+ FINTECH
  * Intègre les interceptors de sécurité, la protection anti-XSS CSRF
  * et la journalisation des transmissions exigée par l'ARCA.
  */

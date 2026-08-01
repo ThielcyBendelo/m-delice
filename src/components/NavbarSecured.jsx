@@ -127,24 +127,30 @@ export default function NavbarSecured() {
       }`}>
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex justify-between h-12 items-center">
-            
-            {/* LOGO FINTECH ULTRA-COMPACT */}
-            <motion.div 
-              whileHover={{ scale: 1.01 }} 
-              className="flex items-center gap-2 cursor-pointer shrink-0" 
-              onClick={(e) => handleNavClick('/', e)}
-            >
-              <img 
-                src="/images/logo.png" 
-                alt="DRC Assurances" 
-                className="h-7 w-auto object-contain"
-              />
-              <div className="hidden sm:flex flex-col justify-center border-l border-slate-200 pl-2">
-                <span className="text-[7.5px] uppercase tracking-[2px] text-red-600 font-black">
-                  Agrément ARCA
-                </span>
-              </div>
-            </motion.div>
+
+{/* LOGO FINTECH ULTRA-COMPACT TYPOGRAPHIQUE */}
+<motion.div 
+  whileHover={{ scale: 1.02 }} 
+  className="flex items-center gap-3 cursor-pointer shrink-0 group select-none" 
+  onClick={(e) => handleNavClick('/', e)}
+>
+  {/* Nom de la Marque "ESNAs" : Typographie rectiligne et contrastée */}
+  <div className="flex items-baseline font-black tracking-tight text-xl md:text-2xl text-slate-900 uppercase">
+    ESNA
+    <span className="text-[#CE1126] lowercase font-extrabold -ml-[1px]">s</span>
+  </div>
+
+  {/* Tag de Certification Technique : Carré, minimaliste et percutant */}
+  <div className="flex flex-col justify-center border-l-2 border-slate-900 pl-3 py-0.5">
+    <span className="text-[8px] uppercase tracking-[0.25em] text-[#CE1126] font-black leading-none mb-0.5">
+      Agrément
+    </span>
+    <span className="text-[9px] uppercase tracking-[0.15em] text-slate-900 font-black leading-none">
+      ARCA
+    </span>
+  </div>
+</motion.div>
+
 
             {/* ================= NAVIGATION DESKTOP : ACTIONS AU CLIC ================= */}
             <div className="hidden lg:flex items-center gap-8">
@@ -241,72 +247,108 @@ export default function NavbarSecured() {
             <div className="flex lg:hidden items-center">
               <button 
                 onClick={() => setIsOpen(!isOpen)} 
-                className="p-1.5 text-slate-800 hover:text-red-600"
+                className="p-2 text-slate-900 hover:text-[#CE1126] transition-colors focus:outline-none rounded-none"
+                aria-label="Menu"
               >
-                {isOpen ? <FaTimes size={18} /> : <FaBars size={18} />}
+                {isOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
               </button>
             </div>
 
-          </div>
-        </div>
+          </div> {/* Ré-ajoute la fermeture du conteneur Flex de la Navbar */}
+        </div> {/* Ré-ajoute la fermeture du conteneur de centrage (max-w-7xl...) */}
 
-        {/* ================= INTERFACE DU MENU MOBILE DROULANT ================= */}
+        {/* ================= INTERFACE DU MENU MOBILE PLEIN ÉCRAN ================= */}
         <AnimatePresence>
           {isOpen && (
             <motion.div 
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
-              className="lg:hidden bg-white border-t border-slate-100 px-6 py-4 space-y-4 shadow-inner overflow-hidden"
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed inset-0 z-50 lg:hidden bg-slate-950 text-white flex flex-col h-screen w-screen rounded-none overflow-y-auto"
             >
-              {navCategories.map((category) => (
-                <div key={category.id} className="space-y-1">
-                  <button
-                    onClick={() => toggleCategoryMobile(category.id)}
-                    className="w-full py-2 flex justify-between items-center text-[11px] font-black uppercase tracking-widest text-slate-400 text-left rounded-none"
-                  >
-                    <span>{category.label}</span>
-                    <motion.span animate={{ rotate: activeMobileCategory === category.id ? 180 : 0 }}>▼</motion.span>
-                  </button>
-
-                  <AnimatePresence>
-                    {activeMobileCategory === category.id && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="pl-2 space-y-1 overflow-hidden"
-                      >
-                        {category.items.map((item) => (
-                          <button
-                            key={item.href}
-                            onClick={(e) => handleNavClick(item.href, e)}
-                            className="w-full px-3 py-2.5 flex items-center gap-3 text-xs font-bold text-slate-700 hover:bg-slate-50 text-left uppercase tracking-wider rounded-none"
-                          >
-                            <span className="text-red-600">{item.icon}</span>
-                            {item.label}
-                          </button>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+              {/* En-tête interne du menu plein écran pour la fermeture */}
+              <div className="flex items-center justify-between px-6 h-20 border-b border-slate-800">
+                <div className="flex items-baseline font-black tracking-tight text-xl uppercase select-none">
+                  ESNA
+                  <span className="text-[#CE1126] lowercase font-extrabold -ml-[1px]">s</span>
                 </div>
-              ))}
-              
-              {!isAuthenticated && (
-                <button
-                  onClick={(e) => handleNavClick('/login', e)}
-                  className="w-full py-3 bg-red-600 text-white font-black uppercase text-[10px] tracking-widest text-center shadow-md rounded-none"
+                <button 
+                  onClick={() => setIsOpen(false)} 
+                  className="p-2 text-white hover:text-[#CE1126] transition-colors rounded-none"
                 >
-                  Espace Connexion
+                  <FaTimes size={24} />
                 </button>
-              )}
+              </div>
+
+              {/* Zone des Liens de Navigation */}
+              <div className="flex-grow px-6 py-8 space-y-6">
+                {navCategories.map((category) => (
+                  <div key={category.id} className="space-y-2 border-b border-slate-900 pb-4 last:border-none">
+                    {/* Bouton de Catégorie principal */}
+                    <button
+                      onClick={() => toggleCategoryMobile(category.id)}
+                      className="w-full py-2 flex justify-between items-center text-[12px] font-black uppercase tracking-[0.2em] text-slate-400 text-left rounded-none hover:text-white transition-colors"
+                    >
+                      <span>{category.label}</span>
+                      <motion.span 
+                        animate={{ rotate: activeMobileCategory === category.id ? 180 : 0 }}
+                        className="text-[10px] text-[#CE1126]"
+                      >
+                        ▼
+                      </motion.span>
+                    </button>
+
+                    {/* Sous-liens de la Catégorie */}
+                    <AnimatePresence initial={false}>
+                      {activeMobileCategory === category.id && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.3, ease: "easeInOut" }}
+                          className="pl-2 space-y-1 overflow-hidden"
+                        >
+                          {category.items.map((item) => (
+                            <button
+                              key={item.href}
+                              onClick={(e) => {
+                                handleNavClick(item.href, e);
+                                setIsOpen(false);
+                              }}
+                              className="w-full px-4 py-3 flex items-center gap-4 text-xs font-extrabold text-slate-200 hover:bg-[#CE1126] hover:text-white text-left uppercase tracking-widest rounded-none border-l-2 border-transparent hover:border-white transition-all duration-200"
+                            >
+                              <span className="text-[#CE1126] transition-colors">{item.icon}</span>
+                              {item.label}
+                            </button>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ))}
+
+                {/* Bouton de Connexion inséré au bas du défilement */}
+                {!isAuthenticated && (
+                  <div className="pt-4">
+                    <button
+                      onClick={(e) => {
+                        handleNavClick('/login', e);
+                        setIsOpen(false);
+                      }}
+                      className="w-full py-4 bg-red-600 text-white font-black uppercase text-[11px] tracking-widest text-center shadow-md rounded-none hover:bg-red-700 transition-colors"
+                    >
+                      Espace Connexion
+                    </button>
+                  </div>
+                )}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
+
       </nav>
     </>
   );
 }
+

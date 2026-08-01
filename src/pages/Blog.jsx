@@ -9,8 +9,8 @@ import Footer from '../components/Footer';
 import { FaBookOpen, FaCalendarAlt, FaUser, FaArrowRight, FaShieldAlt, FaHeartbeat, FaCar } from 'react-icons/fa';
 
 // Importation explicite de vos visuels locaux de réassurance
-import background1 from '../assets/background1.png';
-import background2 from '../assets/background2.png';
+import background1 from '../assets/background_drc.jpeg';
+import background2 from '../assets/background_drc.jpeg';
 
 // Simulation de données d'articles harmonisées
 const blogPosts = [

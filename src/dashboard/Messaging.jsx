@@ -17,7 +17,8 @@ export default function Messaging() {
         <h1 className="text-2xl font-black tracking-tight flex items-center gap-2">
           <FaWhatsapp className="text-green-500" /> Centre de Relations Omnicanal
         </h1>
-        <p className="text-xs text-slate-500">Suivi en temps réel des notifications WhatsApp (API Twilio) et SMS de l'écosystème DRC Assurances.</p>
+        <p className="text-xs text-slate-500">Suivi en temps réel des notifications WhatsApp (API Twilio) et SMS de l'écosystème ESNAS
+.</p>
       </div>
 
       {/* Tableau des logs de communication */}

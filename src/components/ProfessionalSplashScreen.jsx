@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Importation native de votre arrière-plan professionnel
-import background2 from '../assets/background2.png';
+import background2 from '../assets/background_drc.jpeg';
 
 export default function ProfessionalSplashScreen({ onComplete }) {
   const [isLoading, setIsLoading] = useState(true);

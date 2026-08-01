@@ -156,88 +156,91 @@ useEffect(() => {
         </div>
       </header>
 
-      {/* ================= 2. GRILLE DES OFFRES DE MICRO-ASSURANCE ================= */}
-      <main className="flex-grow max-w-7xl mx-auto px-6 py-16 w-full">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-          {filteredPacks.map((pack, idx) => (
-            <motion.div
-              key={pack.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: idx * 0.05 }}
-              className={`bg-white rounded-[2rem] border flex flex-col justify-between relative transition-all duration-500 hover:shadow-2xl ${
-                pack.isPopular 
-                  ? "border-2 border-[#CE1126] shadow-lg" 
-                  : "border-slate-100 shadow-md"
-              }`}
-            >
-              {/* Badge "Plus Populaire" rectangulaire haut de gamme */}
-              {pack.isPopular && (
-                <span className="absolute -top-3 right-6 bg-[#CE1126] text-white text-[9px] uppercase font-black tracking-widest px-4 py-1.5 shadow-sm">
-                  Le plus choisi
-                </span>
-              )}
+{/* ================= 2. GRILLE DES OFFRES DE MICRO-ASSURANCE ================= */}
+<main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-16 w-full">
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+    {filteredPacks.map((pack, idx) => (
+      <motion.div
+        key={pack.id}
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: idx * 0.05 }}
+        className={`bg-white border flex flex-col justify-between relative transition-all duration-500 hover:shadow-2xl rounded-none ${
+          pack.isPopular 
+            ? "border-2 border-[#CE1126] shadow-lg" 
+            : "border-slate-100 shadow-md"
+        }`}
+      >
+        {/* Badge "Plus Populaire" rectangulaire strict */}
+        {pack.isPopular && (
+          <span className="absolute -top-3 right-6 bg-[#CE1126] text-white text-[9px] uppercase font-black tracking-widest px-4 py-1.5 shadow-sm rounded-none">
+            Le plus choisi
+          </span>
+        )}
 
-              {/* En-tête de la carte */}
-              <div className="p-8 border-b border-slate-50">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-12 h-12 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-[#CE1126]">
-                    {pack.icon}
-                  </div>
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1.5 border border-slate-100/60">
-                    {pack.category}
-                  </span>
-                </div>
-                
-                <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tight mb-1">
-                  {pack.name}
-                </h3>
-                <p className="text-xs text-slate-400 font-medium italic mb-6">
-                  {pack.tagline}
-                </p>
-                
-                <div className="flex items-baseline gap-1.5">
-                  <span className="text-5xl font-black text-slate-900 tracking-tighter">{pack.price} USD</span>
-                  <span className="text-xs font-black uppercase text-slate-400 tracking-wider">/ {pack.period}</span>
-                </div>
-              </div>
-
-              {/* Détails de couverture et garanties */}
-              <div className="p-8 flex-grow space-y-6">
-                <div className="flex items-center gap-2.5 text-[11px] font-black uppercase tracking-wider text-red-600 bg-red-50/50 px-4 py-3 border border-red-100/40">
-                  <FaInfoCircle className="flex-shrink-0" />
-                  <span>{pack.coverageLimit}</span>
-                </div>
-                
-                <ul className="space-y-4">
-                  {pack.features.map((feat, index) => (
-                    <li key={index} className="flex items-start gap-3 text-sm font-semibold text-slate-600 leading-snug">
-                      <FaCheckCircle className="text-red-600 mt-0.5 flex-shrink-0" size={14} />
-                      <span>{feat}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Bouton d'action final : Rectangulaire, Rouge, Contraste maximum */}
-              <div className="p-8 pt-0">
-                <button
-                  onClick={() => handleSubscription(pack)}
-                  className={`w-full py-5 font-black uppercase text-[11px] tracking-[0.25em] shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 ${
-                    pack.isPopular
-                      ? "bg-red-600 hover:bg-red-700 text-white shadow-2xl"
-                      : "bg-slate-950 hover:bg-slate-800 text-white"
-                  }`}
-                >
-                  <FaShieldAlt size={11} /> Souscrire pour ma famille
-                </button>
-              </div>
-
-            </motion.div>
-          ))}
+        {/* En-tête de la carte */}
+        <div className="p-6 md:p-8 border-b border-slate-50">
+          <div className="flex items-center justify-between mb-6">
+            {/* Conteneur d'icône 100% carré */}
+            <div className="w-12 h-12 bg-slate-50 border border-slate-100 flex items-center justify-center text-[#CE1126] rounded-none">
+              {pack.icon}
+            </div>
+            {/* Badge de catégorie rectangulaire */}
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1.5 border border-slate-100/60 rounded-none">
+              {pack.category}
+            </span>
+          </div>
+          
+          <h3 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight mb-1">
+            {pack.name}
+          </h3>
+          <p className="text-xs text-slate-400 font-medium italic mb-6">
+            {pack.tagline}
+          </p>
+          
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter">{pack.price} USD</span>
+            <span className="text-xs font-black uppercase text-slate-400 tracking-wider">/ {pack.period}</span>
+          </div>
         </div>
-      </main>
+
+        {/* Détails de couverture et garanties */}
+        <div className="p-6 md:p-8 flex-grow space-y-6">
+          {/* Alerte de limite de couverture rectangulaire */}
+          <div className="flex items-center gap-2.5 text-[10px] md:text-[11px] font-black uppercase tracking-wider text-red-600 bg-red-50/50 px-4 py-3 border border-red-100/40 rounded-none">
+            <FaInfoCircle className="flex-shrink-0" />
+            <span>{pack.coverageLimit}</span>
+          </div>
+          
+          <ul className="space-y-4">
+            {pack.features.map((feat, index) => (
+              <li key={index} className="flex items-start gap-3 text-sm font-semibold text-slate-600 leading-snug">
+                <FaCheckCircle className="text-red-600 mt-0.5 flex-shrink-0" size={14} />
+                <span>{feat}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Bouton d'action final : Rectangulaire strict */}
+        <div className="p-6 md:p-8 pt-0">
+          <button
+            onClick={() => handleSubscription(pack)}
+            className={`w-full py-4 md:py-5 font-black uppercase text-[10px] md:text-[11px] tracking-[0.25em] shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 rounded-none ${
+              pack.isPopular
+                ? "bg-red-600 hover:bg-red-700 text-white shadow-2xl"
+                : "bg-slate-950 hover:bg-slate-800 text-white"
+            }`}
+          >
+            <FaShieldAlt size={11} /> Souscrire pour ma famille
+          </button>
+        </div>
+
+      </motion.div>
+    ))}
+  </div>
+</main>
 
       {/* Pied de page */}
       <Footer />

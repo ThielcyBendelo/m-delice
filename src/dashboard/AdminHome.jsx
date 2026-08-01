@@ -187,7 +187,8 @@ export default function AdminHome() {
           </div>
 
           <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400 dark:text-slate-500 font-mono text-center uppercase tracking-widest font-black">
-            DRC Assurances Core Tech Engine v1.0
+            ESNAS
+ Core Tech Engine v1.0
           </div>
         </div>
 

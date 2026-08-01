@@ -18,7 +18,7 @@ setupCSPViolationReporting();
 // Initialiser le client API sécurisé pour SQL Server & Fintech
 secureAPIClient.initialize();
 
-console.log('🛡️ Infrastructure de sécurité DRC Assurances initialisée');
+console.log('🛡️ Infrastructure de sécurité ESNAS initialisée');
 
 // ===== INITIALISATION DE L'APPLICATION =====
 createRoot(document.getElementById('root')).render(

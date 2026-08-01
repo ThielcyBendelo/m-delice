@@ -10,8 +10,7 @@ const faqs = [
     answer: "Depuis l'étranger, sélectionnez une formule (Santé, Auto, Scolaire), renseignez les coordonnées du bénéficiaire et payez par carte Votre proche reçoit sa carte virtuelle instantanément par WhatsApp",
   },
   {
-    question: "DRC Assurances est-elle agréée par l'ARCA ?",
-    // 🟢 CORRIGÉ : Ajout du guillemet fermant " avant la virgule
+    question: "ESNAS est-elle agréée par l'ARCA ?",
     answer: "Absolument Toutes nos offres et nos partenaires opèrent en stricte conformité avec la législation", 
   },
   {

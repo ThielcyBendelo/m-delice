@@ -7,10 +7,10 @@ import NavbarSecured from '../components/NavbarSecured';
 import Footer from '../components/Footer';
 
 // Importation explicite des images locales pour le build Vite
-import image1 from '../assets/image1.png'; 
-import image2 from '../assets/image2.png';
-import image3 from '../assets/image3.png';
-import image4 from '../assets/image4.png';
+import image1 from '../assets/pack_maman.jpeg'; 
+import image2 from '../assets/pack_auto.jpeg';
+import image3 from '../assets/pack_scolaire.jpeg';
+import image4 from '../assets/pack_diaspo.jpeg';
 
 // Icônes épurées
 import { 

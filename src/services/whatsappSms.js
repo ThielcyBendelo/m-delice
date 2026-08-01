@@ -2,7 +2,8 @@ import secureAPIClient from '../utils/secureAPIClient';
 import notificationService from './notificationService';
 
 /**
- * Service de messagerie omnicanale (WhatsApp & SMS) pour DRC Assurances
+ * Service de messagerie omnicanale (WhatsApp & SMS) pour ESNAS
+
  */
 const whatsappSmsService = {
 
