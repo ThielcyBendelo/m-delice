@@ -46,10 +46,10 @@ export default function Home() {
       <NavbarSecured />
 
 {/* ================= 1. SECTION HERO ================= */}
-<section className="relative flex flex-col bg-slate-50 overflow-hidden border-t border-slate-100 w-full transition-all duration-500 ease-out hover:z-10 hover:border-red-100 hover:shadow-[0_25px_60px_-15px_rgba(206,17,38,0.12)]">
+<section className="relative flex flex-col bg-[#090d16] overflow-hidden border-t border-slate-900 w-full transition-all duration-500 ease-out hover:z-10 hover:border-red-950/40 hover:shadow-[0_25px_60px_-15px_rgba(206,17,38,0.25)]">
   
-  {/* Visuels d'arrière-plan - Rendu clair et sans opacité */}
-  <div className="w-full h-[35vh] sm:h-[45vh] md:h-[60vh] relative overflow-hidden bg-slate-900">
+  {/* Visuels d'arrière-plan - Rendu clair et net */}
+  <div className="w-full h-[35vh] sm:h-[45vh] md:h-[60vh] relative overflow-hidden bg-slate-950">
     <AnimatePresence mode="wait">
       <motion.div 
         key={bgIndex}
@@ -57,51 +57,51 @@ export default function Home() {
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 1.0 }}
-        className="absolute inset-0 bg-cover bg-center brightness-105"
+        className="absolute inset-0 bg-cover bg-center brightness-110 contrast-105"
         style={{ backgroundImage: `url(${backgrounds[bgIndex]})` }}
       />
     </AnimatePresence>
-    {/* Léger voile sombre uniquement en haut pour garantir la visibilité du header si nécessaire, bas totalement transparent */}
-    <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-transparent z-10" />
+    {/* Dégradé fluide vers le fond sombre global pour un fondu haut de gamme */}
+    <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-[#090d16] z-10" />
   </div>
 
   {/* Conteneur de contenu principal */}
   <div className="relative z-20 -mt-16 sm:-mt-24 md:-mt-44 max-w-7xl mx-auto px-4 sm:px-6 pb-16 md:pb-24 flex flex-col items-center w-full">
     
-    {/* Carte principale - Strictement rectangulaire, bords droits sans courbe */}
+    {/* Carte principale Bento - Fond Surface Sombre, Angles droits sans courbes */}
     <motion.div 
       variants={staggerContainer} 
       initial="hidden" 
       animate="visible" 
-      className="bg-white/95 backdrop-blur-md p-6 sm:p-10 md:p-16 shadow-2xl border border-slate-100 flex flex-col items-center w-full max-w-5xl text-center rounded-none"
+      className="bg-[#111827]/90 backdrop-blur-xl p-6 sm:p-10 md:p-16 shadow-[0_30px_70px_rgba(0,0,0,0.6)] border border-slate-800 flex flex-col items-center w-full max-w-5xl text-center rounded-none"
     >
       
       {/* Label ARCA */}
       <motion.span 
         variants={fadeInUp} 
-        className="px-3 py-1 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.2em] text-slate-900 border-l-2 border-[#00A3E0] mb-4 md:mb-6"
+        className="px-3 py-1 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.2em] text-slate-200 border-l-2 border-[#00A3E0] mb-4 md:mb-6"
       >
         Écosystème Numérique Agréé ARCA
       </motion.span>
 
-      {/* Titre ultra-responsive */}
+      {/* Titre ultra-responsive Blanc Pur */}
       <motion.h1 
         variants={fadeInUp} 
-        className="text-2xl sm:text-4xl md:text-6xl font-black text-slate-900 tracking-tight leading-tight md:leading-none mb-4 md:mb-6"
+        className="text-2xl sm:text-4xl md:text-6xl font-black text-white tracking-tight leading-tight md:leading-none mb-4 md:mb-6 uppercase"
       >
         Protégez votre famille en RDC <br className="hidden sm:inline" />
-        <span className="text-[#CE1126] italic">depuis l'Étranger</span>
+        <span className="text-[#CE1126] italic normal-case">depuis l'Étranger</span>
       </motion.h1>
 
-      {/* Description équilibrée mobile / desktop */}
+      {/* Description Gris Argent Scannable */}
       <motion.p 
         variants={fadeInUp} 
-        className="max-w-2xl mx-auto text-slate-800 text-sm sm:text-base md:text-lg leading-relaxed font-semibold mb-6 md:mb-8 px-2"
+        className="max-w-2xl mx-auto text-[#94a3b8] text-sm sm:text-base md:text-lg leading-relaxed font-semibold mb-6 md:mb-8 px-2"
       >
         Plus besoin d'envoyer des fonds en urgence. Souscrivez une micro-assurance avec prise en charge directe pour vos proches restés au pays.
       </motion.p>
 
-      {/* Zone des Boutons d'Action - Également rectangulaires */}
+      {/* Zone des Boutons d'Action - Rectangulaires FinTech */}
       <motion.div 
         variants={staggerContainer} 
         initial="hidden" 
@@ -109,24 +109,24 @@ export default function Home() {
         className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center w-full sm:w-auto px-4 sm:px-0"
       >
         
-        {/* Bouton Principal */}
+        {/* Bouton Principal : Fond blanc, texte noir, lueur turquoise au survol */}
         <motion.button
           variants={fadeInUp}
-          whileHover={{ scale: 1.02, backgroundColor: "#15cfe7", color: "#FFFFFF", borderColor: "#15cfe7" }} 
+          whileHover={{ scale: 1.02, backgroundColor: "#15cfe7", color: "#000000", borderColor: "#15cfe7" }} 
           whileTap={{ scale: 0.98 }}
           onClick={() => navigate('/packs-micro')}
-          className="w-full sm:w-auto px-8 md:px-12 py-4 md:py-5 border-2 border-[#CE1126] bg-white text-black font-extrabold uppercase text-[10px] md:text-[11px] tracking-[0.25em] shadow-md hover:shadow-xl transition-all duration-300 rounded-none"
+          className="w-full sm:w-auto px-8 md:px-12 py-4 md:py-5 border-2 border-white bg-white text-black font-extrabold uppercase text-[10px] md:text-[11px] tracking-[0.25em] shadow-md transition-all duration-300 rounded-none"
         >
           Découvrir les Packs
         </motion.button>
         
-        {/* Bouton Secondaire */}
+        {/* Bouton Secondaire : Bordure rouge, texte blanc, fond rouge complet au survol */}
         <motion.button
           variants={fadeInUp}
           whileHover={{ scale: 1.02, backgroundColor: "#CE1126", color: "#FFFFFF" }}
           whileTap={{ scale: 0.98 }}
           onClick={() => navigate('/simulateur')}
-          className="w-full sm:w-auto px-8 md:px-12 py-4 md:py-5 border-2 border-[#CE1126] bg-white text-black font-extrabold uppercase text-[10px] md:text-[11px] tracking-[0.25em] shadow-md hover:shadow-xl transition-all duration-300 rounded-none"
+          className="w-full sm:w-auto px-8 md:px-12 py-4 md:py-5 border-2 border-[#CE1126] bg-transparent text-white font-extrabold uppercase text-[10px] md:text-[11px] tracking-[0.25em] shadow-md transition-all duration-300 rounded-none"
         >
           Simuler un Tarif
         </motion.button>
@@ -137,7 +137,7 @@ export default function Home() {
 </section>
 
 {/* ================= 2. SECTION COMMERCIALE AMÉLIORÉE ================= */}
-<section className="py-16 md:py-24 bg-white overflow-hidden font-sans border-t border-slate-100 w-full transition-all duration-500 ease-out hover:z-10 hover:border-red-100 hover:shadow-[0_25px_60px_-15px_rgba(206,17,38,0.12)]">
+<section className="py-16 md:py-24 bg-[#090d16] overflow-hidden font-sans border-t border-slate-900 w-full transition-all duration-500 ease-out hover:z-10 hover:border-red-950/40 hover:shadow-[0_25px_60px_-15px_rgba(206,17,38,0.25)]">
   <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-12 md:space-y-16">
     
     {/* ZONE DE TEXTE UNIQUE CENTRÉE */}
@@ -145,10 +145,10 @@ export default function Home() {
       <h3 className="text-xl md:text-2xl font-black uppercase italic tracking-tighter text-[#CE1126]">
         Bâtir un pont de confiance.
       </h3>
-      <h2 className="text-3xl md:text-6xl font-black text-slate-900 tracking-tighter uppercase leading-none">
+      <h2 className="text-3xl md:text-6xl font-black text-white tracking-tighter uppercase leading-none">
         Un écosystème <span className="text-[#CE1126]">traçable.</span>
       </h2>
-      <p className="text-lg md:text-xl text-slate-800 leading-relaxed font-bold max-w-2xl">
+      <p className="text-lg md:text-xl text-[#94a3b8] leading-relaxed font-bold max-w-2xl">
         Garantissez que chaque dollar versé est converti en protection réelle, transparente et instantanée pour vos bénéficiaires en RDC.
       </p>
     </div>
@@ -157,80 +157,78 @@ export default function Home() {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 w-full">
       
       {/* PRODUIT 1 : SANTE MÉDICALE */}
-      <motion.div whileHover={{ y: -6 }} className="group flex flex-col w-full text-left">
-        <div className="relative h-44 md:h-48 w-full overflow-hidden shadow-lg mb-4 md:mb-6 border border-slate-100 rounded-none">
-          <img src={santé} alt="Santé Médicale" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-transparent" />
+      <motion.div whileHover={{ y: -6 }} className="group flex flex-col w-full text-left bg-[#111827] border border-slate-800 rounded-none shadow-xl">
+        <div className="relative h-44 md:h-48 w-full overflow-hidden bg-slate-950 rounded-none">
+          <img src={santé} alt="Santé Médicale" className="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-transparent opacity-60" />
           <div className="absolute top-4 left-4 w-10 h-10 bg-[#CE1126] text-white flex items-center justify-center shadow-lg rounded-none">
             <FaHeartbeat size={18} />
           </div>
         </div>
-        <div className="px-1">
-          <h4 className="text-lg md:text-xl font-bold uppercase mb-2 text-slate-700 tracking-tight">Santé Médicale</h4>
-          <p className="text-lg md:text-sm text-slate-950 leading-relaxed font-semibold">
+        <div className="p-5 flex-grow flex flex-col justify-between">
+          <h4 className="text-lg md:text-xl font-black uppercase mb-2 text-white tracking-tight">Santé Médicale</h4>
+          <p className="text-xs md:text-sm text-[#94a3b8] leading-relaxed font-semibold">
             Prise en charge directe en clinique via QR Code. Vos proches ne déboursent rien sur place.
           </p>
         </div>
       </motion.div>
 
       {/* PRODUIT 2 : AUTOMOBILE */}
-      <motion.div whileHover={{ y: -6 }} className="group flex flex-col w-full text-left">
-        <div className="relative h-44 md:h-48 w-full overflow-hidden shadow-lg mb-4 md:mb-6 border border-slate-100 rounded-none">
-          <img src={auto} alt="Assurance Automobile" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-transparent" />
-          <div className="absolute top-4 left-4 w-10 h-10 bg-slate-900 text-white flex items-center justify-center shadow-lg rounded-none">
+      <motion.div whileHover={{ y: -6 }} className="group flex flex-col w-full text-left bg-[#111827] border border-slate-800 rounded-none shadow-xl">
+        <div className="relative h-44 md:h-48 w-full overflow-hidden bg-slate-950 rounded-none">
+          <img src={auto} alt="Assurance Automobile" className="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-transparent opacity-60" />
+          <div className="absolute top-4 left-4 w-10 h-10 bg-slate-950 text-white border border-slate-800 flex items-center justify-center shadow-lg rounded-none">
             <FaCar size={18} />
           </div>
         </div>
-        <div className="px-1">
-          <h4 className="text-lg md:text-xl font-bold uppercase mb-2 text-slate-700 tracking-tight">Automobile</h4>
-          <p className="text-lg md:text-sm text-slate-950 leading-relaxed font-semibold">
+        <div className="p-5 flex-grow flex flex-col justify-between">
+          <h4 className="text-lg md:text-xl font-black uppercase mb-2 text-white tracking-tight">Automobile</h4>
+          <p className="text-xs md:text-sm text-[#94a3b8] leading-relaxed font-semibold">
             Garanties complètes pour vos véhicules au pays. Gestion et constatation rapides des sinistres.
           </p>
         </div>
       </motion.div>
 
       {/* PRODUIT 3 : SCOLARITÉ */}
-      <motion.div whileHover={{ y: -6 }} className="group flex flex-col w-full text-left">
-        <div className="relative h-44 md:h-48 w-full overflow-hidden shadow-lg mb-4 md:mb-6 border border-slate-100 rounded-none">
-          <img src={scolarité} alt="Assurance Scolarité" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-transparent" />
+      <motion.div whileHover={{ y: -6 }} className="group flex flex-col w-full text-left bg-[#111827] border border-slate-800 rounded-none shadow-xl">
+        <div className="relative h-44 md:h-48 w-full overflow-hidden bg-slate-950 rounded-none">
+          <img src={scolarité} alt="Assurance Scolarité" className="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-transparent opacity-60" />
           <div className="absolute top-4 left-4 w-10 h-10 bg-[#CE1126] text-white flex items-center justify-center shadow-lg rounded-none">
             <FaGraduationCap size={18} />
           </div>
         </div>
-        <div className="px-1">
-          <h4 className="text-lg md:text-1xl font-bold uppercase mb-2 text-slate-700 tracking-tight">Scolarité</h4>
-          <p className="text-lg md:text-sm text-slate-950 leading-relaxed font-semibold">
+        <div className="p-5 flex-grow flex flex-col justify-between">
+          <h4 className="text-lg md:text-xl font-black uppercase mb-2 text-white tracking-tight">Scolarité</h4>
+          <p className="text-xs md:text-sm text-[#94a3b8] leading-relaxed font-semibold">
             Financement et sécurité du parcours scolaire de vos enfants restés au pays en cas de coup dur.
           </p>
         </div>
       </motion.div>
 
       {/* PRODUIT 4 : VOYAGE */}
-      <motion.div whileHover={{ y: -6 }} className="group flex flex-col w-full text-left">
-        <div className="relative h-44 md:h-48 w-full overflow-hidden shadow-lg mb-4 md:mb-6 border border-slate-100 rounded-none">
-          <img src={voyage} alt="Assurance Voyage" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-transparent" />
-          <div className="absolute top-4 left-4 w-10 h-10 bg-slate-900 text-white flex items-center justify-center shadow-lg rounded-none">
+      <motion.div whileHover={{ y: -6 }} className="group flex flex-col w-full text-left bg-[#111827] border border-slate-800 rounded-none shadow-xl">
+        <div className="relative h-44 md:h-48 w-full overflow-hidden bg-slate-950 rounded-none">
+          <img src={voyage} alt="Assurance Voyage" className="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-transparent opacity-60" />
+          <div className="absolute top-4 left-4 w-10 h-10 bg-slate-950 text-white border border-slate-800 flex items-center justify-center shadow-lg rounded-none">
             <FaPlaneDeparture size={18} />
           </div>
         </div>
-        <div className="px-1">
-          <h4 className="text-lg md:text-1xl font-bold uppercase mb-2 text-slate-700 tracking-tight">Voyage</h4>
-          <p className="text-lg md:text-sm text-slate-950 leading-relaxed font-semibold">
+        <div className="p-5 flex-grow flex flex-col justify-between">
+          <h4 className="text-lg md:text-xl font-black uppercase mb-2 text-white tracking-tight">Voyage</h4>
+          <p className="text-xs md:text-sm text-[#94a3b8] leading-relaxed font-semibold">
             Couverture médicale internationale et assistance bagages pour vos déplacements vers ou depuis la RDC.
           </p>
         </div>
       </motion.div>
-
     </div>
-
   </div>
 </section>
 
 {/* ================= 3. SECTION RÉASSURANCE ================= */}
-<section className="py-20 md:py-28 bg-slate-50 border-t border-slate-100 w-full transition-all duration-500 ease-out hover:z-10 hover:border-red-100 hover:shadow-[0_25px_60px_-15px_rgba(206,17,38,0.12)]">
+<section className="py-20 md:py-28 bg-[#090d16] border-t border-slate-900 w-full transition-all duration-500 ease-out hover:z-10 hover:border-red-950/40 hover:shadow-[0_25px_60px_-15px_rgba(206,17,38,0.25)]">
   <motion.div 
     initial={{ opacity: 0, y: 30 }} 
     whileInView={{ opacity: 1, y: 0 }} 
@@ -238,27 +236,27 @@ export default function Home() {
     transition={{ duration: 0.8 }}
     className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-8"
   >
-    {/* Conteneur d'icône - Parfaitement carré */}
-    <div className="inline-flex p-5 bg-white border border-slate-200 text-[#CE1126] shadow-sm rounded-none">
+    {/* Conteneur d'icône - Parfaitement carré, style Bento Sombre */}
+    <div className="inline-flex p-5 bg-[#111827] border border-slate-800 text-[#CE1126] shadow-md rounded-none">
       <FaShieldAlt size={40} />
     </div>
 
-    {/* Titre percutant */}
-    <h3 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-slate-900 leading-tight">
+    {/* Titre percutant Blanc Pur */}
+    <h3 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-white leading-tight">
       Une couverture adossée à des <br />
       <span className="text-[#CE1126]">Leaders Internationaux</span>
     </h3>
 
-    {/* Description */}
-    <p className="text-base md:text-lg text-slate-950 font-semibold leading-relaxed max-w-3xl mx-auto">
+    {/* Description Gris Argent Scannable */}
+    <p className="text-base md:text-lg text-[#94a3b8] font-semibold leading-relaxed max-w-3xl mx-auto">
       Nos polices sont co-assurées par des partenaires agréés ARCA et réassurées mondialement pour une sécurité financière absolue.
     </p>
 
-    {/* NOUVEAU BOUTON : Rectangulaire strict, redirection vers la page des partenaires */}
+    {/* BOUTON HAUTE VISIBILITÉ : Rectangulaire strict, contraste inversé premium */}
     <div className="pt-4">
       <button
         onClick={() => navigate('/partenaires-garanties')}
-        className="inline-flex items-center gap-3 px-8 py-4 border-2 border-slate-950 bg-slate-950 text-white font-extrabold uppercase text-[11px] tracking-[0.25em] shadow-md hover:bg-transparent hover:text-slate-950 transition-all duration-300 rounded-none group"
+        className="inline-flex items-center gap-3 px-8 py-4 border-2 border-white bg-white text-black font-extrabold uppercase text-[11px] tracking-[0.25em] shadow-lg hover:bg-transparent hover:text-white transition-all duration-300 rounded-none group"
       >
         Découvrir nos partenaires 
         <FaArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />

@@ -100,36 +100,36 @@ export default function SecureRegister() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-12 relative overflow-hidden font-sans">
-      {/* Arrière-plan technique discret */}
-      <div className="absolute inset-0 bg-[radial-gradient(#CE1126_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.03] z-10" />
+    <div className="min-h-screen bg-[#090d16] flex items-center justify-center px-4 py-12 relative overflow-hidden font-sans">
+      {/* Arrière-plan technique discret harmonisé Onyx */}
+      <div className="absolute inset-0 bg-[radial-gradient(#CE1126_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.05] z-10" />
       
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="relative z-20 w-full max-w-[500px] bg-white p-8 md:p-12 shadow-2xl border border-slate-100 flex flex-col rounded-none"
+        className="relative z-20 w-full max-w-[500px] bg-[#111827] p-8 md:p-12 shadow-[0_30px_100px_rgba(0,0,0,0.8)] border border-slate-800 flex flex-col rounded-none"
       >
-        {/* En-tête ESNAs */}
+        {/* En-tête ESNAs - Version Sombre */}
         <div className="text-center mb-8">
-          <div className="w-12 h-12 bg-red-600 text-white flex items-center justify-center mx-auto mb-6 shadow-lg rounded-none">
+          <div className="w-12 h-12 bg-[#CE1126] text-white flex items-center justify-center mx-auto mb-6 shadow-lg rounded-none">
             <FaShieldAlt size={20} />
           </div>
-          <h1 className="text-2xl font-black uppercase tracking-tighter text-slate-900 leading-none">
-            ESNA<span className="text-red-600">s DRC</span>
+          <h1 className="text-2xl font-black uppercase tracking-tighter text-white leading-none">
+            ESNA<span className="text-[#CE1126]">s DRC</span>
           </h1>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-950 mt-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mt-3">
             Création de Compte Diaspora
           </p>
         </div>
 
-        {/* Inscription Sociale Rapide */}
+        {/* Inscription Sociale Rapide - Boutons Onyx */}
         <div className="grid grid-cols-3 gap-3 mb-8">
           {socialLogins.map((social) => (
             <button
               key={social.name}
               type="button"
-              className={`flex items-center justify-center py-3 border border-slate-200 text-slate-600 transition-all duration-300 rounded-none text-lg ${social.color}`}
+              className={`flex items-center justify-center py-3 border border-slate-800 text-slate-300 transition-all duration-300 rounded-none text-lg bg-[#090d16] ${social.color}`}
               title={`S'inscrire avec ${social.name}`}
             >
               {social.icon}
@@ -138,9 +138,9 @@ export default function SecureRegister() {
         </div>
 
         <div className="relative flex py-2 items-center mb-8">
-          <div className="flex-grow border-t border-slate-100"></div>
-          <span className="flex-shrink mx-4 text-[9px] font-black text-slate-950 uppercase tracking-widest">Ou par formulaire</span>
-          <div className="flex-grow border-t border-slate-100"></div>
+          <div className="flex-grow border-t border-slate-800"></div>
+          <span className="flex-shrink mx-4 text-[9px] font-black text-slate-500 uppercase tracking-widest">Ou par formulaire</span>
+          <div className="flex-grow border-t border-slate-800"></div>
         </div>
 
         <form onSubmit={handleFormSubmit} className="space-y-5">
@@ -148,76 +148,76 @@ export default function SecureRegister() {
           {/* Ligne : Nom & Prénom */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-950">Nom</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Nom</label>
               <input 
                 type="text" name="lastName" required value={formData.lastName} onChange={handleInputChange}
                 placeholder="Mbuyi" 
-                className="w-full border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-red-600 focus:bg-white text-slate-900 rounded-none uppercase" 
+                className="w-full border border-slate-800 bg-[#090d16] px-4 py-3 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none uppercase placeholder-slate-600" 
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-950">Prénom</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Prénom</label>
               <input 
                 type="text" name="firstName" required value={formData.firstName} onChange={handleInputChange}
                 placeholder="Jean" 
-                className="w-full border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-red-600 focus:bg-white text-slate-900 rounded-none" 
+                className="w-full border border-slate-800 bg-[#090d16] px-4 py-3 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none placeholder-slate-600" 
               />
             </div>
           </div>
 
           {/* Pays de résidence */}
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-950 flex items-center gap-2">
-              <FaGlobe size={10} className="text-red-600" /> Pays de résidence
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+              <FaGlobe size={10} className="text-[#CE1126]" /> Pays de résidence
             </label>
             <div className="relative">
               <select 
                 name="country" value={formData.country} onChange={handleInputChange}
-                className="w-full border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-red-600 focus:bg-white text-slate-900 rounded-none appearance-none cursor-pointer"
+                className="w-full border border-slate-800 bg-[#090d16] px-4 py-3 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none appearance-none cursor-pointer"
               >
-                {countries.map(c => <option key={c} value={c}>{c}</option>)}
+                {countries.map(c => <option key={c} value={c} className="bg-[#111827]">{c}</option>)}
               </select>
-              <FaChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={10} />
+              <FaChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" size={10} />
             </div>
           </div>
 
           {/* Email */}
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-950 flex items-center gap-2">
-              <FaEnvelope size={10} className="text-red-600" /> Email
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+              <FaEnvelope size={10} className="text-[#CE1126]" /> Email
             </label>
             <input 
               type="email" name="email" required value={formData.email} onChange={handleInputChange}
               placeholder="jean.mbuyi@gmail.com" 
-              className="w-full border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-red-600 focus:bg-white text-slate-900 rounded-none" 
+              className="w-full border border-slate-800 bg-[#090d16] px-4 py-3 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none placeholder-slate-600" 
             />
           </div>
 
           {/* Mots de passe */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-950">Mot de passe</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Mot de passe</label>
               <input 
                 type="password" name="password" required value={formData.password} onChange={handleInputChange}
                 placeholder="••••••" 
-                className="w-full border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-red-600 focus:bg-white text-slate-900 rounded-none" 
+                className="w-full border border-slate-800 bg-[#090d16] px-4 py-3 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none placeholder-slate-600" 
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-950">Confirmation</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Confirmation</label>
               <input 
                 type="password" name="confirmPassword" required value={formData.confirmPassword} onChange={handleInputChange}
                 placeholder="••••••" 
-                className="w-full border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none transition focus:border-red-600 focus:bg-white text-slate-900 rounded-none" 
+                className="w-full border border-slate-800 bg-[#090d16] px-4 py-3 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none placeholder-slate-600" 
               />
             </div>
           </div>
 
-          {/* Bouton d'action */}
+          {/* Bouton d'action - Inversé pour le mode sombre */}
           <div className="pt-4">
             <button 
               type="submit" disabled={isLoading}
-              className="w-full py-4 bg-slate-900 hover:bg-red-600 text-white font-black uppercase text-[10px] tracking-[0.2em] transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 shadow-lg rounded-none"
+              className="w-full py-4 bg-white text-black font-black uppercase text-[10px] tracking-[0.2em] transition-all active:scale-95 disabled:opacity-30 flex items-center justify-center gap-3 shadow-xl rounded-none hover:bg-[#CE1126] hover:text-white"
             >
               {isLoading ? (
                 <FaSpinner className="animate-spin" size={14} />
@@ -232,12 +232,12 @@ export default function SecureRegister() {
         </form>
 
         {/* Pied du formulaire */}
-        <div className="mt-8 pt-6 border-t border-slate-100 text-center">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-950">
+        <div className="mt-8 pt-6 border-t border-slate-800 text-center">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
             Déjà membre de l'écosystème ?
             <span 
               onClick={() => navigate('/login')} 
-              className="text-red-600 cursor-pointer hover:text-red-700 pl-2 underline underline-offset-4"
+              className="text-[#CE1126] cursor-pointer hover:text-red-500 pl-2 underline underline-offset-4"
             >
               Se connecter
             </span>

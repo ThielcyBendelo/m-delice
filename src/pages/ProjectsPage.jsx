@@ -79,120 +79,145 @@ export default function ProjectsPage() {
     <div className="min-h-screen bg-white text-slate-900 flex flex-col antialiased font-sans">
       <NavbarSecured />
 
-      {/* ================= 1. EN-TÊTE ET FILTRES FINTECH (Style Épuré) ================= */}
-      <header className="relative flex flex-col bg-white overflow-hidden border-b border-slate-100">
-        <div className="relative z-20 max-w-6xl mx-auto px-6 py-20 pt-32 text-center flex flex-col items-center w-full">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 w-full flex flex-col items-center">
-            <span className="px-4 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 border-l-2 border-[#CE1126]">
-              <FaBriefcaseMedical className="inline mr-1" /> Tiers-Payant National
-            </span>
-            <h1 className="text-4xl md:text-7xl font-black text-slate-900 tracking-tight leading-none uppercase">
-              Réseau de Prestataires <br />
-              <span className="text-[#CE1126] italic">Agréés ARCA</span>
-            </h1>
-            <p className="max-w-3xl mx-auto text-slate-950 text-lg md:text-xl leading-relaxed font-bold">
-              Pas d'avance de frais au pays. Présentez simplement la carte virtuelle ou le code QR reçu par WhatsApp pour activer la prise en charge immédiate.
+  {/* ================= 1. EN-TÊTE ET FILTRES FINTECH (VERSION SOMBRE ONYX) ================= */}
+<header className="relative flex flex-col bg-[#090d16] overflow-hidden border-b border-slate-900 rounded-none">
+  <div className="relative z-20 max-w-6xl mx-auto px-6 py-20 pt-32 text-center flex flex-col items-center w-full">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 w-full flex flex-col items-center">
+      
+      {/* Badge Tiers-Payant */}
+      <span className="px-4 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-[#CE1126] bg-[#CE1126]/10 border border-[#CE1126]/20 flex items-center gap-2 rounded-none">
+        <FaBriefcaseMedical className="inline" size={11} /> Tiers-Payant National
+      </span>
+      
+      {/* Titre Principal Blanc Éclatant */}
+      <h1 className="text-4xl md:text-7xl font-black text-white tracking-tight leading-none uppercase">
+        Réseau de Prestataires <br />
+        <span className="text-[#CE1126] italic normal-case">Agréés ARCA</span>
+      </h1>
+      
+      {/* Description Gris Argent */}
+      <p className="max-w-3xl mx-auto text-[#94a3b8] text-base md:text-xl leading-relaxed font-semibold">
+        Pas d'avance de frais au pays. Présentez simplement la carte virtuelle ou le code QR reçu par WhatsApp pour activer la prise en charge immédiate.
+      </p>
+
+      {/* Grille de filtrage épurée Bento Sombre (Angles droits et rectilignes) */}
+      <div className="mt-8 bg-[#111827] p-4 border border-slate-800 w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-4 rounded-none shadow-xl">
+        
+        {/* Recherche par mot-clé */}
+        <div className="relative flex items-center border-b border-slate-800 md:border-b-0 md:border-r pr-2 rounded-none">
+          <span className="absolute left-2 text-slate-500"><FaSearch size={12} /></span>
+          <input
+            type="text"
+            placeholder="Rechercher un hôpital, quartier..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-8 pr-4 py-2 bg-transparent text-white text-xs md:text-sm font-bold outline-none focus:placeholder-transparent placeholder-slate-600 rounded-none"
+          />
+        </div>
+
+        {/* Filtrage par Ville */}
+        <div className="relative border-b border-slate-800 md:border-b-0 md:border-r pr-2 rounded-none">
+          <select
+            value={selectedCity}
+            onChange={(e) => setSelectedCity(e.target.value)}
+            className="w-full px-3 py-2 bg-transparent text-white text-xs md:text-sm font-bold outline-none cursor-pointer rounded-none appearance-none"
+          >
+            {cities.map(city => (
+              <option key={city} value={city} className="bg-[#111827] text-white">
+                {city === "Tous" ? "Toutes les villes" : city}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Filtrage par Spécialité / Type */}
+        <div className="relative rounded-none">
+          <select
+            value={selectedType}
+            onChange={(e) => setSelectedType(e.target.value)}
+            className="w-full px-3 py-2 bg-transparent text-white text-xs md:text-sm font-bold outline-none cursor-pointer pl-4 rounded-none appearance-none"
+          >
+            {types.map(t => (
+              <option key={t} value={t} className="bg-[#111827] text-white">
+                {t === "Tous" ? "Tous les prestataires" : t === "Santé" ? "Structures Médicales" : "Garages Agréés"}
+              </option>
+            ))}
+          </select>
+        </div>
+
+      </div>
+    </motion.div>
+  </div>
+</header>
+
+{/* ================= 2. GRILLE DU RÉSEAU NATIONAL (VERSION SOMBRE ONYX) ================= */}
+<main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-16 w-full bg-[#090d16]">
+  {filteredPartners.length === 0 ? (
+    <div className="text-center py-16 text-[#94a3b8] font-black uppercase tracking-wider text-xs md:text-sm">
+      Aucun prestataire ne correspond à vos critères dans cette zone.
+    </div>
+  ) : (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+      {filteredPartners.map((partner, idx) => (
+        <motion.div
+          key={partner.id}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: idx * 0.05 }}
+          className="bg-[#111827] p-6 md:p-10 shadow-xl flex flex-col justify-between hover:shadow-2xl transition-all duration-500 border border-slate-800 group rounded-none"
+        >
+          <div>
+            {/* Badge d'icône & Évaluation */}
+            <div className="flex items-center justify-between mb-6">
+              {/* Conteneur d'icône 100% carré */}
+              <div className={`w-14 h-14 border border-slate-800 flex items-center justify-center shadow-md rounded-none ${partner.type === 'Santé' ? 'bg-[#CE1126]/10 text-[#CE1126]' : 'bg-slate-950 text-white'}`}>
+                {partner.type === 'Santé' ? <FaHospital size={22} /> : <FaWrench size={22} />}
+              </div>
+              {/* Badge évaluation rectangulaire */}
+              <div className="flex items-center gap-1.5 text-xs font-black text-amber-400 bg-amber-500/10 px-3 py-1.5 border border-amber-500/20 rounded-none">
+                <FaStar /> <span>{partner.rating}</span>
+              </div>
+            </div>
+
+            {/* Identification de l'établissement */}
+            <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-1 group-hover:text-[#CE1126] transition-colors duration-200">
+              {partner.name}
+            </h3>
+            <p className="text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6">
+              {partner.specialty}
             </p>
 
-            {/* Grille de filtrage épurée sur Fond Blanc */}
-            <div className="mt-8 bg-slate-50 p-4 rounded-2xl border border-slate-100 w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="relative flex items-center border-b border-slate-200 md:border-b-0 md:border-r border-slate-200 pr-2">
-                <span className="absolute left-2 text-slate-400"><FaSearch size={12} /></span>
-                <input
-                  type="text"
-                  placeholder="Rechercher un hôpital, quartier..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-8 pr-4 py-2 bg-transparent text-slate-900 text-xs md:text-sm font-bold outline-none focus:placeholder-transparent"
-                />
-              </div>
-
-              <select
-                value={selectedCity}
-                onChange={(e) => setSelectedCity(e.target.value)}
-                className="w-full px-3 py-2 bg-transparent text-slate-900 text-xs md:text-sm font-bold outline-none cursor-pointer md:border-r border-slate-200"
-              >
-                {cities.map(city => <option key={city} value={city}>{city === "Tous" ? "Toutes les villes" : city}</option>)}
-              </select>
-
-              <select
-                value={selectedType}
-                onChange={(e) => setSelectedType(e.target.value)}
-                className="w-full px-3 py-2 bg-transparent text-slate-900 text-xs md:text-sm font-bold outline-none cursor-pointer pl-4"
-              >
-                {types.map(t => <option key={t} value={t}>{t === "Tous" ? "Tous les prestataires" : t === "Santé" ? "Structures Médicales" : "Garages Agréés"}</option>)}
-              </select>
+            {/* Coordonnées géographiques et de contact */}
+            <div className="space-y-3 border-t border-slate-800 pt-6 mb-8 text-xs md:text-sm font-semibold text-[#94a3b8]">
+              <p className="flex items-center gap-3">
+                <FaMapMarkerAlt className="text-[#CE1126] flex-shrink-0" size={14} />
+                <span>{partner.address} ({partner.city})</span>
+              </p>
+              <p className="flex items-center gap-3 font-mono text-xs text-slate-400">
+                <FaPhoneAlt className="text-slate-500 flex-shrink-0" size={12} />
+                <span>{partner.phone}</span>
+              </p>
             </div>
-          </motion.div>
-        </div>
-      </header>
 
-      {/* ================= 2. GRILLE DU RÉSEAU NATIONAL ================= */}
-      <main className="flex-grow max-w-7xl mx-auto px-6 py-16 w-full">
-        {filteredPartners.length === 0 ? (
-          <div className="text-center py-16 text-slate-950 font-bold uppercase tracking-wider text-sm">
-            Aucun prestataire ne correspond à vos critères dans cette zone.
+            {/* Liste des avantages en puces tactiles rectangulaires */}
+            <div className="flex flex-wrap gap-2 pt-2">
+              {partner.features.map((feat, fIdx) => (
+                <span 
+                  key={fIdx} 
+                  className="text-[10px] font-black uppercase tracking-wider px-3 py-1.5 bg-slate-950 text-slate-300 border border-slate-800 flex items-center gap-1.5 rounded-none"
+                >
+                  <FaCheckCircle className="text-[#CE1126]" size={10} /> {feat}
+                </span>
+              ))}
+            </div>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            {filteredPartners.map((partner, idx) => (
-              <motion.div
-                key={partner.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: idx * 0.05 }}
-                className="bg-white rounded-[2rem] p-8 md:p-10 shadow-md flex flex-col justify-between hover:shadow-2xl transition-all duration-500 border border-slate-100 group"
-              >
-                <div>
-                  {/* Badge d'icône & Évaluation */}
-                  <div className="flex items-center justify-between mb-6">
-                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-sm ${partner.type === 'Santé' ? 'bg-red-50 text-[#CE1126]' : 'bg-slate-950 text-white'}`}>
-                      {partner.type === 'Santé' ? <FaHospital size={22} /> : <FaWrench size={22} />}
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs font-black text-amber-500 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-100">
-                      <FaStar /> <span>{partner.rating}</span>
-                    </div>
-                  </div>
 
-                  {/* Identification de l'établissement */}
-                  <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tight mb-1 group-hover:text-[#CE1126] transition-colors duration-200">
-                    {partner.name}
-                  </h3>
-                  <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6">
-                    {partner.specialty}
-                  </p>
-
-                  {/* Coordonnées géographiques et de contact */}
-                  <div className="space-y-3 border-t border-slate-50 pt-6 mb-8 text-sm font-semibold text-slate-600">
-                    <p className="flex items-center gap-3">
-                      <FaMapMarkerAlt className="text-red-600 flex-shrink-0" size={14} />
-                      <span>{partner.address} ({partner.city})</span>
-                    </p>
-                    <p className="flex items-center gap-3 font-mono text-xs text-slate-500">
-                      <FaPhoneAlt className="text-slate-400 flex-shrink-0" size={12} />
-                      <span>{partner.phone}</span>
-                    </p>
-                  </div>
-
-                  {/* Liste des avantages en puces tactiles */}
-                  <div className="flex flex-wrap gap-2 pt-2">
-                    {partner.features.map((feat, fIdx) => (
-                      <span 
-                        key={fIdx} 
-                        className="text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-lg bg-slate-50 text-slate-500 border border-slate-100 flex items-center gap-1.5"
-                      >
-                        <FaCheckCircle className="text-red-600" size={10} /> {feat}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-              </motion.div>
-            ))}
-          </div>
-        )}
-      </main>
+        </motion.div>
+      ))}
+    </div>
+  )}
+</main>
 
       {/* Pied de page */}
       <Footer />

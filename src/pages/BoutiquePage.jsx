@@ -119,34 +119,37 @@ useEffect(() => {
     <div className="min-h-screen bg-white text-slate-900 flex flex-col antialiased font-sans">
       <NavbarSecured />
 
-            {/* ================= 1. EN-TÊTE DU CATALOGUE ET FILTRES ÉPURÉS ================= */}
-      <header className="relative flex flex-col bg-white overflow-hidden border-b border-slate-100 rounded-none">
-        <div className="relative z-20 max-w-6xl mx-auto px-6 py-20 pt-32 text-center flex flex-col items-center w-full">
+                {/* ================= 1. EN-TÊTE DU CATALOGUE ET FILTRES ÉPURÉS (VERSION SOMBRE ONYX) ================= */}
+      <header className="relative flex flex-col bg-[#090d16] overflow-hidden border-b border-slate-900 rounded-none">
+        <div className="relative z-20 max-w-6xl mx-auto px-4 sm:px-6 py-20 pt-32 text-center flex flex-col items-center w-full">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 w-full flex flex-col items-center">
             
-            <span className="px-4 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-red-600 bg-red-50 border border-red-100 flex items-center gap-2 rounded-none">
+            {/* Badge de souscription */}
+            <span className="px-4 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-[#CE1126] bg-[#CE1126]/10 border border-[#CE1126]/20 flex items-center gap-2 rounded-none shadow-sm">
               <FaShoppingCart size={11} /> Souscription Immédiate
             </span>
             
-            <h1 className="text-4xl md:text-7xl font-black text-slate-900 tracking-tight leading-none uppercase">
-              Packs <span className="text-[#CE1126] italic">Micro-Assurance</span>
+            {/* Titre Principal Blanc Éclatant */}
+            <h1 className="text-4xl md:text-7xl font-black text-white tracking-tight leading-none uppercase">
+              Packs <span className="text-[#CE1126] italic normal-case">Micro-Assurance</span>
             </h1>
             
-            <p className="max-w-2xl mx-auto text-slate-950 text-lg md:text-xl leading-relaxed font-bold">
+            {/* Description Gris Argent Scannable */}
+            <p className="max-w-2xl mx-auto text-[#94a3b8] text-base md:text-xl leading-relaxed font-semibold">
               Sélectionnez une formule claire, ajustée aux réalités locales de la RD Congo. Pas de frais cachés, résiliation libre à tout moment.
             </p>
 
-            {/* ================= DESKTOP & TABLET : Barre sur une seule ligne défilante ================= */}
+            {/* ================= DESKTOP & TABLET : Barre sur une seule ligne défilante FinTech Sombre ================= */}
             <div className="hidden sm:flex mt-8 w-full overflow-x-auto no-scrollbar justify-center pb-2">
               <div className="flex gap-4 whitespace-nowrap px-4">
                 {categories.map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setActiveFilter(cat)}
-                    className={`px-6 py-3 text-[11px] font-black uppercase tracking-[0.15em] transition-all border-2 rounded-none ${
+                    className={`px-6 py-3 text-[11px] font-black uppercase tracking-[0.15em] transition-all border-2 rounded-none focus:outline-none ${
                       activeFilter === cat
-                        ? "border-[#CE1126] bg-red-50/50 text-[#CE1126]"
-                        : "border-slate-200 bg-white text-slate-900 hover:border-slate-400"
+                        ? "border-[#CE1126] bg-[#CE1126]/10 text-white shadow-md"
+                        : "border-slate-800 bg-[#111827] text-slate-400 hover:border-slate-600 hover:text-white"
                     }`}
                   >
                     {cat}
@@ -155,11 +158,11 @@ useEffect(() => {
               </div>
             </div>
 
-            {/* ================= MOBILE : Bouton intégré SOUS le texte (Non fixe, non flottant) ================= */}
+            {/* ================= MOBILE : Bouton intégré SOUS le texte (Non fixe, non flottant) Inversé Blanc ================= */}
             <div className="sm:hidden mt-6 w-full px-4">
               <button
                 onClick={() => setIsMobileMenuOpen(true)}
-                className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-slate-950 text-white font-black uppercase text-[11px] tracking-widest rounded-none active:scale-95 border border-slate-800"
+                className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-white text-black font-black uppercase text-[11px] tracking-widest rounded-none active:scale-95 border border-white shadow-xl focus:outline-none"
               >
                 <FaFilter size={12} className="text-[#CE1126]" />
                 <span>Filtrer ({activeFilter}) ↑</span>
@@ -170,62 +173,62 @@ useEffect(() => {
         </div>
       </header>
 
-      {/* ================= MOBILE : Menu DÉROULANT Plein Écran (Bento Fullscreen Drawer) ================= */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ y: '100%' }}
-            animate={{ y: 0 }}
-            exit={{ y: '100%' }}
-            transition={{ type: 'spring', damping: 28, stiffness: 220 }}
-            className="sm:hidden fixed inset-0 z-[9999] bg-white flex flex-col h-screen w-screen rounded-none overflow-y-auto"
+
+      {/* ================= MOBILE : Menu DÉROULANT Plein Écran (Bento Fullscreen Drawer - VERSION SOMBRE ONYX) ================= */}
+<AnimatePresence>
+  {isMobileMenuOpen && (
+    <motion.div
+      initial={{ y: '100%' }}
+      animate={{ y: 0 }}
+      exit={{ y: '100%' }}
+      transition={{ type: 'spring', damping: 28, stiffness: 220 }}
+      className="sm:hidden fixed inset-0 z-[9999] bg-[#090d16] text-white flex flex-col h-screen w-screen rounded-none overflow-y-auto"
+    >
+      {/* Barre d'en-tête interne du menu */}
+      <div className="flex items-center justify-between px-6 h-20 border-b border-slate-900 bg-[#111827] shrink-0">
+        <span className="text-[11px] font-black uppercase tracking-[0.2em] text-white">
+          Sélectionner une catégorie
+        </span>
+        <button 
+          onClick={() => setIsMobileMenuOpen(false)} 
+          className="p-3 text-white hover:text-[#CE1126] transition-colors rounded-none focus:outline-none"
+        >
+          <FaTimes size={20} />
+        </button>
+      </div>
+
+      {/* Liste verticale aérée des catégories */}
+      <div className="flex-grow px-6 py-8 space-y-4 bg-[#090d16]">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => {
+              setActiveFilter(cat);
+              setIsMobileMenuOpen(false);
+            }}
+            className={`w-full py-5 px-6 text-[12px] font-black uppercase tracking-[0.15em] text-left border transition-all duration-200 rounded-none shadow-sm focus:outline-none ${
+              activeFilter === cat
+                ? "border-[#CE1126] bg-[#CE1126]/10 text-white border-l-4"
+                : "border-slate-800 bg-[#111827] text-slate-400 hover:border-slate-600 hover:text-white"
+            }`}
           >
-            {/* Barre d'en-tête interne du menu */}
-            <div className="flex items-center justify-between px-6 h-20 border-b border-slate-100 bg-white shrink-0">
-              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-900">
-                Sélectionner une catégorie
-              </span>
-              <button 
-                onClick={() => setIsMobileMenuOpen(false)} 
-                className="p-3 text-slate-900 hover:text-[#CE1126] transition-colors rounded-none focus:outline-none"
-              >
-                <FaTimes size={20} />
-              </button>
-            </div>
+            {cat}
+          </button>
+        ))}
+      </div>
 
-            {/* Liste verticale aérée des catégories */}
-            <div className="flex-grow px-6 py-8 space-y-4 bg-slate-50/50">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => {
-                    setActiveFilter(cat);
-                    setIsMobileMenuOpen(false); // Ferme automatiquement après sélection
-                  }}
-                  className={`w-full py-5 px-6 text-[12px] font-black uppercase tracking-[0.15em] text-left border transition-all duration-200 rounded-none shadow-sm ${
-                    activeFilter === cat
-                      ? "border-[#CE1126] bg-red-50/80 text-[#CE1126] border-l-4"
-                      : "border-slate-200 bg-white text-slate-800 hover:border-slate-400"
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
+      {/* Pied décoratif minimaliste ESNAs */}
+      <div className="p-6 border-t border-slate-900 bg-[#111827] text-center shrink-0">
+        <div className="flex items-baseline justify-center font-black tracking-tight text-sm text-slate-500 uppercase select-none">
+          ESNA<span className="text-[#CE1126] lowercase font-extrabold -ml-[1px]">s</span>
+        </div>
+      </div>
+    </motion.div>
+  )}
+</AnimatePresence>
 
-            {/* Pied décoratif minimaliste ESNAs */}
-            <div className="p-6 border-t border-slate-100 bg-white text-center shrink-0">
-              <div className="flex items-baseline justify-center font-black tracking-tight text-sm text-slate-400 uppercase select-none">
-                ESNA<span className="text-[#CE1126] lowercase font-extrabold -ml-[1px]">s</span>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-
-{/* ================= 2. GRILLE DES OFFRES DE MICRO-ASSURANCE ================= */}
-<main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-16 w-full">
+{/* ================= 2. GRILLE DES OFFRES DE MICRO-ASSURANCE (VERSION SOMBRE ONYX) ================= */}
+<main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-16 w-full bg-[#090d16]">
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
     {filteredPacks.map((pack, idx) => (
       <motion.div
@@ -234,71 +237,71 @@ useEffect(() => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, delay: idx * 0.05 }}
-        className={`bg-white border flex flex-col justify-between relative transition-all duration-500 hover:shadow-2xl rounded-none ${
+        className={`bg-[#111827] border flex flex-col justify-between relative transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] rounded-none ${
           pack.isPopular 
-            ? "border-2 border-[#CE1126] shadow-lg" 
-            : "border-slate-100 shadow-md"
+            ? "border-2 border-[#CE1126]" 
+            : "border-slate-800 shadow-xl"
         }`}
       >
         {/* Badge "Plus Populaire" rectangulaire strict */}
         {pack.isPopular && (
-          <span className="absolute -top-3 right-6 bg-[#CE1126] text-white text-[9px] uppercase font-black tracking-widest px-4 py-1.5 shadow-sm rounded-none">
+          <span className="absolute -top-3 right-6 bg-[#CE1126] text-white text-[9px] uppercase font-black tracking-widest px-4 py-1.5 shadow-lg rounded-none z-10">
             Le plus choisi
           </span>
         )}
 
-        {/* En-tête de la carte */}
-        <div className="p-6 md:p-8 border-b border-slate-50">
+        {/* En-tête de la carte - S'accorde au thème sombre */}
+        <div className="p-6 md:p-8 border-b border-slate-800">
           <div className="flex items-center justify-between mb-6">
-            {/* Conteneur d'icône 100% carré */}
-            <div className="w-12 h-12 bg-slate-50 border border-slate-100 flex items-center justify-center text-[#CE1126] rounded-none">
+            {/* Conteneur d'icône Bento Sombre */}
+            <div className="w-12 h-12 bg-slate-950 border border-slate-800 flex items-center justify-center text-[#CE1126] rounded-none shadow-md">
               {pack.icon}
             </div>
-            {/* Badge de catégorie rectangulaire */}
-            <span className="text-[10px] font-black text-slate-950 uppercase tracking-widest bg-slate-50 px-3 py-1.5 border border-slate-100/60 rounded-none">
+            {/* Badge de catégorie rectangulaire FinTech */}
+            <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest bg-slate-800/50 px-3 py-1.5 border border-slate-700/60 rounded-none">
               {pack.category}
             </span>
           </div>
           
-          <h3 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight mb-1">
+          <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-tight mb-1">
             {pack.name}
           </h3>
-          <p className="text-xs text-slate-950 font-medium italic mb-6">
+          <p className="text-[11px] text-[#CE1126] font-bold uppercase tracking-widest mb-6">
             {pack.tagline}
           </p>
           
           <div className="flex items-baseline gap-1.5">
-            <span className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter">{pack.price} USD</span>
-            <span className="text-xs font-black uppercase text-slate-400 tracking-wider">/ {pack.period}</span>
+            <span className="text-4xl md:text-5xl font-black text-white tracking-tighter">{pack.price} USD</span>
+            <span className="text-xs font-black uppercase text-slate-500 tracking-wider">/ {pack.period}</span>
           </div>
         </div>
 
         {/* Détails de couverture et garanties */}
         <div className="p-6 md:p-8 flex-grow space-y-6">
-          {/* Alerte de limite de couverture rectangulaire */}
-          <div className="flex items-center gap-2.5 text-[10px] md:text-[11px] font-black uppercase tracking-wider text-red-600 bg-red-50/50 px-4 py-3 border border-red-100/40 rounded-none">
+          {/* Alerte de limite de couverture - Style Sombre & Rouge */}
+          <div className="flex items-center gap-2.5 text-[10px] md:text-[11px] font-black uppercase tracking-wider text-[#CE1126] bg-[#CE1126]/5 px-4 py-3 border border-[#CE1126]/20 rounded-none">
             <FaInfoCircle className="flex-shrink-0" />
             <span>{pack.coverageLimit}</span>
           </div>
           
           <ul className="space-y-4">
             {pack.features.map((feat, index) => (
-              <li key={index} className="flex items-start gap-3 text-sm font-semibold text-slate-600 leading-snug">
-                <FaCheckCircle className="text-red-600 mt-0.5 flex-shrink-0" size={14} />
+              <li key={index} className="flex items-start gap-3 text-sm font-semibold text-[#94a3b8] leading-snug">
+                <FaCheckCircle className="text-[#CE1126] mt-0.5 flex-shrink-0" size={14} />
                 <span>{feat}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        {/* Bouton d'action final : Rectangulaire strict */}
+        {/* Bouton d'action final : Rectangulaire haute visibilité Inversé */}
         <div className="p-6 md:p-8 pt-0">
           <button
             onClick={() => handleSubscription(pack)}
-            className={`w-full py-4 md:py-5 font-black uppercase text-[10px] md:text-[11px] tracking-[0.25em] shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 rounded-none ${
+            className={`w-full py-4 md:py-5 font-black uppercase text-[10px] md:text-[11px] tracking-[0.25em] shadow-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2 rounded-none border-2 focus:outline-none ${
               pack.isPopular
-                ? "bg-red-600 hover:bg-red-700 text-white shadow-2xl"
-                : "bg-slate-950 hover:bg-slate-800 text-white"
+                ? "bg-[#CE1126] border-[#CE1126] text-white hover:bg-transparent hover:text-white"
+                : "bg-white border-white text-black hover:bg-transparent hover:text-white"
             }`}
           >
             <FaShieldAlt size={11} /> Souscrire pour ma famille
@@ -355,155 +358,157 @@ function MobileMoneyModal({ isOpen, onClose, pack }) {
     return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-md">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-[#090d16]/80 backdrop-blur-xl">
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", duration: 0.4 }}
-            className="w-full max-w-md bg-white border border-slate-100 rounded-none shadow-2xl overflow-hidden relative"
+            className="w-full max-w-md bg-[#111827] border border-slate-800 rounded-none shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden relative"
           >
-            {/* BOUTON FERMER : Angles droits style Luxe */}
+            {/* BOUTON FERMER : Angles droits style Luxe Sombre */}
             {etape !== 'attente' && (
               <button 
                 onClick={onClose} 
-                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-red-600 rounded-none transition-colors z-30"
+                className="absolute top-4 right-4 p-2 text-slate-500 hover:text-[#CE1126] rounded-none transition-colors z-30 focus:outline-none"
               >
-                <FaTimes size={16} />
+                <FaTimes size={18} />
               </button>
             )}
 
-            {/* ================= ÉTAPE 1 : SELECTION ET FORMULAIRE ================= */}
+            {/* ================= ÉTAPE 1 : SELECTION ET FORMULAIRE (VERSION ONYX) ================= */}
             {etape === 'selection' && (
               <div className="p-8 space-y-8">
                 <div className="text-center space-y-2 pr-6">
-                  <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tight">{pack.name}</h3>
-                  <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">{pack.tagline}</p>
+                  <h3 className="text-2xl font-black text-white uppercase tracking-tighter">{pack.name}</h3>
+                  <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">{pack.tagline}</p>
                 </div>
 
-                {/* Récapitulatif Devis */}
-                <div className="bg-slate-50 p-5 rounded-2xl text-center border border-slate-100 flex justify-between items-center">
+                {/* Récapitulatif Devis Bento Sombre */}
+                <div className="bg-[#090d16] p-6 border border-slate-800 rounded-none flex justify-between items-center shadow-inner">
                   <div className="text-left">
-                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Total de la prime</span>
-                    <p className="text-2xl font-black text-slate-900 tracking-tighter">
-                      {pack.price} USD <span className="text-xs text-slate-400 font-bold uppercase tracking-widest">/ {pack.period}</span>
+                    <span className="text-[9px] font-black uppercase text-slate-500 tracking-[0.15em]">Total de la prime</span>
+                    <p className="text-2xl font-black text-white tracking-tighter mt-1">
+                      {pack.price} USD <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest ml-1">/ {pack.period}</span>
                     </p>
                   </div>
-                  <span className="text-[10px] bg-red-50 text-red-600 font-black px-3 py-1.5 rounded-lg border border-red-100 uppercase tracking-widest">
+                  {/* Badge Certification ARCA */}
+                  <span className="text-[9px] bg-[#CE1126]/10 text-[#CE1126] font-black px-3 py-1.5 rounded-none border border-[#CE1126]/20 uppercase tracking-widest shadow-sm">
                     Taxes ARCA Incluses
                   </span>
                 </div>
 
+
                 <form onSubmit={ExecuterPaiement} className="space-y-6">
-                  {/* Choix de l'opérateur Mobile Money */}
-                  <div className="space-y-3">
-                    <label className="text-[11px] uppercase font-black tracking-[0.2em] text-slate-400 block">1. Réseau Mobile Money RDC</label>
-                    <div className="grid grid-cols-3 gap-3">
-                      {[
-                        { id: 'mpesa', nom: 'M-Pesa', selectClass: 'border-[#CE1126] bg-red-50/50 text-[#CE1126]' },
-                        { id: 'orange', nom: 'Orange', selectClass: 'border-orange-500 bg-orange-50/50 text-orange-600' },
-                        { id: 'airtel', nom: 'Airtel', selectClass: 'border-rose-600 bg-rose-50/50 text-rose-600' }
-                      ].map((op) => (
-                        <button
-                          key={op.id} 
-                          type="button" 
-                          onClick={() => setOperateur(op.id)}
-                          className={`py-3.5 text-[11px] font-black uppercase tracking-wider border-2 text-center transition-all ${
-                            operateur === op.id 
-                              ? op.selectClass 
-                              : 'border-slate-100 bg-slate-50/40 text-slate-400 hover:border-slate-200'
-                          }`}
-                        >
-                          {op.nom}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+  {/* Choix de l'opérateur Mobile Money - Styles Rectilignes */}
+  <div className="space-y-3">
+    <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 block">1. Réseau Mobile Money RDC</label>
+    <div className="grid grid-cols-3 gap-3">
+      {[
+        { id: 'mpesa', nom: 'M-Pesa', activeClass: 'border-[#CE1126] bg-[#CE1126]/10 text-white' },
+        { id: 'orange', nom: 'Orange', activeClass: 'border-orange-500 bg-orange-500/10 text-white' },
+        { id: 'airtel', nom: 'Airtel', activeClass: 'border-rose-600 bg-rose-600/10 text-white' }
+      ].map((op) => (
+        <button
+          key={op.id} 
+          type="button" 
+          onClick={() => setOperateur(op.id)}
+          className={`py-3.5 text-[10px] font-black uppercase tracking-wider border-2 text-center transition-all rounded-none focus:outline-none ${
+            operateur === op.id 
+              ? op.activeClass 
+              : 'border-slate-800 bg-[#090d16] text-slate-500 hover:border-slate-600 hover:text-white'
+          }`}
+        >
+          {op.nom}
+        </button>
+      ))}
+    </div>
+  </div>
 
-                  {/* Numéro de téléphone */}
-                  <div className="space-y-3">
-                    <label className="text-[11px] uppercase font-black tracking-[0.2em] text-slate-400 block">2. Numéro de téléphone (9 chiffres)</label>
-                    <div className="relative flex items-center">
-                      <span className="absolute left-0 bottom-3 text-lg font-bold text-slate-400 pointer-events-none">+243</span>
-                      <input 
-                        type="tel" 
-                        required 
-                        placeholder="812345678" 
-                        minLength={9} 
-                        maxLength={9}
-                        value={telephone} 
-                        onChange={(e) => setTelephone(e.target.value.replace(/\D/g, ''))}
-                        className="w-full pl-14 border-b-2 border-slate-100 bg-transparent py-3 text-lg font-bold outline-none transition focus:border-red-600 focus:placeholder-transparent font-mono"
-                      />
-                    </div>
-                  </div>
+  {/* Numéro de téléphone - Saisie sur fond sombre */}
+  <div className="space-y-3">
+    <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 block">2. Numéro de téléphone (9 chiffres)</label>
+    <div className="relative flex items-center">
+      <span className="absolute left-0 bottom-3 text-lg font-bold text-slate-500 pointer-events-none">+243</span>
+      <input 
+        type="tel" 
+        required 
+        placeholder="812345678" 
+        minLength={9} 
+        maxLength={9}
+        value={telephone} 
+        onChange={(e) => setTelephone(e.target.value.replace(/\D/g, ''))}
+        className="w-full pl-14 border-b-2 border-slate-800 bg-transparent py-3 text-lg font-bold outline-none transition focus:border-[#CE1126] focus:placeholder-transparent text-white font-mono rounded-none placeholder-slate-600"
+      />
+    </div>
+  </div>
 
-                  {/* Action finale : Rectangulaire, Rouge, Contraste maximum */}
-                  <button 
-                    type="submit" 
-                    disabled={!operateur || telephone.length !== 9} 
-                    className="w-full py-5 bg-red-600 text-white font-black uppercase text-[11px] tracking-[0.25em] shadow-2xl hover:bg-red-700 transition-all active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center justify-center gap-2"
-                  >
-                    <FaLock size={10} /> Confirmer et Payer la prime
-                  </button>
-                </form>
-              </div>
-            )}
+  {/* Action finale : Rectangulaire, Blanche vers Rouge */}
+  <button 
+    type="submit" 
+    disabled={!operateur || telephone.length !== 9} 
+    className="w-full py-5 bg-white text-black font-black uppercase text-[11px] tracking-[0.25em] shadow-xl hover:bg-[#CE1126] hover:text-white transition-all duration-300 active:scale-95 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center gap-2 rounded-none focus:outline-none"
+  >
+    <FaLock size={10} className="text-[#CE1126] group-hover:text-white" /> Confirmer et Payer la prime
+  </button>
+</form>
+</div>
+)}
 
-            {/* ================= ÉTAPE 2 : ATTENTE APPROBATION ================= */}
-            {etape === 'attente' && (
-              <div className="p-10 text-center space-y-6 flex flex-col items-center">
-                <div className="w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin" />
-                <div className="space-y-3">
-                  <h3 className="text-xl font-black uppercase tracking-tight text-slate-900">Approbation requise</h3>
-                  <p className="text-sm text-slate-500 font-medium max-w-xs mx-auto leading-relaxed italic">
-                    Saisissez votre <span className="font-extrabold text-slate-900">code PIN secret</span> directement sur l'écran de votre téléphone pour valider le débit de la transaction.
-                  </p>
-                </div>
-              </div>
-            )}
+{/* ================= ÉTAPE 2 : ATTENTE APPROBATION (VERSION SOMBRE) ================= */}
+{etape === 'attente' && (
+  <div className="p-10 text-center space-y-8 flex flex-col items-center">
+    <div className="w-12 h-12 border-4 border-[#CE1126] border-t-transparent rounded-none animate-spin" />
+    <div className="space-y-4">
+      <h3 className="text-xl font-black uppercase tracking-tight text-white">Approbation requise</h3>
+      <p className="text-sm text-[#94a3b8] font-semibold max-w-xs mx-auto leading-relaxed">
+        Saisissez votre <span className="text-white border-b border-[#CE1126]">code PIN secret</span> directement sur l'écran de votre téléphone pour valider le débit de la transaction.
+      </p>
+    </div>
+  </div>
+)}
 
-            {/* ================= ÉTAPE 3 : RÉSULTAT SUCCÈS ================= */}
-            {etape === 'succes' && (
-              <div className="p-8 text-center space-y-8">
-                <div className="w-16 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center text-3xl mx-auto border border-red-100 shadow-sm">
-                  ✓
-                </div>
-                <div className="space-y-2">
-                  <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Souscription Réussie !</h3>
-                  <p className="text-sm text-slate-400 font-bold uppercase tracking-wider">Votre attestation a été validée et enregistrée par l'ARCA.</p>
-                </div>
+{/* ================= ÉTAPE 3 : RÉSULTAT SUCCÈS (BENTO SOMBRE LUXE) ================= */}
+{etape === 'succes' && (
+  <div className="p-8 text-center space-y-8">
+    <div className="w-16 h-14 bg-[#CE1126]/10 text-[#CE1126] border border-[#CE1126]/30 flex items-center justify-center text-3xl mx-auto rounded-none shadow-lg">
+      ✓
+    </div>
+    <div className="space-y-2">
+      <h3 className="text-2xl font-black text-white uppercase tracking-tight">Souscription Réussie !</h3>
+      <p className="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em]">Attestation validée par l'ARCA</p>
+    </div>
 
-                {/* Fiche récapitulative de contrat style Bento */}
-                <div className="bg-slate-50 border border-slate-100 p-6 rounded-2xl text-left font-mono space-y-3 text-xs text-slate-600 font-semibold">
-                  <div className="flex justify-between items-center pb-2 border-b border-slate-200/50">
-                    <span className="text-slate-400 uppercase text-[10px]">Contrat ARCA :</span> 
-                    <span className="font-bold text-red-600">{numeroAttestation}</span>
-                  </div>
-                  <div className="flex justify-between items-center pb-2 border-b border-slate-200/50">
-                    <span className="text-slate-400 uppercase text-[10px]">Garantie :</span> 
-                    <span className="text-slate-900 font-bold">{pack.coverageLimit}</span>
-                  </div>
-                  <div className="flex justify-between items-center pt-1">
-                    <span className="text-slate-400 uppercase text-[10px]">Canal :</span> 
-                    <span className="text-[#25D366] font-bold flex items-center gap-1.5"><FaWhatsapp size={14} /> WhatsApp Actif</span>
-                  </div>
-                </div>
+    {/* Fiche récapitulative Bento Sombre */}
+    <div className="bg-[#090d16] border border-slate-800 p-6 rounded-none text-left font-mono space-y-4 text-xs shadow-inner">
+      <div className="flex justify-between items-center pb-2 border-b border-slate-800/50">
+        <span className="text-slate-500 uppercase text-[9px] font-black">Contrat ARCA :</span> 
+        <span className="font-bold text-[#CE1126]">{numeroAttestation}</span>
+      </div>
+      <div className="flex justify-between items-center pb-2 border-b border-slate-800/50">
+        <span className="text-slate-500 uppercase text-[9px] font-black">Garantie :</span> 
+        <span className="text-white font-bold">{pack.coverageLimit}</span>
+      </div>
+      <div className="flex justify-between items-center pt-1">
+        <span className="text-slate-500 uppercase text-[9px] font-black">Canal :</span> 
+        <span className="text-[#25D366] font-bold flex items-center gap-1.5"><FaWhatsapp size={14} /> WhatsApp Actif</span>
+      </div>
+    </div>
 
-                {/* Bouton de téléchargement rectangulaire noir */}
-                <div className="pt-2">
-                  <button 
-                    onClick={onClose} 
-                    className="w-full py-5 bg-slate-950 text-white font-extrabold uppercase text-[11px] tracking-[0.25em] hover:bg-slate-800 transition-all active:scale-95 flex items-center justify-center gap-2"
-                  >
-                    Terminer et retourner au tableau de bord
-                  </button>
-                </div>
-              </div>
-            )}
+    {/* Bouton final rectangulaire blanc */}
+    <div className="pt-2">
+      <button 
+        onClick={onClose} 
+        className="w-full py-5 bg-white text-black font-black uppercase text-[11px] tracking-[0.25em] hover:bg-[#CE1126] hover:text-white transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 rounded-none"
+      >
+        Terminer l'opération
+      </button>
+    </div>
+  </div>
+)}
 
-            {/* Signature Visuelle Tricolore Panafricaine (RDC) très subtile en bas */}
-            <div className="w-full h-1 bg-gradient-to-r from-red-600 via-blue-500 to-yellow-400 opacity-20" />
+{/* Signature Visuelle Tricolore RDC fine */}
+<div className="w-full h-1 bg-gradient-to-r from-[#00A3E0] via-[#CE1126] to-[#FDD100] opacity-30" />
 
           </motion.div>
         </div>

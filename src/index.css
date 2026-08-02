@@ -2,40 +2,62 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =========================================================================
+    1. VARIABLES DE THÈME ET CONFIGURATION GLOBALE (:root)
+   ========================================================================= */
+:root {
+  /* 2026 FINTECH IDENTITY : Dark/Premium Onyx Palette */
+  --bg: #090d16;             /* Fond principal noir profond Fintech */
+  --surface: #111827;        /* Arrière-plan des cartes (Gris anthracite) */
+  --text-dark: #f8fafc;      /* Texte principal (Blanc pur pour contraste maximal) */
+  --text-muted: #94a3b8;     /* Texte secondaire (Gris argent scannable) */
+  
+  /* Couleurs primaires de la marque - Éclat accentué sur fond sombre */
+  --accent-rouge: #CE1126;   /* Rouge officiel RDC (Couleur d'action) */
+  --accent-bleu: #00A3E0;    /* Bleu ciel officiel RDC (Certifications) */
+  --accent-or: #FDD100;      /* Jaune Or officiel RDC (Finances et valeurs) */
+  --border-color: #1f2937;   /* Bordures sombres discrètes et géométriques */
+
+  /* Versions RGB pour la gestion des opacités via Tailwind (rgba) */
+  --accent-rouge-rgb: 206 17 38;
+  --accent-bleu-rgb: 0 163 224;
+}
+
+/* =========================================================================
+    2. RÈGLES DE BASE (HTML, BODY, TYPOGRAPHIES RECTILIGNES)
+   ========================================================================= */
 @layer base {
   html {
     @apply scroll-smooth;
   }
+  
   body {
-    @apply m-0 p-0 box-border;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
     background-color: var(--bg);
     color: var(--text-dark);
     font-family: 'Saira', 'Antonio', Arial, sans-serif;
   }
 
-  /* 2026 FINTECH IDENTITY : Unique Light/Corporate Palette */
-  :root {
-    --bg: #ffffff;             /* Fond principal blanc pur international */
-    --surface: #f8fafc;        /* Arrière-plan des cartes (gris très clair bleuté) */
-    --text-dark: #0f172a;      /* Texte principal (ardoise très sombre pour contraste maximal) */
-    --text-muted: #475569;     /* Texte secondaire (gris foncé scannable) */
-    
-    /* Couleurs primaires de la marque */
-    --accent-rouge: #CE1126;   /* Rouge officiel RDC (Couleur principale d'accent) */
-    --accent-bleu: #00A3E0;    /* Bleu ciel officiel RDC */
-    --accent-or: #FDD100;      /* Jaune Or officiel RDC */
-    --border-color: #e2e8f0;   /* Bordures claires et épurées */
-    
-    /* Versions RGB pour la gestion des opacités via Tailwind (rgba) */
-    --accent-rouge-rgb: 206 17 38;
-    --accent-bleu-rgb: 0 163 224;
+  /* Polices de titrage combinant Saira et Antonio sans courbes */
+  h1, h2, h3 {
+    font-family: 'Antonio', Arial, sans-serif;
+    color: var(--text-dark);
+  }
+
+  h4, h5, h6 {
+    font-family: 'Saira', Arial, sans-serif;
+    color: var(--text-dark);
   }
 }
 
-/* Animation de la ligne d'écriture (Machine à écrire) */
+/* =========================================================================
+    3. UTILS ET ANIMATIONS TECHNIQUES (MACHINE À ÉCRIRE & FADE)
+   ========================================================================= */
 .typewriter {
   overflow: hidden;
-  border-right: 0.15em solid var(--accent-rouge); /* Curseur couleur Rouge RDC */
+  border-right: 0.15em solid var(--accent-rouge);
   white-space: nowrap;
   width: 0;
   animation: typing 3s steps(20, end) forwards, blink-caret 0.75s step-end infinite;
@@ -51,27 +73,6 @@
   50% { border-color: var(--accent-rouge); }
 }
 
-body {
-  background-color: var(--bg);
-  color: var(--text-dark);
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Saira', 'Antonio', Arial, sans-serif;
-}
-
-/* Polices de titrage combinant Saira et Antonio */
-h1, h2, h3 {
-  font-family: 'Antonio', Arial, sans-serif;
-  color: var(--text-dark);
-}
-
-h4, h5, h6 {
-  font-family: 'Saira', Arial, sans-serif;
-  color: var(--text-dark);
-}
-
-/* Animation fade-in pour l'apparition des éléments */
 .animate-fade-in {
   opacity: 0;
   transform: translateY(24px);
@@ -85,7 +86,6 @@ h4, h5, h6 {
   }
 }
 
-/* Respect des préférences système (accessibilité pour réduire les mouvements) */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;
@@ -93,7 +93,6 @@ h4, h5, h6 {
   }
 }
 
-/* Animations de transition de routage fluides */
 .fade-enter {
   opacity: 0;
   transform: translateY(12px);
@@ -104,7 +103,6 @@ h4, h5, h6 {
   transition: opacity 420ms ease, transform 420ms ease;
 }
 
-/* Dégradés réutilisables basés sur les couleurs de l'écosystème */
 .bg-linear-to-r {
   background-image: linear-gradient(90deg, var(--accent-bleu), var(--accent-rouge));
 }
@@ -112,28 +110,41 @@ h4, h5, h6 {
   background-image: linear-gradient(180deg, var(--accent-bleu), var(--accent-or));
 }
 
-/* --- ENSEMBLE DES COMPOSANTS LOGICIELS RÉUTILISABLES --- */
+/* Hide scrollbar pour la barre de filtres horizontale sur une ligne */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* =========================================================================
+    4. COMPOSANTS LOGICIELS FINTECH RÉUTILISABLES (ANGLES 100% DROITS)
+   ========================================================================= */
 @layer components {
-  /* Cartes de l'écosystème Fintech */
+  /* Cartes de l'écosystème aux bords carrés stricts */
   .card-base {
     background-color: var(--surface);
-    border-radius: 0.75rem;
+    border-radius: 0px !important; /* 🟢 Angles droits stricts */
     border: 1px solid var(--border-color);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
   
   .card-interactive {
+    border-radius: 0px !important;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
   .card-interactive:hover {
-    box-shadow: 0 10px 25px -5px rgba(var(--accent-rouge-rgb), 0.08);
+    box-shadow: 0 12px 30px -5px rgba(var(--accent-rouge-rgb), 0.12);
     transform: translateY(-2px);
-    border-color: rgba(var(--accent-rouge-rgb), 0.3); /* Lueur rouge au survol */
+    border-color: rgba(var(--accent-rouge-rgb), 0.4);
   }
   
   .card-hover-scale {
+    border-radius: 0px !important;
     transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform;
   }
@@ -142,46 +153,48 @@ h4, h5, h6 {
     transform: scale(1.02);
   }
 
-  /* Champs de saisie des formulaires épurés */
+  /* Champs de saisie des formulaires adaptés pour l'Onyx sombre */
   .contact-input {
     color: var(--text-dark) !important;
-    background-color: #ffffff !important;
+    background-color: var(--surface) !important;
     border: 1px solid var(--border-color) !important;
+    border-radius: 0px !important; /* 🟢 Carré rectangle */
   }
 
   .contact-input::placeholder {
     color: var(--text-muted) !important;
-    opacity: 0.6;
+    opacity: 0.5;
   }
 
-  /* Notifications de l'écosystème (Toast) */
+  /* Notifications système haut de gamme (Toast) harmonisées */
   .custom-toast {
-    background: #ffffff;
-    border: 1px solid rgba(var(--accent-rouge-rgb), 0.2);
-    border-radius: 12px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+    background: var(--surface) !important;
+    border: 1px solid rgba(var(--accent-rouge-rgb), 0.3) !important;
+    border-radius: 0px !important; /* 🟢 Angles droits stricts */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
   }
 
   .custom-toast-body {
-    color: var(--text-dark);
+    color: var(--text-dark) !important;
     font-family: 'Saira', sans-serif;
-    font-weight: 500;
+    font-weight: 600;
   }
 
   .custom-toast-progress {
-    background: linear-gradient(90deg, var(--accent-rouge), var(--accent-or));
+    background: linear-gradient(90deg, var(--accent-rouge), var(--accent-or)) !important;
   }
 
-  /* Surcharges de secours pour forcer l'homogénéité sans classes sombres résiduelles */
+  /* Surcharges de secours pour forcer l'homogénéité du mode sombre */
+  .text-gray-250 { color: var(--text-dark) !important; }
   .text-gray-200 { color: var(--text-muted) !important; }
   .text-gray-300 { color: var(--text-muted) !important; }
   .text-gray-400 { color: var(--text-muted) !important; }
-  .text-gray-500 { color: var(--text-dark) !important; }
+  .text-gray-500 { color: var(--text-muted) !important; }
   
   .bg-dark-100 { background-color: var(--bg) !important; }
   .bg-dark-200 { background-color: var(--surface) !important; }
-  .bg-dark-300 { background-color: #f1f5f9 !important; }
-  .bg-dark-400 { background-color: #e2e8f0 !important; }
+  .bg-dark-300 { background-color: var(--surface) !important; }
+  .bg-dark-400 { background-color: var(--border-color) !important; }
 
   .border-dark-300,
   .border-gray-700 { 
@@ -190,6 +203,6 @@ h4, h5, h6 {
 
   .hover\:border-purple:hover { border-color: var(--accent-rouge) !important; }
   .hover\:text-purple-400:hover { color: var(--accent-rouge) !important; }
-  .hover\:bg-dark-400:hover { background-color: #f1f5f9 !important; }
-  .hover\:bg-dark-500:hover { background-color: #e2e8f0 !important; }
+  .hover\:bg-dark-400:hover { background-color: var(--border-color) !important; }
+  .hover\:bg-dark-500:hover { background-color: var(--surface) !important; }
 }

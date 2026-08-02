@@ -119,60 +119,56 @@ export default function NavbarSecured() {
   }
       
      
-    return (
+     return (
     <>
-      {/* 🟢 BARRE DE NAVIGATION : Hauteur affinée py-2.5 / Fond Blanc pur et floutage premium */}
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 border-b border-slate-100 bg-white/95 backdrop-blur-md ${
-        isSticky ? 'py-1.5 shadow-sm' : 'py-2.5'
+      {/* ================= BARRE DE NAVIGATION SECURED (VERSION SOMBRE ONYX) ================= */}
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 border-b border-slate-900 bg-[#090d16]/90 backdrop-blur-md ${
+        isSticky ? 'py-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.5)]' : 'py-2.5'
       }`}>
         <div className="max-w-6xl mx-auto px-6">
-          <div className="flex justify-between h-12 items-center">
+          <div className="flex justify-between h-16 items-center relative w-full">
 
-{/* LOGO FINTECH ULTRA-COMPACT TYPOGRAPHIQUE */}
-<motion.div 
-  whileHover={{ scale: 1.02 }} 
-  className="flex items-center gap-3 cursor-pointer shrink-0 group select-none" 
-  onClick={(e) => handleNavClick('/', e)}
->
-  {/* Nom de la Marque "ESNAs" : Typographie rectiligne et contrastée */}
-  <div className="flex items-baseline font-black tracking-tight text-xl md:text-2xl text-slate-900 uppercase">
-    ESNA
-    <span className="text-[#CE1126] lowercase font-extrabold -ml-[1px]">s</span>
-  </div>
+            {/* BLOC 1 : LOGO FINTECH ULTRA-COMPACT TYPOGRAPHIQUE SOMBRE */}
+            <motion.div 
+              whileHover={{ scale: 1.02 }} 
+              className="flex items-center gap-3 cursor-pointer shrink-0 group select-none" 
+              onClick={(e) => handleNavClick('/', e)}
+            >
+              <div className="flex items-baseline font-black tracking-tight text-xl md:text-2xl text-white uppercase">
+                ESNA
+                <span className="text-[#CE1126] lowercase font-extrabold -ml-[1px]">s</span>
+              </div>
 
-  {/* Tag de Certification Technique : Carré, minimaliste et percutant */}
-  <div className="flex flex-col justify-center border-l-2 border-slate-900 pl-3 py-0.5">
-    <span className="text-[8px] uppercase tracking-[0.25em] text-[#CE1126] font-black leading-none mb-0.5">
-      Agrément
-    </span>
-    <span className="text-[9px] uppercase tracking-[0.15em] text-slate-900 font-black leading-none">
-      ARCA
-    </span>
-  </div>
-</motion.div>
+              <div className="flex flex-col justify-center border-l-2 border-white pl-3 py-0.5">
+                <span className="text-[8px] uppercase tracking-[0.25em] text-[#CE1126] font-black leading-none mb-0.5">
+                  Agrément
+                </span>
+                <span className="text-[9px] uppercase tracking-[0.15em] text-white font-black leading-none">
+                  ARCA
+                </span>
+              </div>
+            </motion.div>
 
-
-            {/* ================= NAVIGATION DESKTOP : ACTIONS AU CLIC ================= */}
+            {/* BLOC 2 : NAVIGATION DESKTOP : ACTIONS AU CLIC (VERSION SOMBRE) */}
             <div className="hidden lg:flex items-center gap-8">
               {navCategories.map((category) => (
                 <div key={category.id} className="relative py-2">
                   <button 
                     onClick={() => toggleCategory(category.id)}
-                    className={`flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest transition-colors ${
-                      activeCategory === category.id ? 'text-red-600' : 'text-slate-600 hover:text-slate-900'
+                    className={`flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest transition-colors focus:outline-none ${
+                      activeCategory === category.id ? 'text-[#CE1126]' : 'text-slate-300 hover:text-white'
                     }`}
                   >
                     {category.label}
                     <motion.span 
                       animate={{ rotate: activeCategory === category.id ? 180 : 0 }}
                       transition={{ duration: 0.2 }}
-                      className="text-[9px] opacity-60"
+                      className="text-[9px] opacity-60 text-[#CE1126]"
                     >
                       ▼
                     </motion.span>
                   </button>
 
-                  {/* Menu déroulant au clic : Animation cinétique amortie */}
                   <AnimatePresence>
                     {activeCategory === category.id && (
                       <motion.div 
@@ -180,15 +176,15 @@ export default function NavbarSecured() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 8 }}
                         transition={{ duration: 0.15, ease: "easeOut" }}
-                        className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-52 bg-white border border-slate-100 rounded-none shadow-2xl p-2 space-y-0.5 z-50"
+                        className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-52 bg-[#111827] border border-slate-800 rounded-none shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-2 space-y-0.5 z-50"
                       >
                         {category.items.map((item) => (
                           <button 
                             key={item.href} 
                             onClick={(e) => handleNavClick(item.href, e)} 
-                            className="w-full px-3 py-2 flex items-center gap-3 text-[11px] font-bold uppercase tracking-wider text-slate-600 hover:text-red-600 hover:bg-slate-50 transition-all text-left rounded-none"
+                            className="w-full px-3 py-2.5 flex items-center gap-3 text-[11px] font-extrabold uppercase tracking-wider text-slate-300 hover:text-white hover:bg-[#CE1126] transition-all duration-200 text-left rounded-none border-l-2 border-transparent hover:border-white"
                           >
-                            <span className="text-red-600 text-xs">{item.icon}</span>
+                            <span className="text-[#CE1126] group-hover:text-white transition-colors text-xs">{item.icon}</span>
                             {item.label}
                           </button>
                         ))}
@@ -197,9 +193,13 @@ export default function NavbarSecured() {
                   </AnimatePresence>
                 </div>
               ))}
+            </div>
 
-              {/* ACTION TRANSACTIONNELLE : RECHERCHE FINTECH */}
-              <div className="flex items-center gap-2 ml-2 border-l border-slate-200 pl-4">
+            {/* 🟢 BLOC 3 DE REGROUPEMENT : ACTIONS ET COMMUTATEURS MOBILE SUR UNE MÊME LIGNE */}
+            <div className="flex items-center gap-4">
+              
+              {/* ACTION TRANSACTIONNELLE : RECHERCHE & AUTH FINTECH (VERSION SOMBRE) */}
+              <div className="flex items-center gap-2 border-l border-slate-800 pl-4">
                 <div className="relative flex items-center">
                   <AnimatePresence>
                     {searchOpen && (
@@ -211,53 +211,54 @@ export default function NavbarSecured() {
                         placeholder="N° DRC-..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="bg-slate-50 text-[11px] font-bold px-3 py-1.5 border border-slate-200 focus:outline-none focus:border-red-600 text-slate-900 mr-2 rounded-none"
+                        className="bg-[#111827] text-[11px] font-bold px-3 py-1.5 border border-slate-800 focus:outline-none focus:border-[#CE1126] text-white mr-2 rounded-none placeholder-slate-500"
                       />
                     )}
                   </AnimatePresence>
                   
                   <button 
                     onClick={() => setSearchOpen(!searchOpen)}
-                    className="p-1.5 text-slate-400 hover:text-red-600 transition-colors"
+                    className="p-1.5 text-slate-400 hover:text-[#CE1126] transition-colors focus:outline-none"
                   >
                     <FaSearch size={12} />
                   </button>
                 </div>
 
-                {/* BOUTON D'CONNEXION FINTECH : Angles droits, Rouge et Noir */}
+                {/* BOUTON DE CONNEXION FINTECH */}
                 {isAuthenticated ? (
                   <button 
                     onClick={(e) => handleNavClick('/dashboard', e)}
-                    className="p-1 text-slate-400 hover:text-red-600 transition-colors"
+                    className="p-1 text-slate-400 hover:text-[#CE1126] transition-colors focus:outline-none"
                   >
                     <FaUserCircle size={18} />
                   </button>
                 ) : (
                   <button 
                     onClick={(e) => handleNavClick('/login', e)}
-                    className="ml-2 px-5 py-2 bg-slate-950 text-white font-black uppercase text-[9px] tracking-widest hover:bg-red-600 transition-colors rounded-none"
+                    className="ml-2 px-5 py-2 bg-white text-black font-black uppercase text-[9px] tracking-widest hover:bg-[#CE1126] hover:text-white transition-all duration-200 rounded-none shadow-md"
                   >
                     Connexion
                   </button>
                 )}
               </div>
-            </div>
 
-            {/* COMMUTATEUR DU MENU MOBILE */}
-            <div className="flex lg:hidden items-center">
-              <button 
-                onClick={() => setIsOpen(!isOpen)} 
-                className="p-2 text-slate-900 hover:text-[#CE1126] transition-colors focus:outline-none rounded-none"
-                aria-label="Menu"
-              >
-                {isOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
-              </button>
-            </div>
+              {/* COMMUTATEUR DU MENU MOBILE (PROPREMENT IMBRIQUÉ À DROITE) */}
+              <div className="flex lg:hidden items-center">
+                <button 
+                  onClick={() => setIsOpen(!isOpen)} 
+                  className="p-2 text-white hover:text-[#CE1126] transition-colors focus:outline-none rounded-none"
+                  aria-label="Menu"
+                >
+                  {isOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
+                </button>
+              </div>
 
-          </div> {/* Ré-ajoute la fermeture du conteneur Flex de la Navbar */}
-        </div> {/* Ré-ajoute la fermeture du conteneur de centrage (max-w-7xl...) */}
+            </div> {/* Fin du bloc regroupement droite */}
 
-        {/* ================= INTERFACE DU MENU MOBILE PLEIN ÉCRAN ================= */}
+          </div> 
+        </div>
+
+        {/* ================= INTERFACE DU MENU MOBILE PLEIN ÉCRAN (VERSION SOMBRE ONYX) ================= */}
         <AnimatePresence>
           {isOpen && (
             <motion.div 
@@ -265,17 +266,17 @@ export default function NavbarSecured() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed inset-0 z-50 lg:hidden bg-slate-950 text-white flex flex-col h-screen w-screen rounded-none overflow-y-auto"
+              className="fixed inset-0 z-50 lg:hidden bg-[#090d16] text-white flex flex-col h-screen w-screen rounded-none overflow-y-auto"
             >
               {/* En-tête interne du menu plein écran pour la fermeture */}
-              <div className="flex items-center justify-between px-6 h-20 border-b border-slate-800">
-                <div className="flex items-baseline font-black tracking-tight text-xl uppercase select-none">
+              <div className="flex items-center justify-between px-6 h-20 border-b border-slate-900 bg-[#111827]">
+                <div className="flex items-baseline font-black tracking-tight text-xl uppercase select-none text-white">
                   ESNA
                   <span className="text-[#CE1126] lowercase font-extrabold -ml-[1px]">s</span>
                 </div>
                 <button 
                   onClick={() => setIsOpen(false)} 
-                  className="p-2 text-white hover:text-[#CE1126] transition-colors rounded-none"
+                  className="p-2 text-white hover:text-[#CE1126] transition-colors rounded-none focus:outline-none"
                 >
                   <FaTimes size={24} />
                 </button>
@@ -288,7 +289,7 @@ export default function NavbarSecured() {
                     {/* Bouton de Catégorie principal */}
                     <button
                       onClick={() => toggleCategoryMobile(category.id)}
-                      className="w-full py-2 flex justify-between items-center text-[12px] font-black uppercase tracking-[0.2em] text-slate-400 text-left rounded-none hover:text-white transition-colors"
+                      className="w-full py-2 flex justify-between items-center text-[12px] font-black uppercase tracking-[0.2em] text-slate-400 text-left rounded-none hover:text-white transition-colors focus:outline-none"
                     >
                       <span>{category.label}</span>
                       <motion.span 
@@ -316,7 +317,7 @@ export default function NavbarSecured() {
                                 handleNavClick(item.href, e);
                                 setIsOpen(false);
                               }}
-                              className="w-full px-4 py-3 flex items-center gap-4 text-xs font-extrabold text-slate-200 hover:bg-[#CE1126] hover:text-white text-left uppercase tracking-widest rounded-none border-l-2 border-transparent hover:border-white transition-all duration-200"
+                              className="w-full px-4 py-3 flex items-center gap-4 text-xs font-extrabold text-slate-200 hover:bg-[#CE1126] hover:text-white text-left uppercase tracking-widest rounded-none border-l-2 border-transparent hover:border-white transition-all duration-200 focus:outline-none"
                             >
                               <span className="text-[#CE1126] transition-colors">{item.icon}</span>
                               {item.label}
@@ -336,7 +337,7 @@ export default function NavbarSecured() {
                         handleNavClick('/login', e);
                         setIsOpen(false);
                       }}
-                      className="w-full py-4 bg-red-600 text-white font-black uppercase text-[11px] tracking-widest text-center shadow-md rounded-none hover:bg-red-700 transition-colors"
+                      className="w-full py-4 bg-white text-black font-black uppercase text-[11px] tracking-widest text-center shadow-md rounded-none hover:bg-[#CE1126] hover:text-white transition-colors focus:outline-none"
                     >
                       Espace Connexion
                     </button>
@@ -346,9 +347,7 @@ export default function NavbarSecured() {
             </motion.div>
           )}
         </AnimatePresence>
-
       </nav>
     </>
   );
 }
-
