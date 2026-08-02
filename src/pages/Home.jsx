@@ -166,7 +166,7 @@ export default function Home() {
           </div>
         </div>
         <div className="px-1">
-          <h4 className="text-lg md:text-xl font-black uppercase mb-2 text-slate-900 tracking-tight">Santé Médicale</h4>
+          <h4 className="text-lg md:text-xl font-bold uppercase mb-2 text-slate-700 tracking-tight">Santé Médicale</h4>
           <p className="text-lg md:text-sm text-slate-950 leading-relaxed font-semibold">
             Prise en charge directe en clinique via QR Code. Vos proches ne déboursent rien sur place.
           </p>
@@ -183,7 +183,7 @@ export default function Home() {
           </div>
         </div>
         <div className="px-1">
-          <h4 className="text-lg md:text-xl font-black uppercase mb-2 text-slate-900 tracking-tight">Automobile</h4>
+          <h4 className="text-lg md:text-xl font-bold uppercase mb-2 text-slate-700 tracking-tight">Automobile</h4>
           <p className="text-lg md:text-sm text-slate-950 leading-relaxed font-semibold">
             Garanties complètes pour vos véhicules au pays. Gestion et constatation rapides des sinistres.
           </p>
@@ -200,7 +200,7 @@ export default function Home() {
           </div>
         </div>
         <div className="px-1">
-          <h4 className="text-lg md:text-xl font-black uppercase mb-2 text-slate-900 tracking-tight">Scolarité</h4>
+          <h4 className="text-lg md:text-1xl font-bold uppercase mb-2 text-slate-700 tracking-tight">Scolarité</h4>
           <p className="text-lg md:text-sm text-slate-950 leading-relaxed font-semibold">
             Financement et sécurité du parcours scolaire de vos enfants restés au pays en cas de coup dur.
           </p>
@@ -217,7 +217,7 @@ export default function Home() {
           </div>
         </div>
         <div className="px-1">
-          <h4 className="text-lg md:text-xl font-black uppercase mb-2 text-slate-900 tracking-tight">Voyage</h4>
+          <h4 className="text-lg md:text-1xl font-bold uppercase mb-2 text-slate-700 tracking-tight">Voyage</h4>
           <p className="text-lg md:text-sm text-slate-950 leading-relaxed font-semibold">
             Couverture médicale internationale et assistance bagages pour vos déplacements vers ou depuis la RDC.
           </p>

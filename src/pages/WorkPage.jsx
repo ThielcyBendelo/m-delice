@@ -96,7 +96,7 @@ export default function WorkPage() {
               <div className="grid grid-cols-4 gap-4">
                 {[
                   { id: 'health', label: 'Santé / Médical', icon: <FaHeartbeat /> },
-                  { id: 'auto', label: 'RC Automobile', icon: <FaCar /> },
+                  { id: 'auto', label: 'RC Automob', icon: <FaCar /> },
                   { id: 'student', label: 'Scolarité', icon: <FaGraduationCap /> },
                   { id: 'voyage', label: 'Voyage', icon: <FaPlaneDeparture /> }
                 ].map((type) => (
@@ -162,10 +162,10 @@ export default function WorkPage() {
                         : 'border-slate-100 bg-slate-50/40 hover:border-slate-200'
                     }`}
                   >
-                    <span className={`text-xs font-white uppercase tracking-wider ${coverageLevel === lvl.id ? 'text-[#CE1126]' : 'text-slate-900'}`}>
+                    <span className={`text-xs font-bold uppercase tracking-wider ${coverageLevel === lvl.id ? 'text-[#CE1126]' : 'text-slate-900'}`}>
                       {lvl.title}
                     </span>
-                    <span className="text-[11px] text-slate-950 font-medium leading-tight">
+                    <span className="text-[11px] text-slate-950 font-bold leading-tight">
                       {lvl.desc}
                     </span>
                   </button>

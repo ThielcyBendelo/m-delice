@@ -84,26 +84,31 @@ export default function ClientRegistrationPage() {
       {/* ================= 1. SECTION CORE TUNNEL ================= */}
       <main className="flex-grow max-w-7xl w-full mx-auto px-6 py-24 pt-32 grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
         
-        {/* COLONNE GAUCHE : Récapitulatif du Pack d'Assurance choisi (COL 4 - Bento Noir Profond) */}
-        <div className="lg:col-span-4">
-          <div className="bg-slate-950 text-white p-8 rounded-[2rem] border-t-4 border-[#CE1126] shadow-2xl space-y-6 sticky top-24 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-red-600/5 rounded-full blur-2xl" />
-            <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-red-600">Formule Sélectionnée</h3>
-            <h2 className="text-2xl font-black uppercase tracking-tight">{selectedPack.name}</h2>
-            <div className="text-4xl font-black text-white tracking-tighter">
-              {selectedPack.price} <span className="text-sm font-bold uppercase text-red-600 tracking-widest">USD / Mois</span>
-            </div>
-            
-            <div className="border-t border-white/10 pt-6 space-y-4 text-sm font-medium text-slate-400 leading-relaxed">
-              <p className="flex items-center gap-3">
-                <FaInfoCircle className="text-red-600 flex-shrink-0" /> <span>{selectedPack.coverageLimit}</span>
-              </p>
-              <p className="text-xs text-slate-500 font-light leading-relaxed">
-                En remplissant ce formulaire, vous initiez la création d'une carte d'assuré numérique ARCA rattachée à votre compte de la Diaspora.
-              </p>
-            </div>
-          </div>
-        </div>
+{/* COLONNE GAUCHE : Récapitulatif du Pack d'Assurance choisi (COL 4 - Bento Noir Profond) */}
+<div className="lg:col-span-4">
+  {/* 🟢 'rounded-none' rend le bloc strictement rectangulaire */}
+  <div className="bg-slate-950 text-white p-8 border-t-4 border-t-[#CE1126] shadow-2xl space-y-6 sticky top-24 relative overflow-hidden rounded-none">
+    <div className="absolute top-0 right-0 w-24 h-24 bg-red-600/5 rounded-full blur-2xl" />
+    <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-red-600">Formule Sélectionnée</h3>
+    <h2 className="text-2xl font-black text-white uppercase tracking-tight">{selectedPack.name}</h2>
+    
+    <div className="text-4xl font-black text-white tracking-tighter">
+      {selectedPack.price} <span className="text-sm font-bold uppercase text-red-600 tracking-widest">USD / Mois</span>
+    </div>
+    
+    {/* 🟢 Nettoyage des contrastes textuels sur fond noir */}
+    <div className="border-t border-white/10 pt-6 space-y-4 text-sm font-medium text-slate-400 leading-relaxed">
+      <p className="flex items-center gap-3">
+        <FaInfoCircle className="text-red-600 flex-shrink-0" /> <span>{selectedPack.coverageLimit}</span>
+      </p>
+      {/* 🟢 Changé de text-slate-950 (invisible) à text-slate-300 pour une parfaite lisibilité */}
+      <p className="text-sm font-semibold text-slate-300 leading-relaxed">
+        En remplissant ce formulaire, vous initiez la création d'une carte d'assuré numérique ARCA rattachée à votre compte de la Diaspora.
+      </p>
+    </div>
+  </div>
+</div>
+
 
         {/* COLONNE DROITE : Formulaire d'identification du bénéficiaire local (COL 8) */}
         <div className="lg:col-span-8">
@@ -118,7 +123,7 @@ export default function ClientRegistrationPage() {
               </div>
               <div>
                 <h1 className="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">Identité du Bénéficiaire</h1>
-                <p className="text-sm text-slate-400 font-medium">Renseignez la personne physique qui utilisera les prestations en RDC.</p>
+                <p className="text-1xl text-slate-950 font-medium">Renseignez la personne physique qui utilisera les prestations en RDC.</p>
               </div>
             </div>
 
@@ -127,7 +132,7 @@ export default function ClientRegistrationPage() {
               {/* Ligne 1 : Nom & Prénom */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
                 <div className="space-y-3">
-                  <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Nom de famille</label>
+                  <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-950">Nom de famille</label>
                   <input
                     type="text"
                     name="beneficiaryLastName"
@@ -139,7 +144,7 @@ export default function ClientRegistrationPage() {
                   />
                 </div>
                 <div className="space-y-3">
-                  <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Prénom</label>
+                  <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-950">Prénom</label>
                   <input
                     type="text"
                     name="beneficiaryFirstName"
@@ -155,7 +160,7 @@ export default function ClientRegistrationPage() {
               {/* Ligne 2 : WhatsApp & Lien de Parenté */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
                 <div className="space-y-3">
-                  <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-1.5">
+                  <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-950 flex items-center gap-1.5">
                     <FaPhone size={10} className="text-red-600" /> N° WhatsApp (Notification PWA)
                   </label>
                   <input
@@ -169,7 +174,7 @@ export default function ClientRegistrationPage() {
                   />
                 </div>
                 <div className="space-y-3">
-                  <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Lien de parenté</label>
+                  <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-950">Lien de parenté</label>
                   <select 
                     name="buyerRelation" 
                     value={formData.buyerRelation} 
@@ -186,7 +191,7 @@ export default function ClientRegistrationPage() {
               {/* Ligne 3 : Pièce d'Identité Nationale & Ville */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
                 <div className="space-y-3">
-                  <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-1.5">
+                  <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-950 flex items-center gap-1.5">
                     <FaIdCard size={12} className="text-red-600" /> N° Carte d'Électeur / ID National
                   </label>
                   <input
@@ -199,7 +204,7 @@ export default function ClientRegistrationPage() {
                   />
                 </div>
                 <div className="space-y-3">
-                  <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-1.5">
+                  <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-950 flex items-center gap-1.5">
                     <FaMapMarkerAlt size={11} className="text-red-600" /> Ville de Résidence (RDC)
                   </label>
                   <select 
@@ -217,7 +222,7 @@ export default function ClientRegistrationPage() {
 
               {/* Ligne 4 : Adresse Détaillée */}
               <div className="space-y-3">
-                <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Adresse Résidentielle Complète</label>
+                <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-950">Adresse Résidentielle Complète</label>
                 <input
                   type="text"
                   name="beneficiaryAddress"

@@ -65,7 +65,7 @@ function FAQSection() {
                 onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
                 className="w-full py-8 flex items-center justify-between text-left group"
               >
-                <span className={`text-xl md:text-1xl font-black tracking-tight uppercase transition-colors ${openIndex === idx ? 'text-red-600' : 'text-slate-900'}`}>
+                <span className={`text-xl md:text-xl font-black tracking-tight uppercase transition-colors ${openIndex === idx ? 'text-red-600' : 'text-slate-900'}`}>
                   {faq.question}
                 </span>
                 <motion.div 

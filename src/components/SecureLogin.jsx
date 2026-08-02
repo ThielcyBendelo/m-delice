@@ -103,13 +103,13 @@ export default function SecureLogin() {
 
         <div className="relative flex py-2 items-center mb-8">
           <div className="flex-grow border-t border-slate-100"></div>
-          <span className="flex-shrink mx-4 text-[9px] font-black text-slate-300 uppercase tracking-widest">Ou via email</span>
+          <span className="flex-shrink mx-4 text-[9px] font-black text-slate-950 uppercase tracking-widest">Ou via email</span>
           <div className="flex-grow border-t border-slate-100"></div>
         </div>
 
         <form onSubmit={handleFormSubmit} className="space-y-6">
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">Email</label>
+            <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-950">Email</label>
             <input 
               type="email" name="email" required value={credentials.email} onChange={handleInputChange}
               placeholder="votre@email.com" 
@@ -118,7 +118,7 @@ export default function SecureLogin() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">Mot de passe</label>
+            <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-950">Mot de passe</label>
             <input 
               type="password" name="password" required value={credentials.password} onChange={handleInputChange}
               placeholder="••••••••" 

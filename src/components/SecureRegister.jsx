@@ -118,7 +118,7 @@ export default function SecureRegister() {
           <h1 className="text-2xl font-black uppercase tracking-tighter text-slate-900 leading-none">
             ESNA<span className="text-red-600">s DRC</span>
           </h1>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mt-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-950 mt-3">
             Création de Compte Diaspora
           </p>
         </div>
@@ -139,7 +139,7 @@ export default function SecureRegister() {
 
         <div className="relative flex py-2 items-center mb-8">
           <div className="flex-grow border-t border-slate-100"></div>
-          <span className="flex-shrink mx-4 text-[9px] font-black text-slate-300 uppercase tracking-widest">Ou par formulaire</span>
+          <span className="flex-shrink mx-4 text-[9px] font-black text-slate-950 uppercase tracking-widest">Ou par formulaire</span>
           <div className="flex-grow border-t border-slate-100"></div>
         </div>
 
@@ -148,7 +148,7 @@ export default function SecureRegister() {
           {/* Ligne : Nom & Prénom */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Nom</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-950">Nom</label>
               <input 
                 type="text" name="lastName" required value={formData.lastName} onChange={handleInputChange}
                 placeholder="Mbuyi" 
@@ -156,7 +156,7 @@ export default function SecureRegister() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Prénom</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-950">Prénom</label>
               <input 
                 type="text" name="firstName" required value={formData.firstName} onChange={handleInputChange}
                 placeholder="Jean" 
@@ -167,7 +167,7 @@ export default function SecureRegister() {
 
           {/* Pays de résidence */}
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2">
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-950 flex items-center gap-2">
               <FaGlobe size={10} className="text-red-600" /> Pays de résidence
             </label>
             <div className="relative">
@@ -183,7 +183,7 @@ export default function SecureRegister() {
 
           {/* Email */}
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2">
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-950 flex items-center gap-2">
               <FaEnvelope size={10} className="text-red-600" /> Email
             </label>
             <input 
@@ -196,7 +196,7 @@ export default function SecureRegister() {
           {/* Mots de passe */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Mot de passe</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-950">Mot de passe</label>
               <input 
                 type="password" name="password" required value={formData.password} onChange={handleInputChange}
                 placeholder="••••••" 
@@ -204,7 +204,7 @@ export default function SecureRegister() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Confirmation</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-950">Confirmation</label>
               <input 
                 type="password" name="confirmPassword" required value={formData.confirmPassword} onChange={handleInputChange}
                 placeholder="••••••" 
@@ -233,7 +233,7 @@ export default function SecureRegister() {
 
         {/* Pied du formulaire */}
         <div className="mt-8 pt-6 border-t border-slate-100 text-center">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-950">
             Déjà membre de l'écosystème ?
             <span 
               onClick={() => navigate('/login')} 

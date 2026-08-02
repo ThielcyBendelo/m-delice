@@ -98,9 +98,10 @@ export default function PartnersPage() {
           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#CE1126] bg-[#CE1126]/10 px-4 py-1.5 border border-[#CE1126]/30 rounded-none inline-block">
             Sécurité Institutionnelle & Traçabilité
           </span>
-          <h1 className="text-4xl md:text-7xl font-white text-slate-250 uppercase tracking-tight leading-none max-w-4xl">
-            Garanties Financières <br />& <span className="text-[#00A3E0]">Pool Partenaires</span>
-          </h1>
+          <h1 className="text-4xl md:text-7xl font-bold !text-white uppercase tracking-tight leading-none max-w-4xl">
+  Garanties Financières <br />& <span className="text-[#00A3E0]">Pool Partenaires</span>
+</h1>
+
           <p className="text-lg md:text-xl text-slate-250 font-medium max-w-2xl leading-relaxed">
             Découvrez l'infrastructure de régulation nationale ARCA et les leaders de la réassurance mondiale qui certifient et solidifient chaque produit souscrit sur ESNAs.
           </p>
@@ -167,7 +168,7 @@ export default function PartnersPage() {
       <section className="bg-slate-950 text-white py-16 px-4 sm:px-6 w-full rounded-none">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 border-l-4 border-[#CE1126] pl-6 md:pl-10">
           <div className="space-y-2 text-left">
-            <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight">
+            <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight">
               Besoin de consulter les agréments officiels ?
             </h3>
             <p className="text-slate-400 text-sm font-semibold max-w-2xl">
