@@ -1,9 +1,21 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import authService from '../services/authService';
 
-export default function PrivateRoute() {
-  console.log("⚠️ [Fintech Bypasser] Verrou PrivateRoute désactivé temporairement pour analyse.");
-  
-  // On laisse passer tout le monde de force pour forcer l'affichage du bug de rendu
+/**
+ * Protège les routes dashboard : JWT requis.
+ * Supporte children (App.jsx) OU <Outlet /> (nested routes).
+ */
+export default function PrivateRoute({ children }) {
+  const location = useLocation();
+
+  if (!authService.isLoggedIn()) {
+    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  }
+
+  if (children) {
+    return children;
+  }
+
   return <Outlet />;
 }

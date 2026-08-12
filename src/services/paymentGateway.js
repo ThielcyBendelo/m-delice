@@ -1,6 +1,31 @@
 import secureAPIClient from '../utils/secureAPIClient';
 import notificationService from './notificationService';
 
+const CINETPAY_SDK_URL = 'https://cdn.cinetpay.com/seamless/main.js';
+
+function loadCinetPaySdk() {
+  if (window.CinetPay) return Promise.resolve(window.CinetPay);
+
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector(`script[src="${CINETPAY_SDK_URL}"]`);
+    if (existing) {
+      existing.addEventListener('load', () => resolve(window.CinetPay), { once: true });
+      existing.addEventListener('error', () => reject(new Error('Chargement CinetPay impossible.')), { once: true });
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = CINETPAY_SDK_URL;
+    script.async = true;
+    script.onload = () => {
+      if (window.CinetPay) resolve(window.CinetPay);
+      else reject(new Error('SDK CinetPay chargé mais indisponible.'));
+    };
+    script.onerror = () => reject(new Error('Chargement CinetPay impossible.'));
+    document.head.appendChild(script);
+  });
+}
+
 /**
  * Service Fintech de gestion des transactions transfrontalières
  */
@@ -16,7 +41,7 @@ const paymentGateway = {
   async createStripePaymentIntent(pack, beneficiary) {
     try {
       // Appel sécurisé vers votre route API Node.js/Next.js
-      const response = await secureAPIClient.post('/api/payment/stripe-intent', {
+      const response = await secureAPIClient.post('/payment/stripe-intent', {
         amount: pack.price,
         currency: 'usd', // Devise de référence exigée par l'ARCA
         metadata: {
@@ -44,22 +69,27 @@ const paymentGateway = {
    * @param {Object} beneficiary - Les données du proche en RDC
    * @param {Function} onSuccessCallback - Action à exécuter après succès du Mobile Money
    */
-  initializeCinetPayMobileMoney(pack, beneficiary, onSuccessCallback) {
-    if (!window.CinetPay) {
-      notificationService.error("Le module réseau CinetPay est actuellement introuvable. Vérifiez votre connexion.");
-      return;
-    }
-
+  async initializeCinetPayMobileMoney(pack, beneficiary, onSuccessCallback) {
     try {
+      const apiKey = import.meta.env.VITE_CINETPAY_API_KEY;
+      const siteId = import.meta.env.VITE_CINETPAY_SITE_ID;
+      if (!apiKey || !siteId) {
+        notificationService.error('CinetPay n’est pas configuré. Renseignez VITE_CINETPAY_API_KEY et VITE_CINETPAY_SITE_ID.');
+        return;
+      }
+
+      const CinetPay = await loadCinetPaySdk();
+
       // 1. Configuration des clés d'infrastructure (Masquées en production via les variables d'environnement)
-      window.CinetPay.setConfig({
-        apikey: import.meta.env.VITE_CINETPAY_API_KEY || 'VOTRE_API_KEY_PAR_DEFAUT',
-        site_id: import.meta.env.VITE_CINETPAY_SITE_ID || 'VOTRE_SITE_ID_PAR_DEFAUT',
-        notify_url: 'https://drcassurances.com' // URL qui capte le Webhook de validation
+      CinetPay.setConfig({
+        apikey: apiKey,
+        site_id: siteId,
+        notify_url: `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/payment/webhook/cinetpay`,
+        mode: import.meta.env.PROD ? 'PRODUCTION' : 'TEST',
       });
 
       // 2. Lancement de la modale de paiement Mobile Money multi-opérateurs
-      window.CinetPay.production({
+      CinetPay.getCheckout({
         amount: pack.price,
         currency: 'USD',
         description: `Souscription active du ${pack.name} pour ${beneficiary.beneficiaryFirstName}`,
@@ -71,13 +101,18 @@ const paymentGateway = {
       });
 
       // 3. Écouteur de statut de transaction CinetPay
-      window.CinetPay.waitResponse(async (data) => {
+      CinetPay.waitResponse(async (data) => {
         if (data.status === "REFUSED") {
           notificationService.error("La transaction Mobile Money a été rejetée ou le solde est insuffisant.");
         } else if (data.status === "ACCEPTED") {
           notificationService.success("Paiement Mobile Money validé par l'opérateur local !");
           if (onSuccessCallback) onSuccessCallback(data);
         }
+      });
+
+      CinetPay.onError((data) => {
+        console.error('Erreur CinetPay:', data);
+        notificationService.error('La passerelle CinetPay a refusé la transaction.');
       });
 
     } catch (error) {
@@ -93,7 +128,7 @@ const paymentGateway = {
    */
   async verifyAndRegisterPolicyInDatabase(fullPayload) {
     try {
-      const response = await secureAPIClient.post('/api/payment/checkout-success', fullPayload);
+      const response = await secureAPIClient.post('/payment/checkout-success', fullPayload);
       
       if (response.data && response.data.success) {
         return {

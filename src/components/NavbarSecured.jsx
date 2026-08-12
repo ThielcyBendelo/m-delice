@@ -102,6 +102,7 @@ export default function NavbarSecured() {
       label: "Services",
       items: [
         { href: '/reseau-soins', label: 'Réseau de Soins', icon: <FaBriefcaseMedical /> },
+        { href: '/verification-hopital', label: 'Vérif. Hôpital', icon: <FaShieldAlt /> },
         { href: '/declaration-sinistre', label: 'Déclarer un Sinistre', icon: <FaFileContract /> },
         { href: '/conformite-arca', label: 'Régulation ARCA', icon: <FaBalanceScale /> }
       ]
@@ -339,7 +340,7 @@ export default function NavbarSecured() {
                       }}
                       className="w-full py-4 bg-white text-black font-black uppercase text-[11px] tracking-widest text-center shadow-md rounded-none hover:bg-[#CE1126] hover:text-white transition-colors focus:outline-none"
                     >
-                      Espace Connexion
+                      Espace Connexion Diasporas
                     </button>
                   </div>
                 )}

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import NavbarSecured from '../components/NavbarSecured';
 import Footer from '../components/Footer';
 import policyService from '../services/policyService.js';
+import authService from '../services/authService';
 import notificationService from '../services/notificationService';
 // 🟢 CORRIGÉ : Ajout explicite de FaArrowRight dans les accolades d'importation
 import { 
@@ -28,44 +29,63 @@ export default function PaymentPage() {
     coverageLimit: "Plafond annuel : 3 500 USD"
   };
 
-  const beneficiaryData = location.state?.beneficiaryData || {
-    beneficiaryLastName: 'Mbuyi',
-    beneficiaryFirstName: 'Thérèse',
-    beneficiaryPhone: '+243810000000',
-    beneficiaryCity: 'Kinshasa',
-    beneficiaryAddress: 'Avenue de la Justice, Gombe',
-    beneficiaryNationalID: 'N-RDC-89215'
-  };
+  const beneficiaryData = location.state?.beneficiaryData || null;
 
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [mobileOperator, setMobileOperator] = useState('mpesa');
 
+  useEffect(() => {
+    if (!authService.isLoggedIn()) {
+      notificationService.error('Connectez-vous pour finaliser le paiement.');
+      navigate('/login', {
+        replace: true,
+        state: { from: '/passerelle-paiement', selectedPack, beneficiaryData: location.state?.beneficiaryData },
+      });
+      return;
+    }
+    if (!location.state?.beneficiaryData) {
+      notificationService.info?.('Complétez d’abord l’identité du bénéficiaire.') ||
+        notificationService.error('Complétez d’abord l’identité du bénéficiaire.');
+      navigate('/inscription-beneficiaire', { replace: true, state: { selectedPack } });
+    }
+  }, []);
+
   const handlePaymentSubmit = async (e) => {
     e.preventDefault();
+    if (!beneficiaryData) {
+      notificationService.error('Données bénéficiaire manquantes.');
+      navigate('/inscription-beneficiaire', { state: { selectedPack } });
+      return;
+    }
+    if (!authService.isLoggedIn()) {
+      notificationService.error('Session expirée.');
+      navigate('/login');
+      return;
+    }
+
     setIsProcessing(true);
 
     try {
-      notificationService.info("Traitement de la transaction financière et chiffrement ARCA...");
+      notificationService.info("Création de l'intention de paiement et activation police (SQL)…");
 
-      const mockTxRef = paymentMethod === 'card' 
-        ? `STR-ch_${Math.random().toString(36).substring(2, 12)}` 
-        : `CIN-MM-${Math.floor(10000000 + Math.random() * 90000000)}`;
-
-      const paymentDetails = {
-        transactionReference: mockTxRef,
-        gateway: paymentMethod === 'card' ? 'Stripe_Card' : 'CinetPay_MobileMoney',
+      const gateway = paymentMethod === 'card' ? 'simulation' : 'CinetPay_MobileMoney';
+      const result = await policyService.purchaseWithPaymentFlow(beneficiaryData, selectedPack, {
+        gateway,
         currency: 'USD',
-        exchangeRate: 1
-      };
-
-      const result = await policyService.purchasePolicy(beneficiaryData, selectedPack, paymentDetails);
+        paymentMethod,
+        mobileOperator: paymentMethod === 'mobile_money' ? mobileOperator : null,
+      });
 
       if (result.success) {
-        notificationService.success(`Paiement approuvé ! Contrat officiel émis : ${result.policyNumber}`);
+        const taxNote = result.taxArcaUSD != null ? ` (dont taxe ARCA ${result.taxArcaUSD} USD)` : '';
+        notificationService.success(
+          `Paiement confirmé${result.simulation ? ' [simulation]' : ''} ! Police ${result.policyNumber}${taxNote}`
+        );
         navigate('/dashboard', { 
           state: { 
             paymentSuccess: true,
-            policyNumber: result.policyNumber
+            policyNumber: result.policyNumber,
+            transactionReference: result.transactionReference,
           } 
         });
       } else {
@@ -103,10 +123,10 @@ export default function PaymentPage() {
       <div className="py-4 border-b border-slate-800 space-y-3">
         <p className="text-[11px] font-black uppercase text-slate-300 tracking-wider">Bénéficiaire en RD Congo</p>
         <p className="text-sm font-bold text-white flex items-center gap-2">
-          <FaUser className="text-[#CE1126] flex-shrink-0" size={12} /> {beneficiaryData.beneficiaryFirstName} {beneficiaryData.beneficiaryLastName}
+          <FaUser className="text-[#CE1126] flex-shrink-0" size={12} /> {beneficiaryData?.beneficiaryFirstName || '—'} {beneficiaryData?.beneficiaryLastName || ''}
         </p>
         <p className="text-xs font-black text-slate-400 flex items-center gap-2 font-mono">
-          <FaPhone className="text-[#CE1126] flex-shrink-0" size={12} /> {beneficiaryData.beneficiaryPhone} ({beneficiaryData.beneficiaryCity})
+          <FaPhone className="text-[#CE1126] flex-shrink-0" size={12} /> {beneficiaryData?.beneficiaryPhone || '—'} ({beneficiaryData?.beneficiaryCity || '—'})
         </p>
       </div>
 

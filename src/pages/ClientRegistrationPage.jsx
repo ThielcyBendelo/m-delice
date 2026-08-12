@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import NavbarSecured from '../components/NavbarSecured';
 import Footer from '../components/Footer';
 import notificationService from '../services/notificationService';
+import authService from '../services/authService';
 import { 
   FaUser, FaPhone, FaMapMarkerAlt, FaIdCard, 
   FaShieldAlt, FaArrowRight, FaArrowLeft, FaInfoCircle 
@@ -18,6 +19,8 @@ export default function ClientRegistrationPage() {
     id: 1,
     name: "Pack Santé Maman",
     price: 45,
+    branch: "Santé",
+    coverageLevel: "Confort",
     coverageLimit: "Plafond annuel : 3 500 USD"
   };
 
@@ -33,6 +36,19 @@ export default function ClientRegistrationPage() {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!authService.isLoggedIn()) {
+      notificationService.info?.('Connectez-vous pour souscrire une police.') || notificationService.error('Connectez-vous pour souscrire une police.');
+      navigate('/login', {
+        replace: true,
+        state: {
+          from: '/inscription-beneficiaire',
+          selectedPack,
+        },
+      });
+    }
+  }, []);
 
   const citiesInRdc = [
     "Kinshasa", "Lubumbashi", "Goma", "Bukavu", 
@@ -55,6 +71,12 @@ export default function ClientRegistrationPage() {
       return;
     }
 
+    if (!authService.isLoggedIn()) {
+      notificationService.error('Session requise. Connectez-vous pour continuer.');
+      navigate('/login', { state: { from: '/inscription-beneficiaire', selectedPack } });
+      return;
+    }
+
     setIsSubmitting(true);
     
     try {
@@ -62,12 +84,21 @@ export default function ClientRegistrationPage() {
         notificationService.info("Validation des données du bénéficiaire...");
       }
 
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const beneficiaryData = {
+        ...formData,
+        // alias attendu par le checkout / policyService
+        beneficiaryNationalID: formData.nationalID || formData.beneficiaryNationalID || '',
+      };
 
       navigate('/passerelle-paiement', {
         state: {
-          selectedPack,
-          beneficiaryData: formData
+          selectedPack: {
+            ...selectedPack,
+            branch: selectedPack.branch || 'Santé',
+            coverageLevel: selectedPack.coverageLevel || 'Confort',
+            price: Number(selectedPack.price) || 0,
+          },
+          beneficiaryData,
         }
       });
     } catch (error) {

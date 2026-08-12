@@ -8,6 +8,7 @@ import { BrowserRouter } from 'react-router-dom';
 // Initialiser la sécurité CSP et les validations d'infrastructure
 import { applyCSPMeta, setupCSPViolationReporting } from './utils/cspConfig';
 import secureAPIClient from './utils/secureAPIClient';
+import authService from './services/authService';
 
 // Appliquer Content Security Policy (Protection contre les injections)
 applyCSPMeta();
@@ -16,7 +17,7 @@ applyCSPMeta();
 setupCSPViolationReporting();
 
 // Initialiser le client API sécurisé pour SQL Server & Fintech
-secureAPIClient.initialize();
+secureAPIClient.initialize(null, authService.getToken());
 
 console.log('🛡️ Infrastructure de sécurité ESNAS initialisée');
 

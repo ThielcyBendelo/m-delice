@@ -36,6 +36,7 @@ import PrivateRoute from './components/PrivateRoute';
 import ProfessionalSplashScreen from './components/ProfessionalSplashScreen';
 import SecureLogin from './components/SecureLogin';
 import SecureRegister from './components/SecureRegister';
+import AdminRoute from './components/AdminRoute';
 
 // =========================================================================
 // 4. ESPACE PRIVÉ & BACK-OFFICE (Dossier src/dashboard/)
@@ -49,7 +50,12 @@ import QuittancesGenerator from './dashboard/InvoiceManagement';
 import RiskAnalytics from './dashboard/Analytics';         
 import SystemMessaging from './dashboard/Messaging';       
 import AccountProfile from './dashboard/Profile';         
-import ForexFinanceDashboard from './dashboard/FinanceDashboard'; 
+import ForexFinanceDashboard from './dashboard/FinanceDashboard';
+import VerificationDesk from './dashboard/Verification';
+import SystemHealthDesk from './dashboard/SystemHealth';
+import ClaimsQueueDesk from './dashboard/ClaimsQueue';
+import HospitalVerifyPage from './pages/HospitalVerifyPage';
+import Organizations from './dashboard/Organizations';
 
 // SOUS-COMPOSANT NÉCESSAIRE POUR INTERCEPTER LA LOCALISATION ET LE MODE WAIT
 const AnimatedRoutes = () => {
@@ -72,6 +78,8 @@ const AnimatedRoutes = () => {
         <Route path="/temoignages" element={<PageTransition><TestimonialsPage /></PageTransition>} />
         <Route path="/guide-prevention" element={<PageTransition><BlogPreventionPage /></PageTransition>} />
         <Route path="/partenaires-garanties" element={<PageTransition><PartnersPage /></PageTransition>} />
+        <Route path="/verification-hopital" element={<PageTransition><HospitalVerifyPage /></PageTransition>} />
+        <Route path="/hopital/verifier" element={<PageTransition><HospitalVerifyPage /></PageTransition>} />
         
         {/* --- ACCÈS SÉCURISÉS --- */}
         <Route path="/login" element={<PageTransition><SecureLogin /></PageTransition>} />
@@ -110,6 +118,10 @@ const AnimatedRoutes = () => {
           <Route path="messages" element={<SystemMessaging />} />
           <Route path="profile" element={<AccountProfile />} />
           <Route path="finance" element={<ForexFinanceDashboard />} />
+          <Route path="verification" element={<VerificationDesk />} />
+          <Route path="health" element={<SystemHealthDesk />} />
+          <Route path="claims" element={<ClaimsQueueDesk />} />
+          <Route path="organizations" element={<AdminRoute><Organizations /></AdminRoute>} />
         </Route>
         
         <Route path="*" element={<PageTransition><Home /></PageTransition>} />

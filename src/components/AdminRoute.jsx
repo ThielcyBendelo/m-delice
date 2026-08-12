@@ -1,6 +1,5 @@
 import { Navigate } from 'react-router-dom';
 import authService from '../services/authService';
-import roleService from '../services/roleService';
 
 /**
  * 🔐 Composant de protection pour routes ADMIN SEULEMENT
@@ -17,14 +16,10 @@ const AdminRoute = ({ children }) => {
   }
 
   // 2. Vérifier le rôle admin
-  if (!roleService.isAdmin()) {
-    console.warn('❌ Access denied: Not admin');
-    roleService.logAccess('DENIED_ACCESS', 'ADMIN_DASHBOARD');
-    return <Navigate to="/" replace />;
+  const currentUser = authService.getCurrentUser();
+  if (String(currentUser?.role || '').toLowerCase() !== 'admin') {
+    return <Navigate to="/dashboard" replace />;
   }
-
-  // 3. Log l'accès réussi
-  roleService.logAccess('ACCESSED', 'ADMIN_DASHBOARD');
 
   return children;
 };

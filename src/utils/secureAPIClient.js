@@ -98,6 +98,13 @@ export class SecureAPIClient {
   }
 
   /**
+   * REQUÊTE HTTP PATCH
+   */
+  async patch(endpoint, data = {}, options = {}) {
+    return this.request(endpoint, { method: 'PATCH', body: JSON.stringify(data), ...options });
+  }
+
+  /**
    * REQUÊTE HTTP DELETE
    */
   async delete(endpoint, options = {}) {
@@ -124,16 +131,46 @@ export class SecureAPIClient {
       clearTimeout(timeoutId);
 
       if (!response.ok) {
-        throw new APIError(`HTTP ${response.status}: ${response.statusText}`, response.status, response);
+        let responseData = null;
+        const contentType = response.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+          try {
+            responseData = await response.json();
+          } catch {
+            // La réponse HTTP reste exploitable même si son JSON est invalide.
+          }
+        }
+        const serverMessage = responseData?.message || responseData?.error;
+        throw new APIError(
+          serverMessage || `HTTP ${response.status}: ${response.statusText}`,
+          response.status,
+          response,
+          null,
+          responseData
+        );
       }
 
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
         const data = await response.json();
         // 🟢 COMPATIBILITÉ : Structure d'encapsulation de données Axios pour correspondre à response.data
         return {
           success: true,
-          data: data, 
+          data: data,
+          status: response.status,
+        };
+      }
+
+      // HTML (quittances print), texte brut, etc.
+      if (
+        contentType.includes('text/html') ||
+        contentType.includes('text/plain') ||
+        options.responseType === 'text'
+      ) {
+        const text = await response.text();
+        return {
+          success: true,
+          data: text,
           status: response.status,
         };
       }
@@ -152,13 +189,14 @@ export class SecureAPIClient {
  * Gestionnaire d'exceptions et de messages d'erreurs localisés
  */
 export class APIError extends Error {
-  constructor(message, statusCode = 0, response = null, originalError = null) {
+  constructor(message, statusCode = 0, response = null, originalError = null, responseData = null) {
     super(message);
     this.name = 'APIError';
     this.statusCode = statusCode;
     this.response = response;
+    this.responseData = responseData;
     this.originalError = originalError;
-    this.userMessage = this.getUserMessage(statusCode, message);
+    this.userMessage = responseData?.message || responseData?.error || this.getUserMessage(statusCode, message);
   }
 
   getUserMessage(statusCode, message) {

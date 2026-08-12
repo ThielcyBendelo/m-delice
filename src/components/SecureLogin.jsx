@@ -1,154 +1,245 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import authService from '../services/authService';
 import notificationService from '../services/notificationService';
-import { 
-  FaEnvelope, FaLock, FaShieldAlt, FaArrowRight, FaSpinner, FaUserCheck, 
-  FaGoogle, FaGithub, FaApple 
-} from 'react-icons/fa';
+import { FaShieldAlt, FaArrowRight, FaSpinner, FaGoogle } from 'react-icons/fa';
+
+const GIS_SRC = 'https://accounts.google.com/gsi/client';
+
+function loadGisScript() {
+  return new Promise((resolve, reject) => {
+    if (window.google && window.google.accounts && window.google.accounts.id) {
+      resolve();
+      return;
+    }
+    const existing = document.querySelector('script[src="' + GIS_SRC + '"]');
+    if (existing) {
+      existing.addEventListener('load', function () { resolve(); });
+      existing.addEventListener('error', reject);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = GIS_SRC;
+    script.async = true;
+    script.defer = true;
+    script.onload = function () { resolve(); };
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
 
 export default function SecureLogin() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [googleReady, setGoogleReady] = useState(false);
+  const [googleClientId, setGoogleClientId] = useState('');
   const [credentials, setCredentials] = useState({ email: '', password: '' });
+  const googleBtnRef = useRef(null);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setCredentials(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSocialLogin = async (provider) => {
-    notificationService.info(`Connexion via ${provider} en cours...`);
-    try {
-      const result = await authService.loginWithProvider(provider.toLowerCase());
-      if (result) {
-        notificationService.success(`Bienvenue via ${provider} !`);
-        window.location.href = '/dashboard';
-      }
-    } catch (error) {
-      console.error(`[Social Auth Error - ${provider}]`, error);
-      notificationService.error(`Échec de l'authentification avec ${provider}.`);
+  useEffect(function () {
+    if (authService.isLoggedIn()) {
+      navigate('/dashboard', { replace: true });
     }
+  }, [navigate]);
+
+  useEffect(function () {
+    var cancelled = false;
+
+    (async function () {
+      try {
+        var cfg = await authService.getAuthConfig();
+        var clientId = cfg.googleClientId || import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+        if (!clientId || cancelled) {
+          setGoogleReady(false);
+          return;
+        }
+        setGoogleClientId(clientId);
+        await loadGisScript();
+        if (cancelled || !(window.google && window.google.accounts && window.google.accounts.id)) return;
+
+        window.google.accounts.id.initialize({
+          client_id: clientId,
+          callback: async function (response) {
+            if (!(response && response.credential)) {
+              notificationService.error('Reponse Google invalide.');
+              return;
+            }
+            setIsLoading(true);
+            try {
+              var result = await authService.loginWithGoogle(response.credential);
+              if (result.success) {
+                notificationService.success('Connexion Google reussie !');
+                window.location.href = '/dashboard';
+              } else {
+                notificationService.error(result.error || 'Echec Google.');
+              }
+            } catch (err) {
+              console.error(err);
+              notificationService.error('Echec authentification Google.');
+            } finally {
+              setIsLoading(false);
+            }
+          },
+          auto_select: false,
+          cancel_on_tap_outside: true,
+        });
+
+        if (googleBtnRef.current) {
+          googleBtnRef.current.innerHTML = '';
+          window.google.accounts.id.renderButton(googleBtnRef.current, {
+            theme: 'outline',
+            size: 'large',
+            width: Math.min(360, googleBtnRef.current.clientWidth || 360),
+            text: 'continue_with',
+            shape: 'rectangular',
+            logo_alignment: 'left',
+          });
+        }
+        if (!cancelled) setGoogleReady(true);
+      } catch (e) {
+        console.warn('Google GIS non disponible:', e);
+        if (!cancelled) setGoogleReady(false);
+      }
+    })();
+
+    return function () { cancelled = true; };
+  }, []);
+
+  const handleInputChange = function (e) {
+    var name = e.target.name;
+    var value = e.target.value;
+    setCredentials(function (prev) {
+      return Object.assign({}, prev, { [name]: value });
+    });
   };
 
-  const handleFormSubmit = async (e) => {
+  const handleFormSubmit = async function (e) {
     e.preventDefault();
     if (!credentials.email.includes('@') || credentials.password.length < 6) {
-      notificationService.error("Saisissez un email valide et un mot de passe de 6 caractères minimum.");
+      notificationService.error('Saisissez un email valide et un mot de passe de 6 caracteres minimum.');
       return;
     }
 
     setIsLoading(true);
     try {
-      notificationService.info("Chiffrement de la session et vérification ARCA...");
-      await authService.login(credentials.email, credentials.password);
-      notificationService.success("Connexion validée avec succès !");
-      window.location.href = '/dashboard';
-    } catch (error) {
-      if (authService.isLoggedIn()) {
-        notificationService.success("Session active détectée. Redirection...");
+      notificationService.info('Verification securisee en cours...');
+      var result = await authService.login(credentials.email, credentials.password);
+      if (result && result.success) {
+        notificationService.success('Connexion validee avec succes !');
         window.location.href = '/dashboard';
       } else {
-        notificationService.error("Identifiants incorrects ou serveur indisponible.");
+        notificationService.error((result && result.error) || 'Identifiants incorrects.');
       }
+    } catch (error) {
+      console.error(error);
+      notificationService.error('Identifiants incorrects ou serveur indisponible.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const socialLogins = [
-    { id: 'google', name: 'Google', icon: <FaGoogle />, color: 'hover:bg-red-50 hover:text-red-600 hover:border-red-200' },
-    { id: 'github', name: 'GitHub', icon: <FaGithub />, color: 'hover:bg-slate-900 hover:text-white hover:border-slate-900' },
-    { id: 'apple', name: 'Apple', icon: <FaApple />, color: 'hover:bg-black hover:text-white hover:border-black' },
-  ];
-
   return (
-    <div className="min-h-screen bg-[#090d16] flex items-center justify-center px-4 relative overflow-hidden font-sans">
-      {/* Arrière-plan technique discret harmonisé Onyx */}
+    <div className="min-h-dvh bg-[#090d16] flex items-center justify-center px-3 py-4 relative overflow-x-hidden overflow-y-auto font-sans">
       <div className="absolute inset-0 bg-[radial-gradient(#CE1126_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.05] z-10" />
-      
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="relative z-20 w-full max-w-[440px] bg-[#111827] p-8 md:p-12 shadow-[0_30px_100px_rgba(0,0,0,0.8)] border border-slate-800 flex flex-col rounded-none"
-      >
-        {/* En-tête ESNAs - Couleurs ajustées pour fond sombre */}
-        <div className="text-center mb-10">
-          <div className="w-12 h-12 bg-[#CE1126] text-white flex items-center justify-center mx-auto mb-6 shadow-lg rounded-none">
+
+      <div className="relative z-20 w-full max-w-[420px] bg-[#111827] p-5 sm:p-7 shadow-[0_30px_100px_rgba(0,0,0,0.8)] border border-slate-800 flex flex-col rounded-none animate-fadeIn">
+        <div className="text-center mb-5">
+          <div className="w-10 h-10 bg-[#CE1126] text-white flex items-center justify-center mx-auto mb-3 shadow-lg rounded-none">
             <FaShieldAlt size={20} />
           </div>
           <h1 className="text-2xl font-black uppercase tracking-tighter text-white leading-none">
             ESNAs <span className="text-[#CE1126]">DRC</span>
           </h1>
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mt-3">
-            Authentification Sécurisée ARCA
+            Authentification Securisee ARCA
           </p>
         </div>
 
-        {/* Authentification Sociale - Boutons assombris */}
-        <div className="grid grid-cols-3 gap-3 mb-8">
-          {socialLogins.map((social) => (
+        <div className="mb-4 flex flex-col items-center gap-2">
+          <div ref={googleBtnRef} className="w-full flex justify-center min-h-[44px]" />
+          {!googleReady && (
             <button
-              key={social.id}
               type="button"
-              onClick={() => handleSocialLogin(social.name)}
-              className={`flex items-center justify-center py-3 border border-slate-800 text-slate-300 transition-all duration-300 rounded-none text-lg bg-[#090d16] ${social.color}`}
+              disabled
+              className="w-full flex items-center justify-center gap-3 py-3 border border-slate-800 text-slate-500 bg-[#090d16] text-sm font-bold cursor-not-allowed"
+              title={googleClientId ? 'Chargement Google...' : 'Configurez VITE_GOOGLE_CLIENT_ID / GOOGLE_CLIENT_ID'}
             >
-              {social.icon}
+              <FaGoogle /> Continuer avec Google
+              {!googleClientId && (
+                <span className="text-[9px] uppercase text-slate-600">(non configure)</span>
+              )}
             </button>
-          ))}
+          )}
         </div>
 
-        <div className="relative flex py-2 items-center mb-8">
-          <div className="flex-grow border-t border-slate-800"></div>
-          <span className="flex-shrink mx-4 text-[9px] font-black text-slate-500 uppercase tracking-widest">Ou via email</span>
-          <div className="flex-grow border-t border-slate-800"></div>
+        <div className="relative flex py-1 items-center mb-4">
+          <div className="flex-grow border-t border-slate-800" />
+          <span className="flex-shrink mx-4 text-[9px] font-black text-slate-500 uppercase tracking-widest">
+            Ou via email
+          </span>
+          <div className="flex-grow border-t border-slate-800" />
         </div>
 
-        <form onSubmit={handleFormSubmit} className="space-y-6">
-          <div className="space-y-2">
+        <form onSubmit={handleFormSubmit} className="space-y-3">
+          <div className="space-y-1">
             <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Email</label>
-            <input 
-              type="email" name="email" required value={credentials.email} onChange={handleInputChange}
-              placeholder="votre@email.com" 
-              className="w-full border border-slate-800 bg-[#090d16] px-4 py-3 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none placeholder-slate-600" 
+            <input
+              type="email"
+              name="email"
+              required
+              autoComplete="email"
+              value={credentials.email}
+              onChange={handleInputChange}
+              placeholder="votre@email.com"
+              className="w-full border border-slate-800 bg-[#090d16] px-3 py-2.5 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none placeholder-slate-600"
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1">
             <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Mot de passe</label>
-            <input 
-              type="password" name="password" required value={credentials.password} onChange={handleInputChange}
-              placeholder="••••••••" 
-              className="w-full border border-slate-800 bg-[#090d16] px-4 py-3 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none placeholder-slate-600" 
+            <input
+              type="password"
+              name="password"
+              required
+              autoComplete="current-password"
+              value={credentials.password}
+              onChange={handleInputChange}
+              placeholder="••••••••"
+              className="w-full border border-slate-800 bg-[#090d16] px-3 py-2.5 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none placeholder-slate-600"
             />
           </div>
 
-          <div className="pt-4">
-            <button 
-              type="submit" disabled={isLoading}
-              className="w-full py-4 bg-white text-black font-black uppercase text-[10px] tracking-[0.2em] transition-all active:scale-95 disabled:opacity-30 flex items-center justify-center gap-3 shadow-xl rounded-none hover:bg-[#CE1126] hover:text-white"
+          <div className="pt-1">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 bg-white text-black font-black uppercase text-[10px] tracking-[0.2em] transition-all active:scale-95 disabled:opacity-30 flex items-center justify-center gap-3 shadow-xl rounded-none hover:bg-[#CE1126] hover:text-white"
             >
-              {isLoading ? <FaSpinner className="animate-spin" size={14} /> : (
-                <><span>Se connecter</span><FaArrowRight size={10} /></>
+              {isLoading ? (
+                <FaSpinner className="animate-spin" size={14} />
+              ) : (
+                <>
+                  <span>Se connecter</span>
+                  <FaArrowRight size={10} />
+                </>
               )}
             </button>
           </div>
         </form>
 
-        <div className="mt-8 pt-6 border-t border-slate-800 text-center">
+        <div className="mt-4 pt-4 border-t border-slate-800 text-center">
           <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
             Nouveau sur la plateforme ?
-            <span onClick={() => navigate('/register')} className="text-[#CE1126] cursor-pointer hover:text-red-500 pl-2 underline underline-offset-4">
-              Créer un compte
+            <span
+              onClick={function () { navigate('/register'); }}
+              className="text-[#CE1126] cursor-pointer hover:text-red-500 pl-2 underline underline-offset-4"
+            >
+              Creer un compte
             </span>
           </p>
         </div>
-      </motion.div>
+      </div>
 
-      {/* Signature tricolore RDC fine */}
       <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#00A3E0] via-[#CE1126] to-[#FDD100] opacity-30" />
     </div>
   );
