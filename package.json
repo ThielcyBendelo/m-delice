@@ -23,6 +23,7 @@
     "@stripe/stripe-js": "^8.3.0",
     "bcryptjs": "^3.0.3",
     "body-parser": "^2.2.0",
+    "caniuse-lite": "1.0.30001797",
     "chart.js": "^4.5.1",
     "cors": "^2.8.6",
     "dompurify": "^3.3.0",
