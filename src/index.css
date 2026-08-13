@@ -23,6 +23,175 @@
   --accent-bleu-rgb: 0 163 224;
 }
 
+/* Le thème sombre reste inchangé. Ces règles ne s'activent que lorsque
+   l'utilisateur choisit explicitement le mode clair. */
+html[data-theme="light"] {
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --text-dark: #0f172a;
+  --text-muted: #475569;
+  --border-color: #cbd5e1;
+}
+
+html[data-theme="light"] body {
+  background-color: var(--bg);
+  color: var(--text-dark);
+}
+
+html[data-theme="light"] .bg-\[\#090d16\] {
+  background-color: #f8fafc;
+}
+
+html[data-theme="light"] .bg-\[\#111827\] {
+  background-color: #ffffff;
+}
+
+html[data-theme="light"] .bg-slate-950 {
+  background-color: #e2e8f0;
+}
+
+html[data-theme="light"] .text-white {
+  color: #0f172a;
+}
+
+html[data-theme="light"] .text-slate-300,
+html[data-theme="light"] .text-slate-400,
+html[data-theme="light"] .text-slate-500 {
+  color: #475569;
+}
+
+html[data-theme="light"] .border-slate-800,
+html[data-theme="light"] .border-slate-900 {
+  border-color: #cbd5e1;
+}
+
+html[data-theme="light"] input,
+html[data-theme="light"] textarea,
+html[data-theme="light"] select {
+  color: #0f172a;
+}
+
+html[data-theme="light"] .hero-section {
+  background: #eef2f7;
+  border-color: #d7dee8;
+}
+
+html[data-theme="light"] .hero-section .hero-card {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: #d5dde8;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.14);
+}
+
+html[data-theme="light"] .hero-section .hero-kicker {
+  color: #334155;
+}
+
+html[data-theme="light"] .hero-section .hero-title {
+  color: #0f172a;
+}
+
+html[data-theme="light"] .hero-section .hero-description-text {
+  color: #475569;
+}
+
+html[data-theme="light"] .hero-section .hero-description {
+  border-top: 0;
+  border-bottom: 0;
+}
+
+.hero-description-rule {
+  display: block;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00a3e0 25%, #ce1126 75%, transparent);
+  opacity: 0.9;
+}
+
+html[data-theme="dark"] .hero-section .hero-description-text {
+  color: #e2e8f0;
+  text-shadow: 0 1px 12px rgba(0, 163, 224, 0.2);
+}
+
+html[data-theme="dark"] .hero-section .hero-description {
+  background: rgba(15, 23, 42, 0.42);
+}
+
+html[data-theme="light"] .hero-section .hero-description-rule {
+  background: linear-gradient(90deg, transparent, #0284c7 25%, #b91c1c 75%, transparent);
+  opacity: 0.85;
+}
+
+html[data-theme="light"] .hero-section .hero-primary-button {
+  border-color: #0f172a;
+  background-color: #0f172a;
+  color: #ffffff;
+}
+
+html[data-theme="light"] .hero-section .hero-secondary-button {
+  border-color: #b91c1c;
+  color: #991b1b;
+}
+
+html[data-theme="light"] .navbar-main {
+  background-color: rgba(255, 255, 255, 0.96);
+  border-color: #d7dee8;
+}
+
+html[data-theme="light"] .navbar-main .text-white,
+html[data-theme="light"] .navbar-main .text-slate-300,
+html[data-theme="light"] .navbar-main .text-slate-400 {
+  color: #0f172a;
+}
+
+html[data-theme="light"] .navbar-sub {
+  background-color: rgba(248, 250, 252, 0.97);
+  border-color: #d7dee8;
+  color: #334155;
+}
+
+html[data-theme="light"] .navbar-sub .text-slate-300,
+html[data-theme="light"] .navbar-sub .text-slate-400 {
+  color: #334155;
+}
+
+html[data-theme="light"] .navbar-language-select,
+html[data-theme="light"] .navbar-language-select option {
+  color: #0f172a;
+  background-color: #ffffff;
+}
+
+html[data-theme="light"] .navbar-menu-toggle {
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+}
+
+html[data-theme="dark"] .navbar-menu-toggle {
+  border: 1px solid #334155;
+  background: #111827;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+html[data-theme="light"] .navbar-mobile-menu {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+html[data-theme="light"] .navbar-mobile-menu .text-white,
+html[data-theme="light"] .navbar-mobile-menu .text-slate-200,
+html[data-theme="light"] .navbar-mobile-menu .text-slate-400 {
+  color: #0f172a;
+}
+
+html[data-theme="light"] .navbar-mobile-menu .bg-\[\#111827\] {
+  background-color: #ffffff;
+}
+
+html[data-theme="dark"] .hero-section .hero-description {
+  border-top: 1px solid rgba(148, 163, 184, 0.18);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+}
+
 /* =========================================================================
     2. RÈGLES DE BASE (HTML, BODY, TYPOGRAPHIES RECTILIGNES)
    ========================================================================= */

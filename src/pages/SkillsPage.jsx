@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import NavbarSecured from '../components/NavbarSecured';
 import Footer from '../components/Footer';
+import claimService from '../services/claimService.js';
+import notificationService from '../services/notificationService';
 // 🟢 CORRIGÉ : Inclusion explicite de FaCheckCircle et de toutes les icônes requises pour le formulaire
 import { 
   FaShieldAlt, FaCalendarAlt, FaUser, FaClipboardList, 
@@ -12,7 +13,6 @@ import {
 
 
 export default function ClaimsDeclarationPage() {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     policyNumber: '',
     insuredName: '',
@@ -23,17 +23,38 @@ export default function ClaimsDeclarationPage() {
     contactPhone: '',
     contactEmail: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittedClaim, setSubmittedClaim] = useState(null);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Envoi des données (Prisma/SQL ou API simulée)
-    console.log('Déclaration soumise', formData);
-    navigate('/confirmation-declaration');
+    const estimatedCost = Number.parseFloat(String(formData.amount).replace(',', '.').replace(/[^0-9.]/g, ''));
+    if (formData.amount && (!Number.isFinite(estimatedCost) || estimatedCost <= 0)) {
+      notificationService.error('Saisissez un montant estimé valide en USD.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const result = await claimService.fileClaim({
+        policyNumber: formData.policyNumber.trim(),
+        eventDate: formData.incidentDate,
+        description: `${formData.insuredName.trim()} - ${formData.incidentType}: ${formData.description.trim()}`,
+        estimatedCost: estimatedCost || 0,
+      });
+      if (!result.success) throw new Error(result.error);
+      setSubmittedClaim(result);
+      notificationService.success(`Déclaration enregistrée : ${result.claimNumber}`);
+    } catch (error) {
+      notificationService.error(error.message || 'Impossible de soumettre la déclaration.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -212,11 +233,18 @@ export default function ClaimsDeclarationPage() {
             <div className="pt-4">
               <button
                 type="submit"
-                className="w-full sm:w-auto px-12 py-5 bg-white text-black font-black uppercase text-[10px] md:text-[11px] tracking-[0.25em] shadow-xl hover:bg-[#CE1126] hover:text-white transition-all duration-300 rounded-none active:scale-[0.98] focus:outline-none"
+                disabled={isSubmitting || submittedClaim}
+                className="w-full sm:w-auto px-12 py-5 bg-white text-black font-black uppercase text-[10px] md:text-[11px] tracking-[0.25em] shadow-xl hover:bg-[#CE1126] hover:text-white transition-all duration-300 rounded-none active:scale-[0.98] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Soumettre la déclaration
+                {isSubmitting ? 'Envoi en cours...' : submittedClaim ? 'Déclaration enregistrée' : 'Soumettre la déclaration'}
               </button>
             </div>
+            {submittedClaim && (
+              <div className="border border-emerald-500/40 bg-emerald-500/10 p-5 text-emerald-300" role="status">
+                <p className="text-xs font-black uppercase tracking-wider">Dossier créé : {submittedClaim.claimNumber}</p>
+                <p className="mt-2 text-sm">Votre déclaration a été transmise. Solde disponible : {submittedClaim.remainingLimit ?? 'en cours de calcul'} USD.</p>
+              </div>
+            )}
           </motion.form>
 
                     {/* Aside : Assistance & Rappel Légal (VERSION SOMBRE ONYX) */}

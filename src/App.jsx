@@ -4,6 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { ThemeProvider } from './contexts/ThemeContext.jsx';
+import { LanguageProvider } from './contexts/LanguageContext.jsx';
 
 // =========================================================================
 // 1. PORTAIL PUBLIC : VITRINE & TUNNELS (Dossier src/pages/)
@@ -135,6 +136,7 @@ const App = () => {
 
   return (
     <ThemeProvider>
+      <LanguageProvider>
       {!splashDone && (
         <ProfessionalSplashScreen onComplete={() => setSplashDone(true)} />
       )}
@@ -156,6 +158,7 @@ const App = () => {
           </Suspense>
         </div>
       )}
+      </LanguageProvider>
     </ThemeProvider>
   );
 };

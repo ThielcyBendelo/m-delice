@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Services
-import notificationService from '../services/notificationService';
 import audioService from '../services/audioService';
 import authService from '../services/authService';
+import { useTheme } from '../contexts/ThemeContext.jsx';
+import { useLanguage } from '../contexts/LanguageContext.jsx';
 
 // Icônes épurées adaptées à la Fintech et l'Assurance
 import { 
@@ -13,10 +15,13 @@ import {
   FaSearch, FaUserShield, FaUserCircle,
   FaCalculator, FaBriefcaseMedical, FaBalanceScale, FaHome
 } from 'react-icons/fa';
+import { FaMoon, FaSun, FaGlobe, FaCircle } from 'react-icons/fa';
 
 export default function NavbarSecured() {
   const navigate = useNavigate();
   const menuRef = useRef(null);
+  const { isDark, toggleTheme } = useTheme();
+  const { language, setLanguage } = useLanguage();
   
   // États d'affichage de l'interface au clic
   const [isOpen, setIsOpen] = useState(false); // Menu mobile open/close
@@ -24,7 +29,6 @@ export default function NavbarSecured() {
   const [activeMobileCategory, setActiveMobileCategory] = useState(null); // Sous-menu mobile actif
   
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
   const [isSticky, setIsSticky] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -57,12 +61,10 @@ export default function NavbarSecured() {
   useEffect(() => {
     authService.initialize().then(() => {
       setIsAuthenticated(authService.isLoggedIn());
-      setCurrentUser(authService.getCurrentUser());
     });
 
     const interval = setInterval(() => {
       setIsAuthenticated(authService.isLoggedIn());
-      setCurrentUser(authService.getCurrentUser());
     }, 2000);
 
     return () => clearInterval(interval);
@@ -121,13 +123,13 @@ export default function NavbarSecured() {
       
      
      return (
-    <>
+    <div data-language-scope="navbar">
       {/* ================= BARRE DE NAVIGATION SECURED (VERSION SOMBRE ONYX) ================= */}
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 border-b border-slate-900 bg-[#090d16]/90 backdrop-blur-md ${
-        isSticky ? 'py-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.5)]' : 'py-2.5'
+        <nav className={`navbar-main fixed top-0 w-full z-50 transition-all duration-300 border-b border-slate-900 bg-[#090d16]/95 backdrop-blur-md ${
+        isSticky ? 'shadow-[0_10px_30px_rgba(0,0,0,0.5)]' : ''
       }`}>
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="flex justify-between h-16 items-center relative w-full">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex justify-between h-14 items-center relative w-full">
 
             {/* BLOC 1 : LOGO FINTECH ULTRA-COMPACT TYPOGRAPHIQUE SOMBRE */}
             <motion.div 
@@ -135,12 +137,12 @@ export default function NavbarSecured() {
               className="flex items-center gap-3 cursor-pointer shrink-0 group select-none" 
               onClick={(e) => handleNavClick('/', e)}
             >
-              <div className="flex items-baseline font-black tracking-tight text-xl md:text-2xl text-white uppercase">
+              <div className="flex items-baseline font-black tracking-tight text-lg md:text-xl text-white uppercase">
                 ESNA
                 <span className="text-[#CE1126] lowercase font-extrabold -ml-[1px]">s</span>
               </div>
 
-              <div className="flex flex-col justify-center border-l-2 border-white pl-3 py-0.5">
+              <div className="hidden sm:flex flex-col justify-center border-l-2 border-white pl-2 py-0.5">
                 <span className="text-[8px] uppercase tracking-[0.25em] text-[#CE1126] font-black leading-none mb-0.5">
                   Agrément
                 </span>
@@ -151,12 +153,12 @@ export default function NavbarSecured() {
             </motion.div>
 
             {/* BLOC 2 : NAVIGATION DESKTOP : ACTIONS AU CLIC (VERSION SOMBRE) */}
-            <div className="hidden lg:flex items-center gap-8">
+            <div className="hidden lg:flex items-center gap-6">
               {navCategories.map((category) => (
                 <div key={category.id} className="relative py-2">
                   <button 
                     onClick={() => toggleCategory(category.id)}
-                    className={`flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest transition-colors focus:outline-none ${
+                    className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest transition-colors focus:outline-none ${
                       activeCategory === category.id ? 'text-[#CE1126]' : 'text-slate-300 hover:text-white'
                     }`}
                   >
@@ -197,10 +199,10 @@ export default function NavbarSecured() {
             </div>
 
             {/* 🟢 BLOC 3 DE REGROUPEMENT : ACTIONS ET COMMUTATEURS MOBILE SUR UNE MÊME LIGNE */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               
               {/* ACTION TRANSACTIONNELLE : RECHERCHE & AUTH FINTECH (VERSION SOMBRE) */}
-              <div className="flex items-center gap-2 border-l border-slate-800 pl-4">
+              <div className="flex items-center gap-2 border-l border-slate-800 pl-3">
                 <div className="relative flex items-center">
                   <AnimatePresence>
                     {searchOpen && (
@@ -219,7 +221,7 @@ export default function NavbarSecured() {
                   
                   <button 
                     onClick={() => setSearchOpen(!searchOpen)}
-                    className="p-1.5 text-slate-400 hover:text-[#CE1126] transition-colors focus:outline-none"
+                    className="navbar-icon-button p-1.5 text-slate-400 hover:text-[#CE1126] transition-colors focus:outline-none"
                   >
                     <FaSearch size={12} />
                   </button>
@@ -229,14 +231,14 @@ export default function NavbarSecured() {
                 {isAuthenticated ? (
                   <button 
                     onClick={(e) => handleNavClick('/dashboard', e)}
-                    className="p-1 text-slate-400 hover:text-[#CE1126] transition-colors focus:outline-none"
+                    className="navbar-icon-button p-1 text-slate-400 hover:text-[#CE1126] transition-colors focus:outline-none"
                   >
                     <FaUserCircle size={18} />
                   </button>
                 ) : (
                   <button 
                     onClick={(e) => handleNavClick('/login', e)}
-                    className="ml-2 px-5 py-2 bg-white text-black font-black uppercase text-[9px] tracking-widest hover:bg-[#CE1126] hover:text-white transition-all duration-200 rounded-none shadow-md"
+                    className="ml-1 px-4 py-1.5 bg-white text-black font-black uppercase text-[9px] tracking-widest hover:bg-[#CE1126] hover:text-white transition-all duration-200 rounded-none shadow-md"
                   >
                     Connexion
                   </button>
@@ -245,9 +247,9 @@ export default function NavbarSecured() {
 
               {/* COMMUTATEUR DU MENU MOBILE (PROPREMENT IMBRIQUÉ À DROITE) */}
               <div className="flex lg:hidden items-center">
-                <button 
+                  <button
                   onClick={() => setIsOpen(!isOpen)} 
-                  className="p-2 text-white hover:text-[#CE1126] transition-colors focus:outline-none rounded-none"
+                  className="navbar-menu-toggle p-2 text-white hover:text-[#CE1126] transition-colors focus:outline-none rounded-none"
                   aria-label="Menu"
                 >
                   {isOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
@@ -267,7 +269,7 @@ export default function NavbarSecured() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed inset-0 z-50 lg:hidden bg-[#090d16] text-white flex flex-col h-screen w-screen rounded-none overflow-y-auto"
+              className="navbar-mobile-menu fixed inset-0 z-50 lg:hidden bg-[#090d16] text-white flex flex-col h-screen w-screen rounded-none overflow-y-auto"
             >
               {/* En-tête interne du menu plein écran pour la fermeture */}
               <div className="flex items-center justify-between px-6 h-20 border-b border-slate-900 bg-[#111827]">
@@ -275,9 +277,9 @@ export default function NavbarSecured() {
                   ESNA
                   <span className="text-[#CE1126] lowercase font-extrabold -ml-[1px]">s</span>
                 </div>
-                <button 
+                <button
                   onClick={() => setIsOpen(false)} 
-                  className="p-2 text-white hover:text-[#CE1126] transition-colors rounded-none focus:outline-none"
+                  className="navbar-menu-toggle p-2 text-white hover:text-[#CE1126] transition-colors rounded-none focus:outline-none"
                 >
                   <FaTimes size={24} />
                 </button>
@@ -349,6 +351,50 @@ export default function NavbarSecured() {
           )}
         </AnimatePresence>
       </nav>
-    </>
+
+        <div className="navbar-sub fixed top-14 z-40 w-full border-b border-slate-800 bg-[#111827]/95 backdrop-blur-md">
+        <div className="mx-auto flex h-9 max-w-7xl items-center justify-between gap-3 px-4 text-[10px] font-black uppercase tracking-wider text-slate-400 sm:px-6">
+          <div className="flex min-w-0 items-center gap-2">
+            <FaCircle className="text-emerald-400" size={7} aria-hidden="true" />
+            <span className="hidden sm:inline">Service sécurisé</span>
+            <span className="sm:hidden">Sécurisé</span>
+          </div>
+
+          <div className="flex items-center gap-1 sm:gap-2">
+            <label className="flex items-center gap-1.5 border-r border-slate-700 pr-2" title="Langue de l'interface">
+              <FaGlobe className="text-[#00A3E0]" size={11} aria-hidden="true" />
+              <select
+                value={language}
+                onChange={(event) => setLanguage(event.target.value)}
+                aria-label="Langue de l'interface"
+                className="navbar-language-select cursor-pointer bg-transparent text-[10px] font-black text-slate-300 outline-none"
+              >
+                <option value="fr" className="bg-[#111827]">FR</option>
+                <option value="en" className="bg-[#111827]">EN</option>
+              </select>
+            </label>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              title={isDark ? 'Activer le mode clair' : 'Activer le mode sombre'}
+              aria-label={isDark ? 'Activer le mode clair' : 'Activer le mode sombre'}
+              className="navbar-control flex items-center gap-1.5 border-r border-slate-700 px-2 text-slate-300 transition-colors hover:text-white"
+            >
+              {isDark ? <FaSun className="text-[#FDD100]" size={11} /> : <FaMoon className="text-[#00A3E0]" size={11} />}
+              <span className="hidden md:inline">{isDark ? 'Clair' : 'Sombre'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={(event) => handleNavClick('/verification-hopital', event)}
+              title="Vérifier une police"
+              className="navbar-control hidden items-center gap-1.5 px-2 text-slate-300 transition-colors hover:text-white sm:flex"
+            >
+              <FaShieldAlt className="text-[#CE1126]" size={11} />
+              <span>Vérifier</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

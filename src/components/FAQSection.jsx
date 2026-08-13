@@ -64,7 +64,7 @@ function FAQSection() {
                 onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
                 className="w-full py-6 md:py-7 flex items-center justify-between text-left group px-4 focus:outline-none rounded-none"
               >
-                <span className={`text-base md:text-lg font-black tracking-tight uppercase transition-colors duration-200 ${openIndex === idx ? 'text-[#CE1126]' : 'text-white group-hover:text-[#CE1126]'}`}>
+                <span className={`text-normal md:text-lg font-black tracking-tight uppercase transition-colors duration-200 ${openIndex === idx ? 'text-[#CE1126]' : 'text-white group-hover:text-[#CE1126]'}`}>
                   {faq.question}
                 </span>
                 <motion.div 

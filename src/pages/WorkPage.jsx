@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import NavbarSecured from '../components/NavbarSecured';
 import Footer from '../components/Footer';
 import notificationService from '../services/notificationService';
+import { calculateInsuranceQuote, COVERAGE_OPTIONS } from '../utils/insurancePricing';
 import { 
   FaCalculator, FaShieldAlt, FaHeartbeat, FaCar, 
   FaGraduationCap, FaUsers, FaArrowRight, FaInfoCircle, FaCheckCircle, FaPlaneDeparture
@@ -16,33 +17,7 @@ export default function WorkPage() {
   const [insuranceType, setInsuranceType] = useState('health'); 
   const [beneficiariesCount, setBeneficiariesCount] = useState(1);
   const [coverageLevel, setCoverageLevel] = useState('confort'); 
-  const [estimatedPrice, setEstimatedPrice] = useState(0);
-
-  // Logique métier FinTech préservée à 100%
-  useEffect(() => {
-    let basePrice = 0;
-    let multiplier = 1;
-
-    if (insuranceType === 'health') basePrice = 30;
-    if (insuranceType === 'auto') basePrice = 20;
-    if (insuranceType === 'student') basePrice = 12;
-    if (insuranceType === 'voyage') basePrice = 50;
-
-    if (coverageLevel === 'essentiel') multiplier = 0.8;
-    if (coverageLevel === 'confort') multiplier = 1.0;
-    if (coverageLevel === 'premium') multiplier = 1.4;
-
-    let total = 0;
-    for (let i = 1; i <= beneficiariesCount; i++) {
-      if (i === 1) {
-        total += basePrice * multiplier;
-      } else {
-        total += (basePrice * multiplier) * 0.9; 
-      }
-    }
-
-    setEstimatedPrice(Math.round(total));
-  }, [insuranceType, beneficiariesCount, coverageLevel]);
+  const quote = calculateInsuranceQuote({ insuranceType, beneficiariesCount, coverageLevel });
 
   const handleProceedToPurchase = () => {
     if (notificationService?.success) {
@@ -52,8 +27,12 @@ export default function WorkPage() {
     const simulatedPack = {
       id: insuranceType === 'health' ? 1 : insuranceType === 'auto' ? 2 : 4,
       name: `Pack ${insuranceType.charAt(0).toUpperCase() + insuranceType.slice(1)} - ${coverageLevel.toUpperCase()}`,
-      price: estimatedPrice,
-      coverageLimit: coverageLevel === 'premium' ? "Plafond annuel : 7 500 USD" : "Plafond annuel : 3 500 USD"
+      price: quote.monthlyPrice,
+      branch: quote.branch,
+      insuranceType,
+      coverageLevel,
+      beneficiariesCount: quote.beneficiariesCount,
+      coverageLimit: quote.coverageLimit
     };
 
     navigate('/inscription-beneficiaire', { state: { selectedPack: simulatedPack } });
@@ -202,7 +181,7 @@ export default function WorkPage() {
     {/* AFFICHEUR DU PRIX MASSIVEMENT ACCENTUÉ */}
     <div className="py-4 flex items-baseline gap-2">
       <span className="text-6xl md:text-7xl font-black tracking-tighter text-white">
-        {estimatedPrice}
+        {quote.monthlyPrice}
       </span>
       <span className="text-xl font-bold uppercase text-[#CE1126] tracking-widest">USD / Mois</span>
     </div>
@@ -216,6 +195,10 @@ export default function WorkPage() {
       <div className="flex items-center gap-3">
         <FaCheckCircle className="text-[#CE1126] flex-shrink-0" size={14} />
         <span>Plafond annuel garanti conforme ARCA</span>
+      </div>
+      <div className="flex items-center gap-3">
+        <FaShieldAlt className="text-[#CE1126] flex-shrink-0" size={14} />
+        <span>{quote.coverageLimit} · {quote.coverageLabel}</span>
       </div>
       <div className="flex items-center gap-3">
         <FaInfoCircle className="text-[#CE1126] flex-shrink-0" size={14} />

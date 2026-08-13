@@ -24,7 +24,10 @@ export const ThemeProvider = ({ children }) => {
   // Appliquer le thème au document
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('theme', theme);
+
+    return () => document.documentElement.classList.remove('dark');
   }, [theme]);
 
   // Fonction pour basculer le thème

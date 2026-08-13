@@ -1,6 +1,7 @@
 // AJOUT EXPLICITE DE useEffect DANS LES IMPORTS DE BASE
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import NavbarSecured from '../components/NavbarSecured';
 import Footer from '../components/Footer';
@@ -9,6 +10,7 @@ import {
   FaPlane, FaCheckCircle, FaShoppingCart, FaInfoCircle,
   FaTimes, FaLock, FaWhatsapp, FaDownload, FaFilter 
 } from 'react-icons/fa';
+import { quoteFromPack } from '../utils/insurancePricing';
 
 // Simulation de données des packs d'assurance disponibles
 const insurancePacks = [
@@ -83,6 +85,13 @@ const insurancePacks = [
 ];
 
 export default function BoutiquePage() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [activeFilter, setActiveFilter] = useState("Tous");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isPayModalOpen, setIsPayModalOpen] = useState(false);
+  const [selectedPack, setSelectedPack] = useState(null);
+
     // À mettre juste après la déclaration de vos states dans BoutiquePage()
 useEffect(() => {
   const state = location.state;
@@ -93,14 +102,6 @@ useEffect(() => {
     window.history.replaceState({}, document.title);
   }
 }, [location]);
-
-  const navigate = useNavigate();
-  const [activeFilter, setActiveFilter] = useState("Tous");
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  // CONFIGURATION DES ÉTATS DE PILOTAGE POUR LA MODALE
-  const [isPayModalOpen, setIsPayModalOpen] = useState(false);
-  const [selectedPack, setSelectedPack] = useState(null);
 
   const categories = ["Tous", "Santé", "Automobile", "Scolaire", "Voyage"];
 
@@ -320,7 +321,8 @@ useEffect(() => {
       <MobileMoneyModal 
         isOpen={isPayModalOpen} 
         onClose={() => setIsPayModalOpen(false)} 
-        pack={selectedPack} 
+        pack={selectedPack}
+        navigate={navigate}
       />
     </div>
   );
@@ -328,59 +330,83 @@ useEffect(() => {
 
 
 // ================= PASSERELLE LOGIQUE MULTI-OPÉRATEURS DE LA RDC =================
-function MobileMoneyModal({ isOpen, onClose, pack }) {
-  const [etape, setEtape] = useState('selection'); 
+function MobileMoneyModal({ isOpen, onClose, pack, navigate }) {
   const [operateur, setOperateur] = useState(null);
   const [telephone, setTelephone] = useState('');
-  const [numeroAttestation, setNumeroAttestation] = useState('');
+  const [beneficiariesCount, setBeneficiariesCount] = useState(1);
+  const [coverageLevel, setCoverageLevel] = useState('confort');
+  const [validationError, setValidationError] = useState('');
+  const quote = quoteFromPack(pack, beneficiariesCount, coverageLevel);
 
    useEffect(() => {
     if (isOpen) {
-      setEtape('selection');
       setOperateur(null);
       setTelephone('');
+      setBeneficiariesCount(1);
+      setCoverageLevel('confort');
+      setValidationError('');
     }
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [isOpen]);
 
   if (!pack) return null;
 
   const ExecuterPaiement = (e) => {
-    e.preventDefault();
-    if (!operateur || telephone.length < 9) return;
-    setEtape('attente');
-    setTimeout(() => {
-      const randNum = Math.floor(100000 + Math.random() * 900000);
-      setNumeroAttestation(`DRC-ARCA-${randNum}`);
-      setEtape('succes');
-    }, 4000);
+    e?.preventDefault();
+    if (!operateur) {
+      setValidationError('Sélectionnez un opérateur Mobile Money.');
+      return;
+    }
+    if (telephone.length !== 9) {
+      setValidationError('Saisissez exactement 9 chiffres après +243.');
+      return;
+    }
+    setValidationError('');
+    navigate('/inscription-beneficiaire', {
+      state: {
+        selectedPack: {
+          ...pack,
+          price: quote.monthlyPrice,
+          branch: quote.branch,
+          insuranceType: quote.insuranceType,
+          coverageLevel,
+          beneficiariesCount: quote.beneficiariesCount,
+          coverageLimit: quote.coverageLimit,
+        },
+      },
+    });
+    onClose();
   };
 
-    return (
+    return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-[#090d16]/80 backdrop-blur-xl">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-y-auto p-4 bg-[#090d16]/80 backdrop-blur-xl overscroll-contain">
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", duration: 0.4 }}
-            className="w-full max-w-md bg-[#111827] border border-slate-800 rounded-none shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden relative"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="mobile-money-modal-title"
+            className="my-auto max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto overscroll-contain bg-[#111827] border border-slate-800 rounded-none shadow-[0_30px_100px_rgba(0,0,0,0.8)] relative"
           >
             {/* BOUTON FERMER : Angles droits style Luxe Sombre */}
-            {etape !== 'attente' && (
-              <button 
-                onClick={onClose} 
-                className="absolute top-4 right-4 p-2 text-slate-500 hover:text-[#CE1126] rounded-none transition-colors z-30 focus:outline-none"
-              >
-                <FaTimes size={18} />
-              </button>
-            )}
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 p-2 text-slate-500 hover:text-[#CE1126] rounded-none transition-colors z-30 focus:outline-none"
+            >
+              <FaTimes size={18} />
+            </button>
 
             {/* ================= ÉTAPE 1 : SELECTION ET FORMULAIRE (VERSION ONYX) ================= */}
-            {etape === 'selection' && (
-              <div className="p-8 space-y-8">
+                          <div className="p-8 space-y-8">
                 <div className="text-center space-y-2 pr-6">
-                  <h3 className="text-2xl font-black text-white uppercase tracking-tighter">{pack.name}</h3>
+                  <h3 id="mobile-money-modal-title" className="text-2xl font-black text-white uppercase tracking-tighter">{pack.name}</h3>
                   <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">{pack.tagline}</p>
                 </div>
 
@@ -389,7 +415,7 @@ function MobileMoneyModal({ isOpen, onClose, pack }) {
                   <div className="text-left">
                     <span className="text-[9px] font-black uppercase text-slate-500 tracking-[0.15em]">Total de la prime</span>
                     <p className="text-2xl font-black text-white tracking-tighter mt-1">
-                      {pack.price} USD <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest ml-1">/ {pack.period}</span>
+                      {quote.monthlyPrice} USD <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest ml-1">/ mois</span>
                     </p>
                   </div>
                   {/* Badge Certification ARCA */}
@@ -397,6 +423,24 @@ function MobileMoneyModal({ isOpen, onClose, pack }) {
                     Taxes ARCA Incluses
                   </span>
                 </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <label className="space-y-2 text-left">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">Membres</span>
+                    <select value={beneficiariesCount} onChange={(e) => setBeneficiariesCount(Number(e.target.value))} className="w-full border border-slate-800 bg-[#090d16] p-3 text-sm font-bold text-white rounded-none">
+                      {[1, 2, 3, 4, 5, 6].map((count) => <option key={count} value={count}>{count} {count > 1 ? 'membres' : 'membre'}</option>)}
+                    </select>
+                  </label>
+                  <label className="space-y-2 text-left">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">Garantie</span>
+                    <select value={coverageLevel} onChange={(e) => setCoverageLevel(e.target.value)} className="w-full border border-slate-800 bg-[#090d16] p-3 text-sm font-bold text-white rounded-none">
+                      <option value="essentiel">Essentiel</option>
+                      <option value="confort">Confort</option>
+                      <option value="premium">Premium</option>
+                    </select>
+                  </label>
+                </div>
+                <p className="text-left text-xs font-bold text-[#CE1126]">{quote.coverageLimit} · réduction famille {quote.familyDiscount}%</p>
 
 
                 <form onSubmit={ExecuterPaiement} className="space-y-6">
@@ -432,9 +476,7 @@ function MobileMoneyModal({ isOpen, onClose, pack }) {
       <span className="absolute left-0 bottom-3 text-lg font-bold text-slate-500 pointer-events-none">+243</span>
       <input 
         type="tel" 
-        required 
         placeholder="812345678" 
-        minLength={9} 
         maxLength={9}
         value={telephone} 
         onChange={(e) => setTelephone(e.target.value.replace(/\D/g, ''))}
@@ -444,68 +486,17 @@ function MobileMoneyModal({ isOpen, onClose, pack }) {
   </div>
 
   {/* Action finale : Rectangulaire, Blanche vers Rouge */}
-  <button 
-    type="submit" 
-    disabled={!operateur || telephone.length !== 9} 
-    className="w-full py-5 bg-white text-black font-black uppercase text-[11px] tracking-[0.25em] shadow-xl hover:bg-[#CE1126] hover:text-white transition-all duration-300 active:scale-95 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center gap-2 rounded-none focus:outline-none"
+  {validationError && (
+    <p className="text-center text-xs font-bold text-red-300" role="alert">{validationError}</p>
+  )}
+  <button
+    type="submit"
+    className="w-full py-5 bg-white text-black font-black uppercase text-[11px] tracking-[0.25em] shadow-xl hover:bg-[#CE1126] hover:text-white transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 rounded-none focus:outline-none"
   >
     <FaLock size={10} className="text-[#CE1126] group-hover:text-white" /> Confirmer et Payer la prime
   </button>
 </form>
 </div>
-)}
-
-{/* ================= ÉTAPE 2 : ATTENTE APPROBATION (VERSION SOMBRE) ================= */}
-{etape === 'attente' && (
-  <div className="p-10 text-center space-y-8 flex flex-col items-center">
-    <div className="w-12 h-12 border-4 border-[#CE1126] border-t-transparent rounded-none animate-spin" />
-    <div className="space-y-4">
-      <h3 className="text-xl font-black uppercase tracking-tight text-white">Approbation requise</h3>
-      <p className="text-sm text-[#94a3b8] font-semibold max-w-xs mx-auto leading-relaxed">
-        Saisissez votre <span className="text-white border-b border-[#CE1126]">code PIN secret</span> directement sur l'écran de votre téléphone pour valider le débit de la transaction.
-      </p>
-    </div>
-  </div>
-)}
-
-{/* ================= ÉTAPE 3 : RÉSULTAT SUCCÈS (BENTO SOMBRE LUXE) ================= */}
-{etape === 'succes' && (
-  <div className="p-8 text-center space-y-8">
-    <div className="w-16 h-14 bg-[#CE1126]/10 text-[#CE1126] border border-[#CE1126]/30 flex items-center justify-center text-3xl mx-auto rounded-none shadow-lg">
-      ✓
-    </div>
-    <div className="space-y-2">
-      <h3 className="text-2xl font-black text-white uppercase tracking-tight">Souscription Réussie !</h3>
-      <p className="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em]">Attestation validée par l'ARCA</p>
-    </div>
-
-    {/* Fiche récapitulative Bento Sombre */}
-    <div className="bg-[#090d16] border border-slate-800 p-6 rounded-none text-left font-mono space-y-4 text-xs shadow-inner">
-      <div className="flex justify-between items-center pb-2 border-b border-slate-800/50">
-        <span className="text-slate-500 uppercase text-[9px] font-black">Contrat ARCA :</span> 
-        <span className="font-bold text-[#CE1126]">{numeroAttestation}</span>
-      </div>
-      <div className="flex justify-between items-center pb-2 border-b border-slate-800/50">
-        <span className="text-slate-500 uppercase text-[9px] font-black">Garantie :</span> 
-        <span className="text-white font-bold">{pack.coverageLimit}</span>
-      </div>
-      <div className="flex justify-between items-center pt-1">
-        <span className="text-slate-500 uppercase text-[9px] font-black">Canal :</span> 
-        <span className="text-[#25D366] font-bold flex items-center gap-1.5"><FaWhatsapp size={14} /> WhatsApp Actif</span>
-      </div>
-    </div>
-
-    {/* Bouton final rectangulaire blanc */}
-    <div className="pt-2">
-      <button 
-        onClick={onClose} 
-        className="w-full py-5 bg-white text-black font-black uppercase text-[11px] tracking-[0.25em] hover:bg-[#CE1126] hover:text-white transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 rounded-none"
-      >
-        Terminer l'opération
-      </button>
-    </div>
-  </div>
-)}
 
 {/* Signature Visuelle Tricolore RDC fine */}
 <div className="w-full h-1 bg-gradient-to-r from-[#00A3E0] via-[#CE1126] to-[#FDD100] opacity-30" />
@@ -513,6 +504,7 @@ function MobileMoneyModal({ isOpen, onClose, pack }) {
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }
