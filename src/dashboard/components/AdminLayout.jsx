@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { resolveAvatarUrl } from '../../utils/avatarUrl';
 import {
   FaBars,
   FaBuilding,
@@ -54,7 +55,11 @@ function getInitials(user) {
 
 function Avatar({ user, size = 'h-10 w-10' }) {
   const [imageFailed, setImageFailed] = useState(false);
-  const source = user?.avatarUrl || user?.AvatarUrl || user?.picture;
+  const source = resolveAvatarUrl(user?.avatarUrl || user?.AvatarUrl || user?.picture);
+
+  useEffect(() => {
+    setImageFailed(false);
+  }, [source]);
 
   if (source && !imageFailed) {
     return (

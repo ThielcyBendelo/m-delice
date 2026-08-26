@@ -108,7 +108,7 @@ export default function PartnersPage() {
     </h1>
 
     {/* Description ajustée avec la variable grise officielle text-[#94a3b8] */}
-    <p className="text-base md:text-xl text-[#94a3b8] font-bold max-w-2xl leading-relaxed">
+    <p className="text-base md:text-xl text-[#FDD100] font-bold max-w-2xl leading-relaxed">
       Découvrez l'infrastructure de régulation nationale ARCA et les leaders de la réassurance mondiale qui certifient et solidifient chaque produit souscrit sur ESNAs.
     </p>
   </div>

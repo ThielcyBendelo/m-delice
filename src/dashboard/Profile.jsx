@@ -21,6 +21,7 @@ import {
 import authService from '../services/authService';
 import dashboardService from '../services/dashboardService';
 import notificationService from '../services/notificationService';
+import { resolveAvatarUrl } from '../utils/avatarUrl';
 
 function getInitials(user) {
   const first = String(user?.firstName || user?.FirstName || '').trim();
@@ -109,7 +110,7 @@ export default function Profile() {
     return () => { cancelled = true; };
   }, []);
 
-  const avatarUrl = currentUser.avatarUrl || currentUser.AvatarUrl || currentUser.picture || '';
+  const avatarUrl = resolveAvatarUrl(currentUser.avatarUrl || currentUser.AvatarUrl || currentUser.picture);
   const role = String(currentUser.role || 'Diaspora');
   const authProvider = String(currentUser.authProvider || currentUser.AuthProvider || 'local').toLowerCase();
   const accountType = authProvider === 'google' ? 'Compte Google' : 'Compte local';
@@ -225,6 +226,11 @@ export default function Profile() {
     if (!file) return;
     if (!/^image\/(jpeg|png|webp)$/i.test(file.type)) {
       notificationService.error('Format accepté : JPEG, PNG ou WebP.');
+      event.target.value = '';
+      return;
+    }
+    if (file.size > 1.5 * 1024 * 1024) {
+      notificationService.error('La photo ne doit pas dépasser 1,5 Mo.');
       event.target.value = '';
       return;
     }

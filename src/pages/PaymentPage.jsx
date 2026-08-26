@@ -30,16 +30,18 @@ export default function PaymentPage() {
   };
 
   const beneficiaryData = location.state?.beneficiaryData || null;
+  const paymentDetails = location.state?.paymentDetails || null;
 
-  const [paymentMethod, setPaymentMethod] = useState('card');
-  const [mobileOperator, setMobileOperator] = useState('mpesa');
+  const [paymentMethod, setPaymentMethod] = useState(paymentDetails ? 'mobile_money' : 'card');
+  const [mobileOperator, setMobileOperator] = useState(paymentDetails?.mobileOperator || 'mpesa');
+  const [payerPhone, setPayerPhone] = useState(paymentDetails?.payerPhone?.replace(/^\+243/, '') || '');
 
   useEffect(() => {
     if (!authService.isLoggedIn()) {
       notificationService.error('Connectez-vous pour finaliser le paiement.');
       navigate('/login', {
         replace: true,
-        state: { from: '/passerelle-paiement', selectedPack, beneficiaryData: location.state?.beneficiaryData },
+        state: { from: '/passerelle-paiement', selectedPack, beneficiaryData, paymentDetails },
       });
       return;
     }
@@ -60,6 +62,10 @@ export default function PaymentPage() {
     if (!authService.isLoggedIn()) {
       notificationService.error('Session expirée.');
       navigate('/login');
+      return;
+    }
+    if (paymentMethod === 'mobile_money' && !/^\d{9}$/.test(payerPhone)) {
+      notificationService.error('Saisissez exactement 9 chiffres pour le numéro Mobile Money.');
       return;
     }
 
@@ -93,7 +99,7 @@ export default function PaymentPage() {
       }
     } catch (error) {
       console.error("[Fintech Checkout Error]", error);
-      notificationService.error("Échec critique lors de l'enregistrement de la police d'assurance.");
+      notificationService.error(error.userMessage || error.message || "Échec lors de l'enregistrement de la police d'assurance.");
     } finally {
       setIsProcessing(false);
     }
@@ -264,6 +270,8 @@ export default function PaymentPage() {
                       type="tel" 
                       placeholder="812345678" 
                       maxLength="9" 
+                      value={payerPhone}
+                      onChange={(event) => setPayerPhone(event.target.value.replace(/\D/g, ''))}
                       className="w-full border-b-2 border-slate-800 bg-transparent py-3 text-lg font-bold outline-none transition focus:border-[#CE1126] text-white font-mono rounded-none placeholder-slate-600" 
                       required 
                     />

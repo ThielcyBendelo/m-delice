@@ -33,11 +33,17 @@ app.use(cors({
 }));
 
 app.use(express.json({
+  limit: '3mb',
   verify: (req, _res, buf) => {
     if (req.originalUrl && req.originalUrl.includes('/payment/webhook/stripe')) {
       req.rawBody = buf;
     }
   },
+}));
+
+app.use('/uploads/avatars', express.static(path.join(__dirname, 'uploads', 'avatars'), {
+  dotfiles: 'deny',
+  index: false,
 }));
 
 app.use('/api', apiRoutes);

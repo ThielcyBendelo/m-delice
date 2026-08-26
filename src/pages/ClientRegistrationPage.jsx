@@ -23,6 +23,7 @@ export default function ClientRegistrationPage() {
     coverageLevel: "Confort",
     coverageLimit: "Plafond annuel : 3 500 USD"
   };
+  const paymentDetails = location.state?.paymentDetails || null;
 
   // État initial du formulaire (Dualité Acheteur Diaspora / Bénéficiaire Local)
   const [formData, setFormData] = useState({
@@ -45,6 +46,7 @@ export default function ClientRegistrationPage() {
         state: {
           from: '/inscription-beneficiaire',
           selectedPack,
+          paymentDetails,
         },
       });
     }
@@ -73,7 +75,7 @@ export default function ClientRegistrationPage() {
 
     if (!authService.isLoggedIn()) {
       notificationService.error('Session requise. Connectez-vous pour continuer.');
-      navigate('/login', { state: { from: '/inscription-beneficiaire', selectedPack } });
+      navigate('/login', { state: { from: '/inscription-beneficiaire', selectedPack, paymentDetails } });
       return;
     }
 
@@ -99,6 +101,7 @@ export default function ClientRegistrationPage() {
             price: Number(selectedPack.price) || 0,
           },
           beneficiaryData,
+          paymentDetails,
         }
       });
     } catch (error) {

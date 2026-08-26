@@ -136,7 +136,7 @@ useEffect(() => {
             </h1>
             
             {/* Description Gris Argent Scannable */}
-            <p className="max-w-2xl mx-auto text-[#94a3b8] text-base md:text-xl leading-relaxed font-semibold">
+            <p className="max-w-2xl mx-auto text-[#FDD100] text-base md:text-xl leading-relaxed font-semibold">
               Sélectionnez une formule claire, ajustée aux réalités locales de la RD Congo. Pas de frais cachés, résiliation libre à tout moment.
             </p>
 
@@ -365,16 +365,29 @@ function MobileMoneyModal({ isOpen, onClose, pack, navigate }) {
       return;
     }
     setValidationError('');
+    const selectedPack = {
+      id: pack.id,
+      category: pack.category,
+      name: pack.name,
+      tagline: pack.tagline,
+      period: pack.period,
+      features: pack.features,
+      price: quote.monthlyPrice,
+      branch: quote.branch,
+      insuranceType: quote.insuranceType,
+      coverageLevel,
+      coverageLabel: quote.coverageLabel,
+      beneficiariesCount: quote.beneficiariesCount,
+      annualLimit: quote.annualLimit,
+      annualLimitPerMember: quote.annualLimitPerMember,
+      coverageLimit: quote.coverageLimit,
+    };
     navigate('/inscription-beneficiaire', {
       state: {
-        selectedPack: {
-          ...pack,
-          price: quote.monthlyPrice,
-          branch: quote.branch,
-          insuranceType: quote.insuranceType,
-          coverageLevel,
-          beneficiariesCount: quote.beneficiariesCount,
-          coverageLimit: quote.coverageLimit,
+        selectedPack,
+        paymentDetails: {
+          mobileOperator: operateur,
+          payerPhone: `+243${telephone}`,
         },
       },
     });
@@ -424,6 +437,21 @@ function MobileMoneyModal({ isOpen, onClose, pack, navigate }) {
                   </span>
                 </div>
 
+                <div className="grid grid-cols-3 border border-slate-800 bg-[#090d16] text-center">
+                  <div className="p-3 border-r border-slate-800">
+                    <span className="block text-[9px] font-black uppercase text-slate-500">Membres</span>
+                    <strong className="text-sm text-white">{quote.beneficiariesCount}</strong>
+                  </div>
+                  <div className="p-3 border-r border-slate-800">
+                    <span className="block text-[9px] font-black uppercase text-slate-500">Garantie</span>
+                    <strong className="text-sm text-white">{quote.coverageLabel}</strong>
+                  </div>
+                  <div className="p-3">
+                    <span className="block text-[9px] font-black uppercase text-slate-500">Plafond total</span>
+                    <strong className="text-sm text-white">{quote.annualLimit.toLocaleString('fr-FR')} USD</strong>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <label className="space-y-2 text-left">
                     <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">Membres</span>
@@ -443,7 +471,7 @@ function MobileMoneyModal({ isOpen, onClose, pack, navigate }) {
                 <p className="text-left text-xs font-bold text-[#CE1126]">{quote.coverageLimit} · réduction famille {quote.familyDiscount}%</p>
 
 
-                <form onSubmit={ExecuterPaiement} className="space-y-6">
+                <form onSubmit={ExecuterPaiement} noValidate className="space-y-6">
   {/* Choix de l'opérateur Mobile Money - Styles Rectilignes */}
   <div className="space-y-3">
     <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 block">1. Réseau Mobile Money RDC</label>
@@ -456,7 +484,10 @@ function MobileMoneyModal({ isOpen, onClose, pack, navigate }) {
         <button
           key={op.id} 
           type="button" 
-          onClick={() => setOperateur(op.id)}
+          onClick={() => {
+            setOperateur(op.id);
+            setValidationError('');
+          }}
           className={`py-3.5 text-[10px] font-black uppercase tracking-wider border-2 text-center transition-all rounded-none focus:outline-none ${
             operateur === op.id 
               ? op.activeClass 
@@ -479,7 +510,10 @@ function MobileMoneyModal({ isOpen, onClose, pack, navigate }) {
         placeholder="812345678" 
         maxLength={9}
         value={telephone} 
-        onChange={(e) => setTelephone(e.target.value.replace(/\D/g, ''))}
+        onChange={(e) => {
+          setTelephone(e.target.value.replace(/\D/g, ''));
+          setValidationError('');
+        }}
         className="w-full pl-14 border-b-2 border-slate-800 bg-transparent py-3 text-lg font-bold outline-none transition focus:border-[#CE1126] focus:placeholder-transparent text-white font-mono rounded-none placeholder-slate-600"
       />
     </div>

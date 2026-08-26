@@ -44,7 +44,7 @@ export default function WorkPage() {
 
      {/* ================= 1. EN-TÊTE SIMULATEUR PREMIUM (VERSION SOMBRE ONYX) ================= */}
 <header className="relative flex flex-col bg-[#090d16] overflow-hidden border-b border-slate-900 rounded-none">
-  <div className="relative z-20 max-w-6xl mx-auto px-6 py-20 pt-32 text-center flex flex-col items-center w-full">
+  <div className="relative z-20 max-w-6xl mx-auto px-4 py-28 pt-30 text-center flex flex-col items-center w-full">
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 w-full flex flex-col items-center">
       
       {/* Badge Outil - Fond de surface sombre, angles droits stricts */}
@@ -66,7 +66,7 @@ export default function WorkPage() {
 </header>
 
 {/* ================= 2. CORE INTERFACE DE CALCUL (VERSION SOMBRE ONYX) ================= */}
-<main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 py-16 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start bg-[#090d16]">
+<main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 py-16 pt-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start bg-[#090d16]">
   
   {/* BLOC GAUCHE : PANNEAU DES PARAMÈTRES (COL 7) */}
   <div className="lg:col-span-7 space-y-10 w-full">

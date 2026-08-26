@@ -11,12 +11,14 @@ const INSURANCE_OPTIONS = {
   voyage: { label: 'Voyage', branch: 'Voyage', basePrice: 50 },
 };
 
-export function calculateInsuranceQuote({ insuranceType = 'health', beneficiariesCount = 1, coverageLevel = 'confort' } = {}) {
+export function calculateInsuranceQuote({ insuranceType = 'health', beneficiariesCount = 1, coverageLevel = 'confort', basePrice } = {}) {
   const insurance = INSURANCE_OPTIONS[insuranceType] || INSURANCE_OPTIONS.health;
   const coverage = COVERAGE_OPTIONS[coverageLevel] || COVERAGE_OPTIONS.confort;
   const members = Math.max(1, Math.min(6, Number(beneficiariesCount) || 1));
-  const memberPrice = insurance.basePrice * coverage.multiplier;
+  const referencePrice = Number(basePrice) > 0 ? Number(basePrice) : insurance.basePrice;
+  const memberPrice = referencePrice * coverage.multiplier;
   const total = memberPrice + Math.max(0, members - 1) * memberPrice * 0.9;
+  const aggregateAnnualLimit = coverage.annualLimit * members;
 
   return {
     insuranceType,
@@ -26,8 +28,9 @@ export function calculateInsuranceQuote({ insuranceType = 'health', beneficiarie
     coverageLabel: coverage.label,
     beneficiariesCount: members,
     monthlyPrice: Math.round(total * 100) / 100,
-    annualLimit: coverage.annualLimit,
-    coverageLimit: `Plafond annuel : ${coverage.annualLimit.toLocaleString('fr-FR')} USD`,
+    annualLimit: aggregateAnnualLimit,
+    annualLimitPerMember: coverage.annualLimit,
+    coverageLimit: `Plafond annuel total : ${aggregateAnnualLimit.toLocaleString('fr-FR')} USD (${coverage.annualLimit.toLocaleString('fr-FR')} USD par membre)`,
     familyDiscount: members > 1 ? 10 : 0,
   };
 }
@@ -39,6 +42,7 @@ export function quoteFromPack(pack, beneficiariesCount = 1, coverageLevel = 'con
     insuranceType: pack?.insuranceType || typeByBranch[pack?.branch] || typeByCategory[pack?.category] || 'health',
     beneficiariesCount,
     coverageLevel: String(coverageLevel || pack?.coverageLevel || 'confort').toLowerCase(),
+    basePrice: pack?.price,
   });
 }
 

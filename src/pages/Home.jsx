@@ -12,8 +12,6 @@ import FAQSection from '../components/FAQSection';
 import { FaShieldAlt, FaArrowRight, FaCheckCircle, FaHeartbeat, FaCar, FaGraduationCap, FaPlaneDeparture } from 'react-icons/fa';
 
 // Assets (Vérifiez bien que ces fichiers existent dans src/assets/)
-import background1 from '../assets/background_drc.jpeg';
-import background2 from '../assets/logo_drc.jpeg';
 import santé from '../assets/santé.jpeg';
 import auto from '../assets/auto.jpeg';
 import scolarité from '../assets/scolarité.jpeg';
@@ -30,137 +28,169 @@ const staggerContainer = {
   visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
 };
 
+
 export default function Home() {
   const navigate = useNavigate();
-  const backgrounds = [background1, background2];
-  const [bgIndex, setBgIndex] = useState(0);
+  
+   // 1. Vos images de fond (4 éléments)
+  const backgrounds = [santé, auto, scolarité, voyage];
+  
+  // 2. Vos descriptions rééquilibrées et spécifiques (4 éléments)
   const heroDescriptions = [
-    'Plus besoin d’envoyer des fonds en urgence. Souscrivez une micro-assurance avec prise en charge directe pour vos proches restés au pays.',
-    'Choisissez une formule claire, suivez vos garanties et donnez à votre famille un accès rapide aux soins agréés en RDC.',
-    'Une protection traçable, pensée pour la diaspora, avec des démarches simples et une assistance disponible au bon moment.',
+    'Prise en charge directe en clinique via QR Code. Vos proches ne déboursent rien sur place.',
+    'Garanties complètes pour vos véhicules au pays. Gestion et constatation rapides des sinistres.',
+    'Financement et sécurité du parcours scolaire de vos enfants restés au pays en cas de coup dur.',
+    'Couverture médicale internationale et assistance bagages pour vos déplacements vers ou depuis la RDC.',
   ];
-  const [descriptionIndex, setDescriptionIndex] = useState(0);
 
+  // 3. Vos couleurs du drapeau de la RDC associées à chaque thématique (4 éléments)
+// Remplacer l'ancien tableau par celui-ci (uniquement les codes HEX)
+const descriptionColors = [
+  "#00A3E0", // Index 0 (Santé) : Bleu ciel
+  "#FDD100", // Index 1 (Auto)  : Jaune or
+  "#CE1126", // Index 2 (École) : Rouge national
+  "#FFFFFF"  // Index 3 (Voyage) : Blanc pur
+];
+
+
+  const [bgIndex, setBgIndex] = useState(0);
+
+  // 3. Unification de l'effet de défilement pour garantir la synchronisation absolue
   useEffect(() => {
     const timer = setInterval(() => {
+      // Sécurité UX : évite de tourner si l'utilisateur change d'onglet
+      if (document.hidden) return;
+      
       setBgIndex((prev) => (prev + 1) % backgrounds.length);
-    }, 6000);
+    }, 6000); // Transition globale et synchrone toutes les 6 secondes
+    
     return () => clearInterval(timer);
   }, [backgrounds.length]);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setDescriptionIndex((previous) => (previous + 1) % heroDescriptions.length);
-    }, 5200);
-    return () => clearInterval(timer);
-  }, [heroDescriptions.length]);
-
   return (
-    <div className="min-h-screen w-full bg-[#CE1126] flex flex-col antialiased font-sans text-slate-900 transition-colors duration-300 py-21">
+    <div className="min-h-screen w-full bg-[#050811] flex flex-col antialiased font-sans text-slate-900 transition-colors duration-300">
       <NavbarSecured />
 
+     {/* ================= 1. SECTION HERO ================= */}
 {/* ================= 1. SECTION HERO ================= */}
-<section className="hero-section relative flex flex-col bg-[#090d16] overflow-hidden border-t border-slate-900 w-full transition-all duration-500 ease-out hover:z-10 hover:border-red-950/40 hover:shadow-[0_25px_60px_-15px_rgba(206,17,38,0.25)]">
+<section className="hero-section relative w-full min-h-[90vh] sm:min-h-[95vh] flex flex-col justify-between bg-[#050811] overflow-hidden border-b border-slate-900/50 py-21 pt-5">
   
-  {/* Visuels d'arrière-plan - Rendu clair et net */}
-  <div className="w-full h-[30vh] sm:h-[38vh] md:h-[48vh] relative overflow-hidden bg-slate-950">
+  {/* Carrousel Immersif Plein Écran (Synchronisé Fond + Description) */}
+  <div className="absolute inset-0 w-full h-full z-0">
     <AnimatePresence mode="wait">
       <motion.div 
         key={bgIndex}
         initial={{ opacity: 0, scale: 1.03 }}
         animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 1.0 }}
-        className="absolute inset-0 bg-cover bg-center brightness-110 contrast-105"
+        exit={{ opacity: 0, scale: 0.99 }}
+        transition={{ duration: 2.0, ease: [0.16, 1, 0.3, 1] }}
+        className="absolute inset-0 bg-cover bg-center brightness-[0.32] contrast-[1.05] saturate-[0.9]"
         style={{ backgroundImage: `url(${backgrounds[bgIndex]})` }}
       />
     </AnimatePresence>
-    {/* Dégradé fluide vers le fond sombre global pour un fondu haut de gamme */}
-    <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-[#090d16] z-10" />
-  </div>
-
-  {/* Conteneur de contenu principal */}
-  <div className="relative z-20 -mt-12 sm:-mt-16 md:-mt-24 max-w-7xl mx-auto px-4 sm:px-6 pb-10 md:pb-14 flex flex-col items-center w-full">
     
-    {/* Carte principale Bento - Fond Surface Sombre, Angles droits sans courbes */}
-    <motion.div 
-      variants={staggerContainer} 
-      initial="hidden" 
-      animate="visible" 
-      className="hero-card bg-[#111827]/90 backdrop-blur-xl p-6 sm:p-8 md:p-10 shadow-[0_30px_70px_rgba(0,0,0,0.6)] border border-slate-800 flex flex-col items-center w-full max-w-4xl text-center rounded-none"
-    >
-      
-      {/* Label ARCA */}
-      <motion.span 
-        variants={fadeInUp} 
-        className="hero-kicker px-3 py-1 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.2em] text-slate-200 border-l-2 border-[#00A3E0] mb-4 md:mb-6"
-      >
-        Écosystème Numérique Agréé ARCA
-      </motion.span>
-
-      {/* Titre ultra-responsive Blanc Pur */}
-      <motion.h1 
-        variants={fadeInUp} 
-        className="hero-title text-2xl sm:text-4xl md:text-6xl font-black text-white tracking-tight leading-tight md:leading-none mb-4 md:mb-5 uppercase"
-      >
-        Protégez votre famille en RDC <br className="hidden sm:inline" />
-        <span className="text-[#CE1126] italic normal-case">depuis l'Étranger</span>
-      </motion.h1>
-
-      {/* Descriptions rotatives : hauteur stable pour éviter les sauts de mise en page */}
-      <div className="hero-description mb-5 flex min-h-[8.5rem] w-full max-w-3xl flex-col items-center justify-center gap-4 px-3 sm:mb-6 sm:min-h-[7rem] sm:gap-5 md:mb-7 md:min-h-[6rem] md:gap-4">
-        <span className="hero-description-rule w-16 sm:w-24" aria-hidden="true" />
-        <div className="relative flex min-h-[4.5rem] w-full items-center justify-center overflow-hidden sm:min-h-[4rem]">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.p
-              key={descriptionIndex}
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -18 }}
-              transition={{ duration: 0.55, ease: 'easeOut' }}
-              className="hero-description-text absolute inset-x-0 top-1/2 mx-auto w-full max-w-2xl -translate-y-1/2 text-center text-sm leading-relaxed font-semibold sm:text-base md:text-lg"
-            >
-              {heroDescriptions[descriptionIndex]}
-            </motion.p>
-          </AnimatePresence>
-        </div>
-        <span className="hero-description-rule w-16 sm:w-24" aria-hidden="true" />
-      </div>
-
-      {/* Zone des Boutons d'Action - Rectangulaires FinTech */}
-      <motion.div 
-        variants={staggerContainer} 
-        initial="hidden" 
-        animate="visible" 
-        className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center w-full sm:w-auto px-4 sm:px-0"
-      >
-        
-        {/* Bouton Principal : Fond blanc, texte noir, lueur turquoise au survol */}
-        <motion.button
-          variants={fadeInUp}
-          whileHover={{ scale: 1.02, backgroundColor: "#15cfe7", color: "#000000", borderColor: "#15cfe7" }} 
-          whileTap={{ scale: 0.98 }}
-          onClick={() => navigate('/packs-micro')}
-          className="hero-primary-button w-full sm:w-auto px-8 md:px-12 py-4 md:py-5 border-2 border-white bg-white text-black font-extrabold uppercase text-[10px] md:text-[11px] tracking-[0.25em] shadow-md transition-all duration-300 rounded-none"
-        >
-          Découvrir les Packs
-        </motion.button>
-        
-        {/* Bouton Secondaire : Bordure rouge, texte blanc, fond rouge complet au survol */}
-        <motion.button
-          variants={fadeInUp}
-          whileHover={{ scale: 1.02, backgroundColor: "#CE1126", color: "#FFFFFF" }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => navigate('/simulateur')}
-          className="hero-secondary-button w-full sm:w-auto px-8 md:px-12 py-4 md:py-5 border-2 border-[#CE1126] bg-transparent text-white font-extrabold uppercase text-[10px] md:text-[11px] tracking-[0.25em] shadow-md transition-all duration-300 rounded-none"
-        >
-          Simuler un Tarif
-        </motion.button>
-
-      </motion.div>
-    </motion.div>
+    {/* Grilles de dégradés FinTech : Assurent la lisibilité parfaite du texte blanc */}
+    <div className="absolute inset-0 bg-gradient-to-t from-[#050811] via-transparent to-[#050811]/80 z-10" />
+    <div className="absolute inset-0 bg-gradient-to-r from-[#050811]/60 via-transparent to-[#050811]/60 z-10" />
   </div>
+
+  {/* Contenu Principal de la section Hero */}
+  <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-1 flex flex-col justify-center items-center text-center mt-16 sm:mt-20">
+    
+    {/* Label ARCA Épuré */}
+    <motion.span 
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="hero-kicker px-4 py-1.5 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.25em] text-[#FDD100] border-l-2 border-[#00A3E0] mb-6 backdrop-blur-md bg-white/[0.02] shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
+    >
+      Écosystème Numérique Agréé ARCA
+    </motion.span>
+
+    {/* Titre Fixe Ultra-Responsive */}
+    <motion.h1 
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.1 }}
+      className="hero-title text-3xl sm:text-6xl md:text-5xl font-black text-white tracking-tight leading-[1.05] md:leading-none mb-8 uppercase max-w-5xl drop-shadow-2xl"
+    >
+      Protégez votre famille en RDC <br className="hidden sm:inline" />
+      <span className="text-[#CE1126] italic normal-case font-serif tracking-normal block sm:inline sm:ml-4">depuis l'Étranger</span>
+    </motion.h1>
+
+    {/* Zone Description Agrandie & Dynamique aux couleurs de la RDC */}
+    {/* 🌟 Zone Description avec changement de couleur forcé par Style Inline */}
+<div className="hero-description relative w-full max-w-4xl min-h-[7.5rem] sm:min-h-[6rem] md:min-h-[5.5rem] flex items-center justify-center my-6 overflow-hidden">
+  <AnimatePresence mode="wait">
+    <motion.p
+      key={bgIndex}
+      initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      exit={{ opacity: 0, y: -20, filter: "blur(8px)" }}
+      transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+      style={{ color: descriptionColors[bgIndex] }} // 💡 Forçage de la couleur en CSS pur (Garantit le changement à 100%)
+      className="hero-description-text font-black text-lg sm:text-2xl md:text-3xl leading-relaxed sm:leading-relaxed md:leading-relaxed tracking-wide max-w-3xl drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)] text-balance"
+    >
+      {heroDescriptions[bgIndex]}
+    </motion.p>
+  </AnimatePresence>
+</div>
+
+
+    {/* Zone Boutons d'Action Premium (Finition Angles Droits FinTech) */}
+    <motion.div 
+      initial={{ opacity: 0, y: 25 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.3 }}
+      className="flex flex-col sm:flex-row gap-5 sm:gap-6 justify-center w-full sm:w-auto px-4 sm:px-0 mt-10 md:mt-12"
+    >
+      <motion.button
+        whileHover={{ scale: 1.02, backgroundColor: "#15cfe7", color: "#000000", borderColor: "#15cfe7", boxShadow: "0 0 35px rgba(21, 207, 231, 0.45)" }} 
+        whileTap={{ scale: 0.98 }}
+        onClick={() => navigate('/packs-micro')}
+        className="hero-primary-button w-full sm:w-auto px-12 md:px-16 py-5 md:py-6 border-2 border-white bg-white text-black font-black uppercase text-[11px] tracking-[0.25em] transition-all duration-300 rounded-none cursor-pointer"
+      >
+        Découvrir les Packs
+      </motion.button>
+      
+      <motion.button
+        whileHover={{ scale: 1.02, backgroundColor: "#CE1126", borderColor: "#CE1126", boxShadow: "0 0 35px rgba(206, 17, 38, 0.45)" }}
+        whileTap={{ scale: 0.98 }}
+        onClick={() => navigate('/simulateur')}
+        className="hero-secondary-button w-full sm:w-auto px-12 md:px-16 py-5 md:py-6 border-2 border-[#CE1126] bg-transparent text-white font-black uppercase text-[11px] tracking-[0.25em] transition-all duration-300 rounded-none cursor-pointer"
+      >
+        Simuler un Tarif
+      </motion.button>
+    </motion.div>
+
+    {/* Indicateurs Visuels Avancés avec barre de progression de 40 secondes */}
+    <div className="flex gap-4 mt-16 z-30">
+      {backgrounds.map((_, idx) => (
+        <button
+          key={idx}
+          onClick={() => setBgIndex(idx)}
+          className="group relative h-[3px] focus:outline-none cursor-pointer transition-all duration-500"
+          style={{ width: idx === bgIndex ? '60px' : '16px' }}
+        >
+          <div className={`absolute inset-0 transition-all duration-500 ${idx === bgIndex ? 'bg-white/20' : 'bg-white/10 group-hover:bg-white/30'}`} />
+          {idx === bgIndex && (
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: "100%" }}
+              transition={{ duration: 40, ease: "linear" }}
+              className="absolute inset-y-0 left-0 bg-[#15cfe7]"
+            />
+          )}
+        </button>
+      ))}
+    </div>
+
+  </div>
+
+  <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-slate-800 to-transparent z-20" />
 </section>
+
+
 
 {/* ================= 2. SECTION COMMERCIALE AMÉLIORÉE ================= */}
 <section className="commercial-section py-16 md:py-24 bg-[#090d16] overflow-hidden font-sans border-t border-slate-900 w-full transition-all duration-500 ease-out hover:z-10 hover:border-red-950/40 hover:shadow-[0_25px_60px_-15px_rgba(206,17,38,0.25)]">
@@ -174,7 +204,7 @@ export default function Home() {
       <h2 className="text-3xl md:text-6xl font-black text-white tracking-tighter uppercase leading-none">
         Un écosystème <span className="text-[#CE1126]">traçable.</span>
       </h2>
-      <p className="text-lg md:text-xl text-[#94a3b8] leading-relaxed font-bold max-w-2xl">
+      <p className="text-lg md:text-xl text-[#FDD100] leading-relaxed font-bold max-w-2xl">
         Garantissez que chaque dollar versé est converti en protection réelle, transparente et instantanée pour vos bénéficiaires en RDC.
       </p>
     </div>
@@ -298,7 +328,7 @@ export default function Home() {
     </h3>
 
     {/* Description Gris Argent Scannable */}
-    <p className="text-base md:text-lg text-[#94a3b8] font-semibold leading-relaxed max-w-3xl mx-auto">
+    <p className="text-base md:text-lg text-[#FDD100] font-semibold leading-relaxed max-w-3xl mx-auto">
       Nos polices sont co-assurées par des partenaires agréés ARCA et réassurées mondialement pour une sécurité financière absolue.
     </p>
 

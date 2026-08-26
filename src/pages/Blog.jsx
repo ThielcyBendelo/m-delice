@@ -74,7 +74,7 @@ export default function Blog() {
               <span className="text-[#CE1126] italic">en RD Congo</span>
             </h1>
             
-            <p className="max-w-2xl mx-auto text-slate-950 text-lg md:text-xl leading-relaxed font-bold">
+            <p className="max-w-2xl mx-auto text-[#FDD100] text-lg md:text-xl leading-relaxed font-bold">
               Comprenez vos droits, optimisez vos contrats d'assurance et découvrez comment protéger au mieux vos proches restés au pays.
             </p>
 

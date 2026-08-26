@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
-
 // Services
 import audioService from '../services/audioService';
 import authService from '../services/authService';
@@ -342,7 +341,7 @@ export default function NavbarSecured() {
                       }}
                       className="w-full py-4 bg-white text-black font-black uppercase text-[11px] tracking-widest text-center shadow-md rounded-none hover:bg-[#CE1126] hover:text-white transition-colors focus:outline-none"
                     >
-                      Espace Connexion Diasporas
+                      Créer un compte Diaspora
                     </button>
                   </div>
                 )}

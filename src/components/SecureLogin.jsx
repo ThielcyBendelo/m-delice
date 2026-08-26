@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
 import notificationService from '../services/notificationService';
 import { FaShieldAlt, FaArrowRight, FaSpinner, FaGoogle } from 'react-icons/fa';
@@ -30,17 +30,24 @@ function loadGisScript() {
 
 export default function SecureLogin() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
   const [googleReady, setGoogleReady] = useState(false);
   const [googleClientId, setGoogleClientId] = useState('');
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const googleBtnRef = useRef(null);
 
+  const continueAfterLogin = useCallback(() => {
+    const destination = location.state?.from || '/dashboard';
+    const { from: _from, ...routeState } = location.state || {};
+    navigate(destination, { replace: true, state: routeState });
+  }, [location.state, navigate]);
+
   useEffect(function () {
     if (authService.isLoggedIn()) {
-      navigate('/dashboard', { replace: true });
+      continueAfterLogin();
     }
-  }, [navigate]);
+  }, [continueAfterLogin]);
 
   useEffect(function () {
     var cancelled = false;
@@ -69,7 +76,7 @@ export default function SecureLogin() {
               var result = await authService.loginWithGoogle(response.credential);
               if (result.success) {
                 notificationService.success('Connexion Google reussie !');
-                window.location.href = '/dashboard';
+                continueAfterLogin();
               } else {
                 notificationService.error(result.error || 'Echec Google.');
               }
@@ -103,7 +110,7 @@ export default function SecureLogin() {
     })();
 
     return function () { cancelled = true; };
-  }, []);
+  }, [continueAfterLogin]);
 
   const handleInputChange = function (e) {
     var name = e.target.name;
@@ -126,7 +133,7 @@ export default function SecureLogin() {
       var result = await authService.login(credentials.email, credentials.password);
       if (result && result.success) {
         notificationService.success('Connexion validee avec succes !');
-        window.location.href = '/dashboard';
+        continueAfterLogin();
       } else {
         notificationService.error((result && result.error) || 'Identifiants incorrects.');
       }
