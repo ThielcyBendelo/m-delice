@@ -220,7 +220,7 @@ export default function ServicesPage() {
     ))}
   </div>
 </main>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import NavbarSecured from '../components/NavbarSecured';
-import Footer from '../components/Footer';
+// import Footer from '../components/Footer';
 import notificationService from '../services/notificationService';
 import { calculateInsuranceQuote, COVERAGE_OPTIONS } from '../utils/insurancePricing';
 import { 
@@ -52,21 +52,23 @@ export default function WorkPage() {
         Outil d'Aide à la Décision
       </span>
       
-      {/* Titre Blanc Éclatant */}
-      <h1 className="text-4xl md:text-7xl font-black text-white tracking-tight leading-none uppercase">
-        Tarificateur <span className="text-[#CE1126] italic normal-case">En Ligne</span>
-      </h1>
-      
-      {/* Description Gris Argent Scannable */}
-      <p className="max-w-3xl mx-auto text-[#94a3b8] text-base md:text-xl leading-relaxed font-semibold">
-        Calculez instantanément le montant de la prime pour votre famille en RDC. Obtenez un devis transparent et traçable en quelques clics.
-      </p>
+
+{/* Titre Blanc Éclatant : MASQUÉ SUR MOBILE */}
+<h1 className="hidden md:block text-4xl md:text-7xl font-black text-white tracking-tight leading-none uppercase">
+  Tarificateur <span className="text-[#CE1126] italic normal-case">En Ligne</span>
+</h1>
+
+{/* Description Gris Argent Scannable : MASQUÉE SUR MOBILE */}
+<p className="hidden md:block max-w-3xl mx-auto text-[#94a3b8] text-base md:text-xl leading-relaxed font-semibold">
+  Calculez instantanément le montant de la prime pour votre famille en RDC. Obtenez un devis transparent et traçable en quelques clics.
+</p>
+
     </motion.div>
   </div>
 </header>
 
 {/* ================= 2. CORE INTERFACE DE CALCUL (VERSION SOMBRE ONYX) ================= */}
-<main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 py-16 pt-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start bg-[#090d16]">
+<main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 py-12 pt-2 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start bg-[#090d16]">
   
   {/* BLOC GAUCHE : PANNEAU DES PARAMÈTRES (COL 7) */}
   <div className="lg:col-span-7 space-y-10 w-full">
@@ -223,7 +225,7 @@ export default function WorkPage() {
 </div>
 </main>
 
-<Footer />
+{/* <Footer /> */}
 </div>
 );
 }

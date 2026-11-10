@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import NavbarSecured from '../components/NavbarSecured';
-import Footer from '../components/Footer';
+// import Footer from '../components/Footer';
 import claimService from '../services/claimService.js';
 import notificationService from '../services/notificationService';
 // 🟢 CORRIGÉ : Inclusion explicite de FaCheckCircle et de toutes les icônes requises pour le formulaire
@@ -75,11 +75,13 @@ export default function ClaimsDeclarationPage() {
       <FaExclamationTriangle className="animate-pulse" /> Centre de Sinistre Digital
     </motion.div>
     
-    <h1 className="text-3xl md:text-7xl font-black tracking-tighter text-white uppercase leading-none mb-6">
+    {/* Titre : MASQUÉ SUR MOBILE, VISIBLE SUR DESKTOP */}
+    <h1 className="hidden md:block text-3xl md:text-7xl font-black tracking-tighter text-white uppercase leading-none mb-6">
       Déclaration de <span className="text-[#CE1126] italic normal-case">Sinistre</span>
     </h1>
     
-    <p className="max-w-3xl text-base md:text-lg text-[#94a3b8] font-semibold leading-relaxed">
+    {/* Description : MASQUÉE SUR MOBILE, VISIBLE SUR DESKTOP */}
+    <p className="hidden md:block max-w-3xl text-base md:text-lg text-[#94a3b8] font-semibold leading-relaxed">
       Remplissez ce formulaire pour activer votre prise en charge immédiate. Nos experts ARCA analysent votre dossier sous 24 à 48 heures.
     </p>
   </div>
@@ -247,66 +249,67 @@ export default function ClaimsDeclarationPage() {
             )}
           </motion.form>
 
-                    {/* Aside : Assistance & Rappel Légal (VERSION SOMBRE ONYX) */}
-          <motion.aside 
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="bg-[#111827] p-8 md:p-12 text-white shadow-2xl space-y-12 relative overflow-hidden border border-slate-800 rounded-none text-left"
-            /* 🟢 'rounded-none' rend le bloc strictement rectangulaire et bg-[#111827] s'intègre au thème */
-          >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/5 blur-3xl rounded-none pointer-events-none" />
-            
-            <div className="space-y-4">
-              <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] text-[#CE1126]">
-                Engagement ESNAs
-              </span>
-              <h2 className="text-3xl font-black tracking-tighter uppercase italic leading-none text-white">
-                Prise en charge <br /> Garantie.
-              </h2>
-              <p className="text-sm text-[#94a3b8] font-semibold leading-relaxed">
-                Chaque déclaration est traitée en priorité absolue pour garantir une réponse rapide à vos bénéficiaires.
-              </p>
-            </div>
+                 {/* Aside : Assistance & Rappel Légal (VERSION SOMBRE ONYX) - MASQUÉ SUR MOBILE, VISIBLE SUR DESKTOP */}
+<motion.aside 
+  initial={{ opacity: 0, x: 30 }}
+  animate={{ opacity: 1, x: 0 }}
+  className="hidden md:block bg-[#111827] p-8 md:p-12 text-white shadow-2xl space-y-12 relative overflow-hidden border border-slate-800 rounded-none text-left"
+  /* 🟢 'hidden md:block' masque le volet sur mobile et l'affiche sur desktop */
+>
+  <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/5 blur-3xl rounded-none pointer-events-none" />
+  
+  <div className="space-y-4">
+    <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] text-[#CE1126]">
+      Engagement ESNAs
+    </span>
+    <h2 className="text-3xl font-black tracking-tighter uppercase italic leading-none text-white">
+      Prise en charge <br /> Garantie.
+    </h2>
+    <p className="text-sm text-[#94a3b8] font-semibold leading-relaxed">
+      Chaque déclaration est traitée en priorité absolue pour garantir une réponse rapide à vos bénéficiaires.
+    </p>
+  </div>
 
-            {/* Liste des atouts de traçabilité */}
-            <div className="space-y-8">
-              {/* Atout 1 */}
-              <div className="flex gap-4 items-start">
-                <div className="w-10 h-10 bg-slate-950 border border-slate-800 flex items-center justify-center text-[#CE1126] rounded-none shrink-0 shadow-md">
-                  <FaShieldAlt size={16} />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-black uppercase tracking-wider text-white">Traçabilité Totale</p>
-                  <p className="text-xs text-slate-400 font-semibold leading-relaxed">
-                    Recevez un numéro de dossier ARCA unique pour suivre l'évolution en temps réel.
-                  </p>
-                </div>
-              </div>
+  {/* Liste des atouts de traçabilité */}
+  <div className="space-y-8">
+    {/* Atout 1 */}
+    <div className="flex gap-4 items-start">
+      <div className="w-10 h-10 bg-slate-950 border border-slate-800 flex items-center justify-center text-[#CE1126] rounded-none shrink-0 shadow-md">
+        <FaShieldAlt size={16} />
+      </div>
+      <div className="space-y-1">
+        <p className="text-sm font-black uppercase tracking-wider text-white">Traçabilité Totale</p>
+        <p className="text-xs text-slate-400 font-semibold leading-relaxed">
+          Recevez un numéro de dossier ARCA unique pour suivre l'évolution en temps réel.
+        </p>
+      </div>
+    </div>
 
-              {/* Atout 2 */}
-              <div className="flex gap-4 items-start">
-                <div className="w-10 h-10 bg-slate-950 border border-slate-800 flex items-center justify-center text-[#CE1126] rounded-none shrink-0 shadow-md">
-                  <FaCheckCircle size={16} />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-black uppercase tracking-wider text-white">Tiers-Payant</p>
-                  <p className="text-xs text-slate-400 font-semibold leading-relaxed">
-                    Dans 80% des cas, aucun frais n'est déboursé par l'assuré en clinique partenaire.
-                  </p>
-                </div>
-              </div>
-            </div>
+    {/* Atout 2 */}
+    <div className="flex gap-4 items-start">
+      <div className="w-10 h-10 bg-slate-950 border border-slate-800 flex items-center justify-center text-[#CE1126] rounded-none shrink-0 shadow-md">
+        <FaCheckCircle size={16} />
+      </div>
+      <div className="space-y-1">
+        <p className="text-sm font-black uppercase tracking-wider text-white">Tiers-Payant</p>
+        <p className="text-xs text-slate-400 font-semibold leading-relaxed">
+          Dans 80% des cas, aucun frais n'est déboursé par l'assuré en clinique partenaire.
+        </p>
+      </div>
+    </div>
+  </div>
 
-            {/* Note réglementaire de bas de bloc */}
-            <div className="pt-6 border-t border-slate-800">
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest italic leading-relaxed">
-                * Sous réserve de conformité avec les conditions générales de votre contrat.
-              </p>
-            </div>
-          </motion.aside>
+  {/* Note réglementaire de bas de bloc */}
+  <div className="pt-6 border-t border-slate-800">
+    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest italic leading-relaxed">
+      * Sous réserve de conformité avec les conditions générales de votre contrat.
+    </p>
+  </div>
+</motion.aside>
+
         </div>
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

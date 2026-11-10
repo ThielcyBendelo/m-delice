@@ -185,7 +185,7 @@ export default function HospitalVerifyPage() {
           </Link>
         </div>
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }
