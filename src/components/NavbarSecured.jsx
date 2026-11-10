@@ -132,10 +132,10 @@ export default function NavbarSecured() {
       id: "services",
       label: "Services",
       items: [
-        { href: '/reseau-soins', label: 'Réseau de Soins', icon: <FaBriefcaseMedical /> },
+        // { href: '/reseau-soins', label: 'Réseau de Soins', icon: <FaBriefcaseMedical /> },
         { href: '/verification-hopital', label: 'Vérif. Hôpital', icon: <FaShieldAlt /> },
         { href: '/declaration-sinistre', label: 'Déclarer un Sinistre', icon: <FaFileContract /> },
-        { href: '/conformite-arca', label: 'Régulation ARCA', icon: <FaBalanceScale /> }
+        // { href: '/conformite-arca', label: 'Régulation ARCA', icon: <FaBalanceScale /> }
       ]
     }
   ];
