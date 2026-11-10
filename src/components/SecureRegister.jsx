@@ -1,14 +1,28 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { getCountries, getCountryCallingCode, parsePhoneNumberFromString } from 'libphonenumber-js';
 import authService from '../services/authService';
 import notificationService from '../services/notificationService';
+import TurnstileField from './TurnstileField';
 import {
   FaShieldAlt, FaEnvelope, FaArrowRight, FaSpinner, FaGoogle,
-  FaGlobe, FaChevronDown
+  FaGlobe, FaChevronDown, FaPhone, FaCheckCircle, FaEye, FaEyeSlash, FaKey
 } from 'react-icons/fa';
 
 const GIS_SRC = 'https://accounts.google.com/gsi/client';
+const countryNames = new Intl.DisplayNames(['fr'], { type: 'region' });
+
+function flagForCountry(countryCode) {
+  return countryCode.replace(/./g, (letter) => String.fromCodePoint(letter.charCodeAt(0) + 127397));
+}
+
+const countries = getCountries().map((code) => ({
+  code,
+  name: countryNames.of(code) || code,
+  callingCode: getCountryCallingCode(code),
+  prefix: `+${getCountryCallingCode(code)}`,
+  flag: flagForCountry(code),
+}));
 
 function loadGisScript() {
   return new Promise((resolve, reject) => {
@@ -32,11 +46,51 @@ function loadGisScript() {
   });
 }
 
+function passwordScore(password) {
+  return [
+    password.length >= 8,
+    /[A-Z]/.test(password),
+    /[a-z]/.test(password),
+    /\d/.test(password),
+    /[^A-Za-z0-9]/.test(password),
+  ].filter(Boolean).length;
+}
+
+function PasswordStrength({ password }) {
+  const score = passwordScore(password);
+  const labels = ['Faible', 'Faible', 'Moyen', 'Bon', 'Fort', 'Tres fort'];
+  const colors = ['bg-red-700', 'bg-red-500', 'bg-amber-500', 'bg-lime-500', 'bg-emerald-500', 'bg-emerald-400'];
+  return (
+    <div className="mt-1" aria-live="polite">
+      <div className="flex h-1 gap-1">
+        {[0, 1, 2, 3, 4].map((item) => <span key={item} className={`flex-1 ${item < score ? colors[score] : 'bg-slate-700'}`} />)}
+      </div>
+      <span className="text-[9px] text-slate-400">Force : {labels[score]}</span>
+    </div>
+  );
+}
+
+function generatePassword() {
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*';
+  const values = new Uint32Array(16);
+  crypto.getRandomValues(values);
+  return Array.from(values, (value) => alphabet[value % alphabet.length]).join('');
+}
+
 export default function SecureRegister() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [phoneVerification, setPhoneVerification] = useState(null);
+  const [verificationCode, setVerificationCode] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState('');
   const [googleReady, setGoogleReady] = useState(false);
   const [googleClientId, setGoogleClientId] = useState('');
+  const [phoneCountryIso, setPhoneCountryIso] = useState('FR');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [registrationStatus, setRegistrationStatus] = useState('');
+  const turnstileTokenRef = useRef('');
+  const registrationDataRef = useRef({ formData, phoneCountryIso });
   const googleBtnRef = useRef(null);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -44,10 +98,18 @@ export default function SecureRegister() {
     email: '',
     password: '',
     confirmPassword: '',
-    country: 'France'
+    country: 'France',
+    countryIso: 'FR',
+    phoneCountryCode: '33',
+    phone: ''
   });
 
-  const countries = ["France", "Belgique", "Canada", "USA", "Royaume-Uni", "Allemagne", "Autre"];
+  const updateTurnstileToken = useCallback((token) => {
+    turnstileTokenRef.current = token;
+    setTurnstileToken(token);
+  }, []);
+
+  registrationDataRef.current = { formData, phoneCountryIso };
 
   useEffect(function () {
     if (authService.isLoggedIn()) {
@@ -77,9 +139,33 @@ export default function SecureRegister() {
               return;
             }
             setIsLoading(true);
+            setRegistrationStatus('Vérification de votre identité Google en cours...');
             try {
-              var result = await authService.loginWithGoogle(response.credential);
+              var currentRegistration = registrationDataRef.current;
+              var googlePhone = parsePhoneNumberFromString(currentRegistration.formData.phone, currentRegistration.phoneCountryIso);
+              if (!googlePhone || !googlePhone.isValid()) {
+                notificationService.error('Pour créer un compte avec Google, saisissez d’abord un numéro de téléphone valide pour le pays sélectionné.');
+                setRegistrationStatus('Votre numéro est nécessaire pour la vérification de sécurité par SMS.');
+                return;
+              }
+              var result = await authService.loginWithGoogle(response.credential, turnstileTokenRef.current, {
+                phone: googlePhone.number,
+                phoneCountryCode: googlePhone.countryCallingCode,
+                phoneCountryIso: currentRegistration.phoneCountryIso,
+                country: currentRegistration.formData.country,
+              });
               if (result.success) {
+                if (result.requiresPhoneVerification) {
+                  setPhoneVerification({
+                    userId: result.user?.id,
+                    challengeId: result.phoneVerification?.challengeId,
+                    maskedPhone: result.phoneVerification?.maskedPhone,
+                  });
+                  setRegistrationStatus('Identité Google validée. Saisissez le code SMS pour terminer la création de votre profil.');
+                  notificationService.info('Un code de sécurité a été envoyé par SMS.');
+                  return;
+                }
+                setRegistrationStatus('Validation Google réussie. Ouverture de votre espace sécurisé...');
                 notificationService.success('Compte Google connecte !');
                 window.location.href = '/dashboard';
               } else {
@@ -113,7 +199,7 @@ export default function SecureRegister() {
       }
     })();
     return function () { cancelled = true; };
-  }, []);
+  }, [turnstileToken]);
 
   const handleInputChange = function (e) {
     var name = e.target.name;
@@ -126,16 +212,48 @@ export default function SecureRegister() {
   const handleFormSubmit = async function (e) {
     e.preventDefault();
 
-    if (formData.password.length < 6) {
-      notificationService.error('Le mot de passe doit contenir au moins 6 caracteres.');
+    if (phoneVerification) {
+      if (!/^\d{6}$/.test(verificationCode)) {
+        notificationService.error('Saisissez le code SMS a 6 chiffres.');
+        return;
+      }
+      setIsLoading(true);
+      setRegistrationStatus('Validation du code de sécurité en cours...');
+      try {
+        var verificationResult = await authService.verifyPhone(
+          phoneVerification.userId,
+          phoneVerification.challengeId,
+          verificationCode
+        );
+        if (verificationResult.success) {
+          setRegistrationStatus('Validation de connexion réussie. Votre compte a été créé avec succès.');
+          notificationService.success('Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter.');
+          navigate('/login', { state: { registrationValidated: true } });
+        } else {
+          notificationService.error(verificationResult.error || 'Code SMS invalide.');
+        }
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
+
+    if (passwordScore(formData.password) < 4) {
+      notificationService.error('Le mot de passe doit contenir au moins 8 caracteres, une majuscule, une minuscule et un chiffre.');
       return;
     }
     if (formData.password !== formData.confirmPassword) {
       notificationService.error('Les mots de passe ne correspondent pas.');
       return;
     }
+    const parsedPhone = parsePhoneNumberFromString(formData.phone, phoneCountryIso);
+    if (!parsedPhone || !parsedPhone.isValid()) {
+      notificationService.error(`Numero invalide pour ${countryNames.of(phoneCountryIso)}. Saisissez le numero national exact.`);
+      return;
+    }
 
     setIsLoading(true);
+    setRegistrationStatus('Création de votre profil. Vérification des informations en cours...');
     try {
       notificationService.info('Creation du compte Diaspora...');
       var result = await authService.register({
@@ -143,18 +261,34 @@ export default function SecureRegister() {
         lastName: formData.lastName,
         email: formData.email,
         password: formData.password,
-        country: formData.country
+        country: formData.country,
+        countryIso: formData.countryIso,
+        phone: parsedPhone.number,
+        phoneCountryCode: parsedPhone.countryCallingCode,
+        phoneCountryIso: phoneCountryIso
+        ,turnstileToken
       });
 
       if (result && result.success) {
-        notificationService.success('Compte cree. Connectez-vous.');
-        navigate('/login');
+        if (result.phoneVerification) {
+          setPhoneVerification({
+            userId: result.user?.id,
+            challengeId: result.phoneVerification.challengeId,
+            maskedPhone: result.phoneVerification.maskedPhone,
+          });
+          notificationService.success('Code SMS envoye a votre numero.');
+          setRegistrationStatus('Profil créé. En attente de la vérification de votre numéro par SMS.');
+        } else {
+          notificationService.success('Compte cree. Connectez-vous.');
+          setRegistrationStatus('Validation de connexion réussie. Votre compte a été créé avec succès.');
+          navigate('/login');
+        }
       } else {
-        notificationService.error((result && result.error) || "Echec de l'inscription.");
+        notificationService.error((result && result.error) || "Impossible de créer le compte. Vérifiez les informations saisies et réessayez.");
       }
     } catch (error) {
       console.error('[Registration Error]', error);
-      notificationService.error("Une erreur est survenue. L'email est peut-etre deja utilise.");
+      notificationService.error(error.userMessage || error.message || "Le service d'inscription est momentanément indisponible. Réessayez dans quelques instants.");
     } finally {
       setIsLoading(false);
     }
@@ -164,12 +298,7 @@ export default function SecureRegister() {
     <div className="min-h-dvh bg-[#090d16] flex items-center justify-center px-3 py-4 relative overflow-x-hidden overflow-y-auto font-sans">
       <div className="absolute inset-0 bg-[radial-gradient(#CE1126_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.05] z-10" />
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
-        className="relative z-20 w-full max-w-[620px] bg-[#111827] p-4 sm:p-6 shadow-[0_30px_100px_rgba(0,0,0,0.8)] border border-slate-800 flex flex-col rounded-none"
-      >
+      <div className="relative z-20 w-full max-w-[620px] bg-[#111827] p-4 sm:p-6 shadow-[0_30px_100px_rgba(0,0,0,0.8)] border border-slate-800 flex flex-col rounded-none animate-fadeIn">
         <div className="text-center mb-4">
           <div className="w-10 h-10 bg-[#CE1126] text-white flex items-center justify-center mx-auto mb-2 shadow-lg rounded-none">
             <FaShieldAlt size={20} />
@@ -180,6 +309,7 @@ export default function SecureRegister() {
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mt-3">
             Creation de Compte Diaspora
           </p>
+          {registrationStatus && <p className="mt-3 text-[10px] font-semibold leading-relaxed text-[#CE1126]" aria-live="polite">{registrationStatus}</p>}
         </div>
 
         <div className="mb-3 flex flex-col items-center gap-2">
@@ -205,6 +335,24 @@ export default function SecureRegister() {
         </div>
 
         <form onSubmit={handleFormSubmit} className="space-y-3">
+          <TurnstileField onToken={updateTurnstileToken} />
+          {phoneVerification ? (
+            <div className="space-y-4 text-center">
+              <FaCheckCircle className="mx-auto text-emerald-500" size={36} />
+              <h2 className="text-lg font-black uppercase text-white">Verifiez votre telephone</h2>
+              <p className="text-xs leading-relaxed text-slate-400">
+                Saisissez le code a 6 chiffres envoye par SMS au numero {phoneVerification.maskedPhone}.
+              </p>
+              <input
+                type="text" inputMode="numeric" autoComplete="one-time-code" maxLength="6"
+                value={verificationCode} onChange={function (e) { setVerificationCode(e.target.value.replace(/\D/g, '')); }}
+                placeholder="000000" required
+                className="w-full border border-slate-800 bg-[#090d16] px-3 py-3 text-center text-xl font-black tracking-[0.5em] outline-none focus:border-[#CE1126] text-white rounded-none placeholder-slate-600"
+              />
+            </div>
+          ) : null}
+          {!phoneVerification ? (
+          <>
           <div className="grid grid-cols-2 gap-2 sm:gap-3">
             <div className="space-y-1">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Nom</label>
@@ -230,15 +378,48 @@ export default function SecureRegister() {
             </label>
             <div className="relative">
               <select
-                name="country" value={formData.country} onChange={handleInputChange}
+                name="country" value={formData.country} onChange={function (e) {
+                  var selected = countries.find(function (item) { return item.name === e.target.value; });
+                  setFormData(function (prev) { return Object.assign({}, prev, { country: selected.name, countryIso: selected.code }); });
+                }}
                 className="w-full border border-slate-800 bg-[#090d16] px-3 py-2.5 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none appearance-none cursor-pointer"
               >
                 {countries.map(function (c) {
-                  return <option key={c} value={c} className="bg-[#111827]">{c}</option>;
+                  return <option key={c.code} value={c.name} className="bg-[#111827]">{c.flag} {c.name}</option>;
                 })}
               </select>
               <FaChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" size={10} />
             </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+              <FaPhone size={10} className="text-[#CE1126]" /> Telephone
+            </label>
+            <div className="grid grid-cols-[minmax(150px,0.9fr)_1fr] gap-2">
+              <select
+                name="phoneCountryCode"
+                value={phoneCountryIso}
+                onChange={function (e) {
+                  var selected = countries.find(function (item) { return item.code === e.target.value; });
+                  setPhoneCountryIso(selected.code);
+                  setFormData(function (prev) { return Object.assign({}, prev, { phoneCountryCode: selected.callingCode }); });
+                }}
+                className="w-full border border-slate-800 bg-[#090d16] px-2 py-2.5 text-sm font-bold outline-none focus:border-[#CE1126] text-white rounded-none"
+                aria-label="Pays et indicatif téléphonique"
+              >
+                {countries.map(function (item) {
+                  return <option key={item.code} value={item.code} className="bg-[#111827]">{item.flag} {item.name} ({item.prefix})</option>;
+                })}
+              </select>
+              <input
+                type="tel" name="phone" required value={formData.phone} onChange={handleInputChange}
+                placeholder={phoneCountryIso === 'CD' ? '81 234 5678' : 'Numero national'}
+                inputMode="tel"
+                className="w-full border border-slate-800 bg-[#090d16] px-3 py-2.5 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none placeholder-slate-600"
+              />
+            </div>
+            <p className="text-[9px] text-slate-500">{flagForCountry(phoneCountryIso)} {countryNames.of(phoneCountryIso)} : saisissez uniquement le numero national. Le format sera verifie avant inscription.</p>
           </div>
 
           <div className="space-y-1">
@@ -254,22 +435,38 @@ export default function SecureRegister() {
 
           <div className="grid grid-cols-2 gap-2 sm:gap-3">
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Mot de passe</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2"><FaKey size={10} className="text-[#CE1126]" /> Mot de passe</label>
+              <div className="relative">
               <input
-                type="password" name="password" required value={formData.password} onChange={handleInputChange}
-                placeholder="••••••"
+                type={showPassword ? 'text' : 'password'} name="password" required value={formData.password} onChange={handleInputChange}
+                placeholder="8 caracteres minimum" autoComplete="new-password"
                 className="w-full border border-slate-800 bg-[#090d16] px-3 py-2.5 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none placeholder-slate-600"
               />
+                <button type="button" onClick={function () { setShowPassword(function (value) { return !value; }); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500" aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}>{showPassword ? <FaEyeSlash /> : <FaEye />}</button>
+              </div>
+              {formData.password && <PasswordStrength password={formData.password} />}
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Confirmation</label>
+              <div className="relative">
               <input
-                type="password" name="confirmPassword" required value={formData.confirmPassword} onChange={handleInputChange}
-                placeholder="••••••"
+                type={showConfirmPassword ? 'text' : 'password'} name="confirmPassword" required value={formData.confirmPassword} onChange={handleInputChange}
+                placeholder="Retapez le mot de passe" autoComplete="new-password"
                 className="w-full border border-slate-800 bg-[#090d16] px-3 py-2.5 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none placeholder-slate-600"
               />
+                <button type="button" onClick={function () { setShowConfirmPassword(function (value) { return !value; }); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500" aria-label={showConfirmPassword ? 'Masquer la confirmation' : 'Afficher la confirmation'}>{showConfirmPassword ? <FaEyeSlash /> : <FaEye />}</button>
+              </div>
             </div>
           </div>
+
+          <button type="button" onClick={function () {
+            var generated = generatePassword();
+            setFormData(function (prev) { return Object.assign({}, prev, { password: generated, confirmPassword: generated }); });
+            setShowPassword(true);
+            setShowConfirmPassword(true);
+          }} className="text-[10px] font-bold uppercase tracking-widest text-[#CE1126] hover:text-white">
+            Generer un mot de passe securise
+          </button>
 
           <div className="pt-1">
             <button
@@ -286,6 +483,27 @@ export default function SecureRegister() {
               )}
             </button>
           </div>
+          </>
+          ) : null}
+          {phoneVerification ? (
+            <div className="pt-1">
+              <button
+                type="button" disabled={isLoading}
+                onClick={async function () {
+                  setIsLoading(true);
+                  var resent = await authService.resendPhoneVerification(phoneVerification.userId);
+                  setIsLoading(false);
+                  if (resent.success) {
+                    setPhoneVerification(function (prev) { return Object.assign({}, prev, resent.phoneVerification); });
+                    notificationService.success('Nouveau code SMS envoye.');
+                  } else notificationService.error(resent.error);
+                }}
+                className="w-full py-3 border border-slate-700 text-slate-300 font-black uppercase text-[10px] tracking-[0.2em] hover:border-[#CE1126] hover:text-white disabled:opacity-40"
+              >
+                Renvoyer le code SMS
+              </button>
+            </div>
+          ) : null}
         </form>
 
         <div className="mt-3 pt-3 border-t border-slate-800 text-center">
@@ -299,7 +517,7 @@ export default function SecureRegister() {
             </span>
           </p>
         </div>
-      </motion.div>
+      </div>
 
       <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#00A3E0] via-[#CE1126] to-[#FDD100] opacity-30" />
     </div>

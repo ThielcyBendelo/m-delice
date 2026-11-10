@@ -14,10 +14,10 @@ export const CSPConfig = {
   development: {
     'default-src': ["'self'"],
     'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://accounts.google.com', 'https://cdn.cinetpay.com', 'https://stripe.com'],
-    'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
-    'style-src-elem': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+    'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com', 'https://accounts.google.com'],
+    'style-src-elem': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com', 'https://accounts.google.com'],
     'font-src': ["'self'", 'https://fonts.gstatic.com'],
-    'img-src': ["'self'", 'data:', 'https://*.googleusercontent.com', 'https://*.gstatic.com', 'https://unsplash.com', 'https://*.stripe.com'],
+    'img-src': ["'self'", 'data:', 'blob:', 'http://localhost:*', 'http://127.0.0.1:*', 'https://*.googleusercontent.com', 'https://*.gstatic.com', 'https://images.unsplash.com', 'https://*.stripe.com'],
     // 🟢 CORRIGÉ : Ajout de l'IP numérique locale pour autoriser les liaisons directes de fetch
     'connect-src': ["'self'", 'http://localhost:*', 'http://127.0.0.1:*', 'https://accounts.google.com', 'https://cinetpay.com', 'https://api.stripe.com'],
     'frame-src': ["'self'", 'https://accounts.google.com', 'https://cinetpay.com', 'https://stripe.com'],
@@ -27,10 +27,10 @@ export const CSPConfig = {
   production: {
     'default-src': ["'self'"],
     'script-src': ["'self'", "'unsafe-inline'", 'https://accounts.google.com', 'https://cdn.cinetpay.com', 'https://stripe.com'],
-    'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
-    'style-src-elem': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+    'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com', 'https://accounts.google.com'],
+    'style-src-elem': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com', 'https://accounts.google.com'],
     'font-src': ["'self'", 'https://fonts.gstatic.com'],
-    'img-src': ["'self'", 'data:', 'https://*.googleusercontent.com', 'https://*.gstatic.com', 'https://unsplash.com', 'https://*.stripe.com'],
+    'img-src': ["'self'", 'data:', 'blob:', 'https://*.googleusercontent.com', 'https://*.gstatic.com', 'https://images.unsplash.com', 'https://*.stripe.com', 'https://drcassurances.com'],
     'connect-src': ["'self'", 'https://accounts.google.com', 'https://cinetpay.com', 'https://stripe.com', 'https://drcassurances.com'],
     'frame-src': ["'self'", 'https://accounts.google.com', 'https://cinetpay.com', 'https://stripe.com'],
      // Interdire l'embedding total hors domaine pour bloquer le clickjacking

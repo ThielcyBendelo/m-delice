@@ -11,11 +11,14 @@ import image1 from '../assets/pack_maman.jpeg';
 import image2 from '../assets/pack_auto.jpeg';
 import image3 from '../assets/pack_scolaire.jpeg';
 import image4 from '../assets/pack_diaspo.jpeg';
+import image5 from '../assets/pack-collective.jpg';
+import image6 from '../assets/pack-accident.jpg';
+
 
 // Icônes épurées
 import { 
   FaShieldAlt, FaHeartbeat, FaCar, FaGraduationCap, 
-  FaPlane, FaCheckCircle, FaArrowRight, FaHospitalSymbol 
+  FaPlane, FaCheckCircle, FaArrowRight, FaHospitalSymbol, FaBriefcase, FaUsers
 } from 'react-icons/fa';
 
 export default function ServicesPage() {
@@ -82,7 +85,37 @@ export default function ServicesPage() {
         "Assistance juridique internationale"
       ],
       color: "border-t-4 border-slate-950"
-    }
+    },
+  {
+    id: 5,
+    title: "Assurance Santé Collective & Mutuelle",
+    image: image5, // Idéalement, une image d'une équipe de collaborateurs ou d'un check-up médical
+    icon: <FaUsers className="text-white text-3xl" />,
+    bgIcon: "bg-blue-600",
+    description: "Une couverture médicale complète et attractive financée par l'employeur pour prendre en charge les consultations, les soins courants et les hospitalisations de vos salariés et de leurs familles nucléaires en RDC.",
+    guarantees: [
+      "Prise en charge intégrale des hospitalisations et chirurgies",
+      "Consultations et soins courants pour l'employé et sa famille",
+      "Accès direct au réseau de cliniques partenaires (Tiers Payant)",
+      "Couverture des médicaments prescrits et examens de laboratoire"
+    ],
+    color: "border-t-4 border-blue-600"
+  },
+  {
+    id: 6,
+    title: "Accidents du Travail & Prévoyance",
+    image: image6, // Idéalement, une image symbolisant la protection, la sécurité ou la prévoyance en entreprise
+    icon: <FaShieldAlt className="text-white text-3xl" />,
+    bgIcon: "bg-slate-950",
+    description: "Une assurance privée complémentaire au régime obligatoire de la CNSS en RDC pour prémunir votre entreprise et protéger vos équipes face aux risques professionnels majeurs.",
+    guarantees: [
+      "Indemnisation en cas de décès accidentel ou invalidité",
+      "Couverture des accidents survenus sur le lieu de travail ou en trajet",
+      "Prise en charge des frais de secours et de transport d'urgence",
+      "Rente d'incapacité temporaire ou permanente pour le salarié"
+    ],
+    color: "border-t-4 border-slate-950"
+  }
   ];
 
    return (

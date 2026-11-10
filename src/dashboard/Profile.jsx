@@ -44,6 +44,17 @@ function toDateValue(value) {
   return Number.isFinite(timestamp) ? timestamp : 0;
 }
 
+function passwordScore(password) {
+  return [password.length >= 8, /[A-Z]/.test(password), /[a-z]/.test(password), /\d/.test(password), /[^A-Za-z0-9]/.test(password)].filter(Boolean).length;
+}
+
+function generateSecurePassword() {
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*';
+  const values = new Uint32Array(16);
+  crypto.getRandomValues(values);
+  return Array.from(values, (value) => alphabet[value % alphabet.length]).join('');
+}
+
 export default function Profile() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -204,6 +215,10 @@ export default function Profile() {
 
   async function handleSecuritySubmit(event) {
     event.preventDefault();
+    if (passwordScore(securityData.newPassword) < 4) {
+      notificationService.error('Le nouveau mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre.');
+      return;
+    }
     if (securityData.newPassword !== securityData.confirmPassword) {
       notificationService.error('Les nouveaux mots de passe ne correspondent pas.');
       return;
@@ -450,9 +465,12 @@ export default function Profile() {
               </div>
 
               <form onSubmit={handleSecuritySubmit} className="space-y-4">
-                <Field label="Mot de passe actuel" type="password" value={securityData.currentPassword} onChange={(value) => setSecurityData((prev) => ({ ...prev, currentPassword: value }))} />
+                <p className="text-xs leading-relaxed text-slate-400">{authProvider === 'google' ? 'Compte Google : vous pouvez définir un mot de passe ESNAS supplémentaire. Google reste votre méthode principale de connexion.' : 'Saisissez votre mot de passe actuel pour confirmer cette modification.'}</p>
+                {authProvider !== 'google' && <Field label="Mot de passe actuel" type="password" value={securityData.currentPassword} onChange={(value) => setSecurityData((prev) => ({ ...prev, currentPassword: value }))} />}
                 <Field label="Nouveau mot de passe" type="password" value={securityData.newPassword} onChange={(value) => setSecurityData((prev) => ({ ...prev, newPassword: value }))} />
+                {securityData.newPassword && <p className="text-xs text-slate-400">Force : {['Faible', 'Faible', 'Moyenne', 'Bonne', 'Forte', 'Très forte'][passwordScore(securityData.newPassword)]}</p>}
                 <Field label="Confirmer le mot de passe" type="password" value={securityData.confirmPassword} onChange={(value) => setSecurityData((prev) => ({ ...prev, confirmPassword: value }))} />
+                <button type="button" onClick={() => { const value = generateSecurePassword(); setSecurityData((prev) => ({ ...prev, newPassword: value, confirmPassword: value })); }} className="text-left text-xs font-black uppercase tracking-wider text-[#CE1126] hover:text-white">Générer un mot de passe sécurisé</button>
 
                 <button
                   type="submit"

@@ -27,11 +27,12 @@ const authService = {
     }
   },
 
-  async login(email, password) {
+  async login(email, password, turnstileToken = '') {
     try {
       const response = await secureAPIClient.post('/auth/login', {
         email: String(email || '').trim().toLowerCase(),
         password,
+        turnstileToken,
       });
 
       const responseData = response.data?.data || response.data;
@@ -63,7 +64,11 @@ const authService = {
 
       const responseData = response.data?.data || response.data;
       if (responseData && (responseData.success || response.status === 201)) {
-        return { success: true, user: responseData.user };
+        return {
+          success: true,
+          user: responseData.user,
+          phoneVerification: responseData.phoneVerification || null,
+        };
       }
       return {
         success: false,
@@ -78,14 +83,50 @@ const authService = {
     }
   },
 
+  async verifyPhone(userId, challengeId, code) {
+    try {
+      const response = await secureAPIClient.post('/auth/phone/verify', {
+        userId,
+        challengeId,
+        code: String(code || '').trim(),
+      });
+      const data = response.data?.data || response.data;
+      return data?.success
+        ? { success: true, message: data.message }
+        : { success: false, error: data?.message || 'Code SMS invalide.' };
+    } catch (error) {
+      return { success: false, error: error.userMessage || error.message || 'Erreur de verification SMS.' };
+    }
+  },
+
+  async resendPhoneVerification(userId) {
+    try {
+      const response = await secureAPIClient.post('/auth/phone/resend', { userId });
+      const data = response.data?.data || response.data;
+      return data?.success
+        ? { success: true, message: data.message, phoneVerification: data.phoneVerification }
+        : { success: false, error: data?.message || 'Impossible de renvoyer le code SMS.' };
+    } catch (error) {
+      return { success: false, error: error.userMessage || error.message || 'Erreur de renvoi SMS.' };
+    }
+  },
+
   /** Google Identity Services — credential = JWT ID token */
-  async loginWithGoogle(credential) {
+  async loginWithGoogle(credential, turnstileToken = '', verificationData = {}) {
     if (!credential) {
       return { success: false, error: 'Jeton Google manquant.' };
     }
     try {
-      const response = await secureAPIClient.post('/auth/google', { credential });
+      const response = await secureAPIClient.post('/auth/google', { credential, turnstileToken, ...verificationData });
       const responseData = response.data?.data || response.data;
+      if (responseData?.requiresPhoneVerification) {
+        return {
+          success: true,
+          requiresPhoneVerification: true,
+          user: responseData.user,
+          phoneVerification: responseData.phoneVerification,
+        };
+      }
       if (responseData?.token) {
         this.setSession(responseData.token, responseData.user);
         return { success: true, user: responseData.user };
@@ -138,6 +179,16 @@ const authService = {
 
   async changePassword(passwordData) {
     const response = await secureAPIClient.patch('/auth/password', passwordData || {});
+    return response.data?.data || response.data || {};
+  },
+
+  async requestPasswordReset(email, turnstileToken) {
+    const response = await secureAPIClient.post('/auth/password/forgot', { email, turnstileToken });
+    return response.data?.data || response.data || {};
+  },
+
+  async resetPassword(token, password, turnstileToken) {
+    const response = await secureAPIClient.post('/auth/password/reset', { token, password, turnstileToken });
     return response.data?.data || response.data || {};
   },
 

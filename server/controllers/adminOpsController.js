@@ -352,6 +352,198 @@ const adminOpsController = {
     }
   },
 
+  /** GET /admin/regions — régions et nombre d'agents affectés */
+  async listRegions(req, res) {
+    try {
+      const pool = await poolPromise;
+      const result = await pool.request().query(`
+        SELECT r.RegionID, r.RegionCode, r.RegionName, r.CountryCode, r.IsActive,
+               r.CreatedAt, r.UpdatedAt,
+               COUNT(CASE WHEN a.IsActive = 1 THEN 1 END) AS ActiveAgentCount,
+               COUNT(CASE WHEN o.IsActive = 1 THEN 1 END) AS ActiveOrganizationCount
+        FROM Regions r
+        LEFT JOIN UserRegionAssignments a ON a.RegionID = r.RegionID
+        LEFT JOIN PartnerOrganizations o ON o.RegionID = r.RegionID
+        GROUP BY r.RegionID, r.RegionCode, r.RegionName, r.CountryCode,
+                 r.IsActive, r.CreatedAt, r.UpdatedAt
+        ORDER BY r.RegionName ASC
+      `);
+      return res.status(200).json({ success: true, regions: result.recordset });
+    } catch (error) {
+      console.error('admin.listRegions:', error);
+      return res.status(500).json({ success: false, message: 'Erreur liste regions.' });
+    }
+  },
+
+  /** GET /admin/agents — comptes agent et affectation régionale principale */
+  async listAgents(req, res) {
+    try {
+      const pool = await poolPromise;
+      const result = await pool.request().query(`
+        SELECT u.UserID, u.FirstName, u.LastName, u.Email, u.IsActive AS UserIsActive,
+               a.RegionID, a.IsActive AS AssignmentIsActive,
+               r.RegionCode, r.RegionName
+        FROM Users u
+        LEFT JOIN UserRegionAssignments a
+          ON a.UserID = u.UserID AND a.IsPrimary = 1
+        LEFT JOIN Regions r ON r.RegionID = a.RegionID
+        WHERE LOWER(u.UserRole) = N'agent'
+        ORDER BY u.IsActive DESC, u.LastName, u.FirstName
+      `);
+      return res.status(200).json({ success: true, agents: result.recordset });
+    } catch (error) {
+      console.error('admin.listAgents:', error);
+      return res.status(500).json({ success: false, message: 'Erreur liste agents.' });
+    }
+  },
+
+  /** POST /admin/regions — création d'une région */
+  async createRegion(req, res) {
+    try {
+      const regionCode = String(req.body?.regionCode || '').trim().toUpperCase();
+      const regionName = String(req.body?.regionName || '').trim();
+      const countryCode = String(req.body?.countryCode || '').trim().toUpperCase() || null;
+      if (!/^[A-Z0-9][A-Z0-9-]{2,39}$/.test(regionCode) || !regionName) {
+        return res.status(400).json({ success: false, message: 'Code et nom de region invalides.' });
+      }
+      const pool = await poolPromise;
+      const result = await pool.request()
+        .input('Code', sql.NVarChar(40), regionCode)
+        .input('Name', sql.NVarChar(120), regionName)
+        .input('CountryCode', sql.NVarChar(10), countryCode)
+        .query(`
+          INSERT INTO Regions (RegionCode, RegionName, CountryCode)
+          OUTPUT INSERTED.RegionID, INSERTED.RegionCode, INSERTED.RegionName,
+                 INSERTED.CountryCode, INSERTED.IsActive
+          VALUES (@Code, @Name, @CountryCode)
+        `);
+      await auditService.log({
+        actorUserId: req.user.id,
+        action: 'admin.region_create',
+        entityType: 'region',
+        entityId: result.recordset[0].RegionID,
+        details: { regionCode },
+        ipAddress: req.ip,
+      });
+      return res.status(201).json({ success: true, region: result.recordset[0] });
+    } catch (error) {
+      if (error?.number === 2601 || error?.number === 2627) {
+        return res.status(409).json({ success: false, message: 'Ce code region existe deja.' });
+      }
+      console.error('admin.createRegion:', error);
+      return res.status(500).json({ success: false, message: 'Erreur creation region.' });
+    }
+  },
+
+  /** PATCH /admin/regions/:id/active */
+  async setRegionActive(req, res) {
+    try {
+      const regionId = Number(req.params.id);
+      const active = req.body?.active === true || req.body?.active === 1 || req.body?.active === '1';
+      if (!Number.isInteger(regionId) || regionId <= 0) {
+        return res.status(400).json({ success: false, message: 'id region invalide.' });
+      }
+      const pool = await poolPromise;
+      const result = await pool.request()
+        .input('RegionID', sql.Int, regionId)
+        .input('Active', sql.Bit, active ? 1 : 0)
+        .query(`
+          UPDATE Regions SET IsActive = @Active, UpdatedAt = SYSUTCDATETIME()
+          OUTPUT INSERTED.RegionID, INSERTED.RegionCode, INSERTED.IsActive
+          WHERE RegionID = @RegionID
+        `);
+      if (!result.recordset.length) return res.status(404).json({ success: false, message: 'Region introuvable.' });
+      await auditService.log({
+        actorUserId: req.user.id,
+        action: 'admin.region_active',
+        entityType: 'region',
+        entityId: regionId,
+        details: { active },
+        ipAddress: req.ip,
+      });
+      return res.status(200).json({ success: true, region: result.recordset[0] });
+    } catch (error) {
+      console.error('admin.setRegionActive:', error);
+      return res.status(500).json({ success: false, message: 'Erreur activation region.' });
+    }
+  },
+
+  /** GET /admin/regions/:id/agents */
+  async listRegionAgents(req, res) {
+    try {
+      const regionId = Number(req.params.id);
+      if (!Number.isInteger(regionId) || regionId <= 0) {
+        return res.status(400).json({ success: false, message: 'id region invalide.' });
+      }
+      const pool = await poolPromise;
+      const result = await pool.request()
+        .input('RegionID', sql.Int, regionId)
+        .query(`
+          SELECT a.UserRegionAssignmentID, a.UserID, a.RegionID, a.IsPrimary, a.IsActive,
+                 u.FirstName, u.LastName, u.Email, u.UserRole, u.IsActive AS UserIsActive
+          FROM UserRegionAssignments a
+          JOIN Users u ON u.UserID = a.UserID
+          WHERE a.RegionID = @RegionID
+          ORDER BY a.IsActive DESC, u.LastName, u.FirstName
+        `);
+      return res.status(200).json({ success: true, agents: result.recordset });
+    } catch (error) {
+      console.error('admin.listRegionAgents:', error);
+      return res.status(500).json({ success: false, message: 'Erreur liste agents.' });
+    }
+  },
+
+  /** PUT /admin/users/:id/region — affectation régionale idempotente */
+  async assignUserRegion(req, res) {
+    try {
+      const userId = Number(req.params.id);
+      const regionId = Number(req.body?.regionId);
+      const active = req.body?.active !== false;
+      if (!Number.isInteger(userId) || userId <= 0 || !Number.isInteger(regionId) || regionId <= 0) {
+        return res.status(400).json({ success: false, message: 'Utilisateur ou region invalide.' });
+      }
+      const pool = await poolPromise;
+      const result = await pool.request()
+        .input('UserID', sql.Int, userId)
+        .input('RegionID', sql.Int, regionId)
+        .input('AssignedByUserID', sql.Int, Number(req.user.id))
+        .input('Active', sql.Bit, active ? 1 : 0)
+        .query(`
+          IF NOT EXISTS (SELECT 1 FROM Users WHERE UserID = @UserID AND LOWER(UserRole) = N'agent')
+            THROW 51001, 'Seuls les comptes agent peuvent etre affectes.', 1;
+          IF NOT EXISTS (SELECT 1 FROM Regions WHERE RegionID = @RegionID AND IsActive = 1)
+            THROW 51002, 'Region inexistante ou inactive.', 1;
+          UPDATE UserRegionAssignments
+             SET IsPrimary = 1, IsActive = @Active, AssignedByUserID = @AssignedByUserID,
+                 UpdatedAt = SYSUTCDATETIME()
+           WHERE UserID = @UserID AND RegionID = @RegionID;
+          IF @@ROWCOUNT = 0
+          BEGIN
+            INSERT INTO UserRegionAssignments (UserID, RegionID, IsPrimary, IsActive, AssignedByUserID)
+            VALUES (@UserID, @RegionID, 1, @Active, @AssignedByUserID);
+          END;
+          SELECT UserRegionAssignmentID, UserID, RegionID, IsPrimary, IsActive
+          FROM UserRegionAssignments
+          WHERE UserID = @UserID AND RegionID = @RegionID;
+        `);
+      await auditService.log({
+        actorUserId: req.user.id,
+        action: 'admin.agent_region_assign',
+        entityType: 'user_region_assignment',
+        entityId: userId,
+        details: { regionId, active },
+        ipAddress: req.ip,
+      });
+      return res.status(200).json({ success: true, assignment: result.recordset.at(-1) });
+    } catch (error) {
+      if (error?.number === 51001 || error?.number === 51002) {
+        return res.status(400).json({ success: false, message: error.message });
+      }
+      console.error('admin.assignUserRegion:', error);
+      return res.status(500).json({ success: false, message: 'Erreur affectation region.' });
+    }
+  },
+
   /** GET /admin/audit — derniers événements */
   async auditTrail(req, res) {
     try {

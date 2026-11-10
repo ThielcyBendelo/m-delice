@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
 import notificationService from '../services/notificationService';
 import { FaShieldAlt, FaArrowRight, FaSpinner, FaGoogle } from 'react-icons/fa';
+import TurnstileField from './TurnstileField';
 
 const GIS_SRC = 'https://accounts.google.com/gsi/client';
 
@@ -35,7 +36,14 @@ export default function SecureLogin() {
   const [googleReady, setGoogleReady] = useState(false);
   const [googleClientId, setGoogleClientId] = useState('');
   const [credentials, setCredentials] = useState({ email: '', password: '' });
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const turnstileTokenRef = useRef('');
   const googleBtnRef = useRef(null);
+
+  const updateTurnstileToken = useCallback((token) => {
+    turnstileTokenRef.current = token;
+    setTurnstileToken(token);
+  }, []);
 
   const continueAfterLogin = useCallback(() => {
     const destination = location.state?.from || '/dashboard';
@@ -44,10 +52,15 @@ export default function SecureLogin() {
   }, [location.state, navigate]);
 
   useEffect(function () {
+    if (location.state?.registrationValidated) {
+      notificationService.success('Validation de connexion réussie. Bienvenue sur ESNAS.');
+      navigate('/login', { replace: true, state: {} });
+      return;
+    }
     if (authService.isLoggedIn()) {
       continueAfterLogin();
     }
-  }, [continueAfterLogin]);
+  }, [continueAfterLogin, location.state, navigate]);
 
   useEffect(function () {
     var cancelled = false;
@@ -73,7 +86,7 @@ export default function SecureLogin() {
             }
             setIsLoading(true);
             try {
-              var result = await authService.loginWithGoogle(response.credential);
+              var result = await authService.loginWithGoogle(response.credential, turnstileTokenRef.current);
               if (result.success) {
                 notificationService.success('Connexion Google reussie !');
                 continueAfterLogin();
@@ -82,7 +95,7 @@ export default function SecureLogin() {
               }
             } catch (err) {
               console.error(err);
-              notificationService.error('Echec authentification Google.');
+              notificationService.error(err.userMessage || err.message || 'Google n’a pas pu valider votre identité. Réessayez avec un compte vérifié.');
             } finally {
               setIsLoading(false);
             }
@@ -110,7 +123,7 @@ export default function SecureLogin() {
     })();
 
     return function () { cancelled = true; };
-  }, [continueAfterLogin]);
+  }, [continueAfterLogin, turnstileToken]);
 
   const handleInputChange = function (e) {
     var name = e.target.name;
@@ -129,17 +142,17 @@ export default function SecureLogin() {
 
     setIsLoading(true);
     try {
-      notificationService.info('Verification securisee en cours...');
-      var result = await authService.login(credentials.email, credentials.password);
+      notificationService.info('Vérification sécurisée de vos informations en cours...');
+      var result = await authService.login(credentials.email, credentials.password, turnstileToken);
       if (result && result.success) {
-        notificationService.success('Connexion validee avec succes !');
+        notificationService.success('Validation de connexion réussie. Bienvenue sur ESNAS.');
         continueAfterLogin();
       } else {
         notificationService.error((result && result.error) || 'Identifiants incorrects.');
       }
     } catch (error) {
       console.error(error);
-      notificationService.error('Identifiants incorrects ou serveur indisponible.');
+      notificationService.error(error.userMessage || error.message || 'Connexion impossible pour le moment. Vérifiez vos informations ou réessayez dans quelques instants.');
     } finally {
       setIsLoading(false);
     }
@@ -188,6 +201,7 @@ export default function SecureLogin() {
         </div>
 
         <form onSubmit={handleFormSubmit} className="space-y-3">
+          <TurnstileField onToken={updateTurnstileToken} />
           <div className="space-y-1">
             <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Email</label>
             <input
@@ -214,6 +228,12 @@ export default function SecureLogin() {
               placeholder="••••••••"
               className="w-full border border-slate-800 bg-[#090d16] px-3 py-2.5 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none placeholder-slate-600"
             />
+          </div>
+
+          <div className="text-right">
+            <button type="button" onClick={function () { navigate('/reset-password'); }} className="text-[10px] font-bold uppercase tracking-wider text-slate-400 underline underline-offset-4 hover:text-white">
+              Mot de passe oublié ?
+            </button>
           </div>
 
           <div className="pt-1">

@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import apiRoutes from './routes/apiRoutes.js';
 import { startAutomationJobs } from './jobs/automationJobs.js';
+import { startOutboxWorker } from './jobs/outboxWorker.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '.env') });
@@ -66,4 +67,5 @@ app.listen(PORT, HOST, () => {
   if (process.env.AUTOMATION_ENABLED !== 'false') {
     startAutomationJobs();
   }
+  startOutboxWorker();
 });

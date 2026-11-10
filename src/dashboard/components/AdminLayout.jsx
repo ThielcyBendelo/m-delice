@@ -37,6 +37,7 @@ const NAV_ITEMS = [
   { path: '/dashboard/messages', label: 'Communications', icon: FaWhatsapp, roles: 'staff' },
   { path: '/dashboard/finance', label: 'Contrôle financier', icon: FaCoins, roles: ['admin', 'finance'] },
   { path: '/dashboard/organizations', label: 'Organisations', icon: FaBuilding, roles: ['admin'] },
+  { path: '/dashboard/regions', label: 'Régions & agents', icon: FaUsers, roles: ['admin'] },
   { path: '/dashboard/health', label: 'Santé du système', icon: FaHeartbeat, roles: ['admin'] },
   { path: '/dashboard/profile', label: 'Mon profil', icon: FaUserCircle, roles: 'all' },
 ];
@@ -124,11 +125,11 @@ export default function AdminLayout() {
 
   const navigation = (
     <>
-      <div className="flex h-20 items-center justify-between border-b border-slate-800 px-5">
+      <div className="flex h-20 items-center justify-between border-b border-slate-200 px-4">
         {!collapsed && (
-          <div>
-            <div className="text-xl font-black text-white">ESNAS</div>
-            <div className="text-[10px] font-bold uppercase text-[#00A3E0]">
+          <div className="min-w-0">
+            <div className="text-xl font-black tracking-tight text-slate-900">ESNAS</div>
+            <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#CE1126]">
               {isStaff ? 'Console de gestion' : 'Espace assuré'}
             </div>
           </div>
@@ -136,7 +137,7 @@ export default function AdminLayout() {
         <button
           type="button"
           onClick={() => setCollapsed((value) => !value)}
-          className="touch-target hidden rounded-md p-2 text-slate-400 hover:bg-slate-800 hover:text-white lg:block"
+          className="touch-target hidden rounded-md p-2 text-slate-600 transition hover:bg-slate-100 hover:text-[#CE1126] lg:block"
           title={collapsed ? 'Déployer le menu' : 'Réduire le menu'}
         >
           <FaChevronLeft className={collapsed ? 'rotate-180' : ''} />
@@ -144,54 +145,70 @@ export default function AdminLayout() {
         <button
           type="button"
           onClick={() => setMobileOpen(false)}
-          className="touch-target rounded-md p-2 text-slate-400 hover:text-white lg:hidden"
+          className="touch-target rounded-md p-2 text-slate-600 transition hover:text-[#CE1126] lg:hidden"
           title="Fermer le menu"
         >
           <FaTimes />
         </button>
       </div>
 
-      <button
-        type="button"
-        onClick={() => navigate('/dashboard/profile')}
-        className={`touch-target flex items-center gap-3 border-b border-slate-800 p-4 text-left hover:bg-slate-800/70 ${collapsed ? 'justify-center' : ''}`}
-      >
-        <Avatar user={currentUser} />
-        {!collapsed && (
-          <span className="min-w-0">
-            <span className="block truncate text-sm font-black text-white">{displayName}</span>
-            <span className="block truncate text-[10px] font-bold uppercase text-[#FDD100]">{role}</span>
-          </span>
-        )}
-      </button>
+      <div className="px-3 py-3">
+        <button
+          type="button"
+          onClick={() => navigate('/dashboard/profile')}
+          className={`touch-target flex w-full items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-left shadow-sm transition hover:border-[#CE1126]/40 hover:bg-white ${collapsed ? 'justify-center' : ''}`}
+        >
+          <Avatar user={currentUser} />
+          {!collapsed && (
+            <span className="min-w-0">
+              <span className="block truncate text-sm font-black text-slate-900">{displayName}</span>
+              <span className="mt-0.5 block truncate text-[10px] font-bold uppercase tracking-[0.16em] text-[#CE1126]">{role}</span>
+            </span>
+          )}
+        </button>
+      </div>
 
-      <nav className="flex-1 space-y-1 overflow-y-auto p-3" aria-label="Navigation de l’espace privé">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          const active = isActive(item);
-          return (
-            <button
-              type="button"
-              key={item.path}
-              onClick={() => navigate(item.path)}
-              title={collapsed ? item.label : undefined}
-              className={`touch-target flex h-12 lg:h-11 w-full items-center gap-3 rounded-md px-3 text-sm font-bold transition-colors ${collapsed ? 'justify-center' : ''} ${
-                active ? 'bg-[#00A3E0] text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-              }`}
-            >
-              <Icon className="shrink-0 text-base" />
-              {!collapsed && <span className="truncate">{item.label}</span>}
-            </button>
-          );
-        })}
+      <nav className="flex-1 overflow-y-auto p-3" aria-label="Navigation de l’espace privé">
+        <div className="mb-3 flex items-center justify-between px-1">
+          <span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Accès</span>
+          <span className="rounded-full border border-slate-200 bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-700">
+            {menuItems.length} modules
+          </span>
+        </div>
+
+        <div className="space-y-1">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item);
+            const accent = active
+              ? 'border-[#CE1126]/30 bg-[#fff7f7] text-[#CE1126]'
+              : 'border-transparent text-slate-700 hover:border-slate-200 hover:bg-slate-50 hover:text-[#00A3E0]';
+            return (
+              <button
+                type="button"
+                key={item.path}
+                onClick={() => navigate(item.path)}
+                title={collapsed ? item.label : undefined}
+                className={`group flex h-11 w-full items-center gap-3 rounded-lg border px-3 text-left transition-colors ${collapsed ? 'justify-center' : ''} ${accent}`}
+              >
+                <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-md ${active ? 'bg-[#CE1126]/10 text-[#CE1126]' : 'bg-slate-100 text-[#00A3E0]'}`}>
+                  <Icon className="text-sm" />
+                </span>
+                {!collapsed && (
+                  <span className="block max-w-full truncate px-1 text-[12px] font-black leading-tight">{item.label}</span>
+                )}
+              </button>
+            );
+          })}
+        </div>
       </nav>
 
-      <div className="safe-bottom border-t border-slate-800 p-3">
+      <div className="safe-bottom border-t border-slate-200 p-3">
         <button
           type="button"
           onClick={logout}
           title={collapsed ? 'Déconnexion' : undefined}
-          className={`touch-target flex h-12 lg:h-11 w-full items-center gap-3 rounded-md px-3 text-sm font-bold text-red-400 hover:bg-red-500/10 ${collapsed ? 'justify-center' : ''}`}
+          className={`touch-target flex h-12 lg:h-11 w-full items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-3 text-sm font-bold text-red-700 transition hover:bg-red-100 ${collapsed ? 'justify-center' : ''}`}
         >
           <FaSignOutAlt /> {!collapsed && <span>Déconnexion</span>}
         </button>
@@ -200,11 +217,12 @@ export default function AdminLayout() {
   );
 
   const activePage = menuItems.find((item) => isActive(item));
+  const isDashboardHome = location.pathname === '/dashboard';
 
   return (
-    <div className="admin-shell min-h-dvh text-slate-900 dark:text-slate-100">
+    <div className="admin-shell min-h-dvh bg-white text-slate-900">
       <aside
-        className={`fixed inset-y-0 left-0 z-50 hidden flex-col border-r border-white/10 bg-slate-950/90 backdrop-blur-xl transition-[width] duration-200 lg:flex ${collapsed ? 'w-20' : 'w-64'}`}
+        className={`fixed inset-y-0 left-0 z-50 hidden flex-col border-r border-slate-200 bg-white shadow-[18px_0_30px_rgba(15,23,42,0.05)] backdrop-blur-xl transition-[width] duration-200 lg:flex ${collapsed ? 'w-24' : 'w-[300px]'}`}
       >
         {navigation}
       </aside>
@@ -215,51 +233,104 @@ export default function AdminLayout() {
             type="button"
             aria-label="Fermer le menu"
             onClick={() => setMobileOpen(false)}
-            className="fixed inset-0 z-40 bg-slate-950/60 lg:hidden"
+            className="fixed inset-0 z-40 bg-slate-950/70 lg:hidden"
           />
-          <aside id="admin-mobile-menu" className="fixed inset-y-0 left-0 z-50 flex w-[min(90vw,340px)] flex-col overflow-y-auto overscroll-contain border-r border-white/10 bg-slate-950/95 shadow-2xl backdrop-blur-xl lg:hidden">
-            {navigation}
+          <aside id="admin-mobile-menu" className="fixed inset-y-0 left-0 z-50 flex w-[min(90vw,360px)] flex-col overflow-y-auto overscroll-contain border-r border-slate-200 bg-white shadow-2xl backdrop-blur-xl lg:hidden">
+            <div className="p-3">
+              {navigation}
+            </div>
           </aside>
         </>
       )}
 
-      <div className={`min-h-dvh transition-[padding] duration-200 ${collapsed ? 'lg:pl-20' : 'lg:pl-64'}`}>
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/10 bg-slate-950/75 px-4 backdrop-blur-xl sm:px-6">
-          <div className="flex min-w-0 items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setMobileOpen(true)}
-              className="touch-target rounded-md border border-white/10 p-2.5 text-slate-200 transition hover:bg-white/5 lg:hidden"
-              title="Ouvrir le menu"
-              aria-expanded={mobileOpen}
-              aria-controls="admin-mobile-menu"
-            >
-              <FaBars />
-            </button>
-            <div className="min-w-0">
-              <div className="truncate text-sm font-black sm:text-base">{activePage?.label || 'Espace privé'}</div>
-              <div className="hidden text-[10px] font-bold uppercase tracking-[0.22em] text-slate-400 sm:block">Accès sécurisé ESNAS · Multi-pays</div>
+      <div className={`min-h-dvh transition-[padding] duration-200 ${collapsed ? 'lg:pl-24' : 'lg:pl-[300px]'}`}>
+        <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/90 px-4 backdrop-blur-xl sm:px-6">
+          <div className="mx-auto flex h-16 max-w-[1500px] items-center justify-between">
+            <div className="flex min-w-0 items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setMobileOpen(true)}
+                className="touch-target rounded-xl border border-slate-200 bg-white p-2.5 text-slate-700 shadow-sm transition hover:border-[#CE1126] hover:text-[#CE1126] lg:hidden"
+                title="Ouvrir le menu"
+                aria-expanded={mobileOpen}
+                aria-controls="admin-mobile-menu"
+              >
+                <FaBars />
+              </button>
+              <div className="min-w-0">
+                <div className="truncate text-sm font-black text-slate-900 sm:text-base">{activePage?.label || 'Espace privé'}</div>
+                <div className="hidden text-[10px] font-bold uppercase tracking-[0.22em] text-slate-500 sm:block">Accès sécurisé ESNAS · Multi-pays</div>
+              </div>
             </div>
-          </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
-            <button
-              type="button"
-              onClick={() => navigate('/dashboard/verification')}
-              className="touch-target hidden rounded-md border border-white/10 p-2.5 text-slate-300 transition hover:bg-white/5 hover:text-[#00A3E0] sm:block"
-              title="Recherche et vérification"
-            >
-              <FaSearch />
-            </button>
-            <button type="button" onClick={() => navigate('/dashboard/profile')} className="flex items-center gap-2" title="Mon profil">
-              <Avatar user={currentUser} size="h-9 w-9" />
-              <span className="hidden max-w-40 truncate text-xs font-black text-white md:block">{displayName}</span>
-            </button>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <button
+                type="button"
+                onClick={() => navigate('/dashboard/verification')}
+                className="touch-target hidden rounded-xl border border-slate-200 bg-white p-2.5 text-slate-600 shadow-sm transition hover:border-[#CE1126] hover:text-[#CE1126] sm:block"
+                title="Recherche et vérification"
+              >
+                <FaSearch />
+              </button>
+              <button type="button" onClick={() => navigate('/dashboard/profile')} className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-2 py-1.5 shadow-sm transition hover:border-[#00A3E0]" title="Mon profil">
+                <Avatar user={currentUser} size="h-9 w-9" />
+                <span className="hidden max-w-40 truncate text-xs font-black text-slate-900 md:block">{displayName}</span>
+              </button>
+            </div>
           </div>
         </header>
 
-        <main className="p-4 sm:p-6 lg:p-8">
-          <div className="mx-auto max-w-[1500px]">
+        <main className="admin-content p-4 sm:p-6 lg:p-8">
+          <div className="mx-auto max-w-[1500px] border border-slate-200 bg-white p-3 shadow-[0_20px_60px_rgba(15,23,42,0.06)] sm:p-4 lg:p-6">
+            {isDashboardHome && (
+              <div className="mb-6 rounded-[28px] border border-slate-200 bg-slate-50 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] sm:p-6">
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="rounded-full border border-emerald-200 bg-emerald-500/10 p-2.5 text-emerald-600">
+                      <Avatar user={currentUser} size="h-12 w-12" />
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">Bienvenue</p>
+                      <h2 className="text-2xl font-black tracking-[-0.03em] text-slate-900 sm:text-3xl">{displayName}</h2>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-full border border-[#00A3E0]/20 bg-[#00A3E0]/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-[#00A3E0]">
+                      {role}
+                    </span>
+                    <span className="rounded-full border border-emerald-200 bg-emerald-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-emerald-700">
+                      Accès sécurisé
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                  {menuItems.slice(0, 3).map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <button
+                        key={item.path}
+                        type="button"
+                        onClick={() => navigate(item.path)}
+                        className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-[#CE1126]/40 hover:shadow-md"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#eef9ff] text-[#00A3E0]">
+                            <Icon />
+                          </span>
+                          <span>
+                            <span className="block text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">Module</span>
+                            <span className="block text-sm font-black text-slate-800">{item.label}</span>
+                          </span>
+                        </div>
+                        <span className="text-lg text-slate-400">›</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
             <Outlet />
           </div>
         </main>

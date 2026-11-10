@@ -192,6 +192,40 @@ html[data-theme="dark"] .hero-section .hero-description {
   border-bottom: 1px solid rgba(148, 163, 184, 0.18);
 }
 
+/* Shared navigation and dashboard surface treatment. */
+.navbar-main {
+  background-color: #0b1f3a !important;
+  border-color: #17345d !important;
+}
+
+.navbar-main .text-white,
+.navbar-main .text-slate-300,
+.navbar-main .text-slate-400 {
+  color: #f8fafc;
+}
+
+.admin-shell,
+.admin-shell main,
+.admin-content {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+.admin-shell aside,
+.admin-shell header {
+  background-color: #ffffff !important;
+}
+
+.admin-shell .text-white {
+  color: #0f172a;
+}
+
+@media (min-width: 1024px) {
+  .navbar-desktop-links {
+    margin-inline: auto;
+  }
+}
+
 /* =========================================================================
     2. RÈGLES DE BASE (HTML, BODY, TYPOGRAPHIES RECTILIGNES)
    ========================================================================= */

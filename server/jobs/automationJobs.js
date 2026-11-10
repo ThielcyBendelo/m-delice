@@ -37,6 +37,7 @@ async function queueRenewalReminders(pool) {
   for (const row of result.recordset) {
     const subject = 'Rappel renouvellement police ' + row.PolicyNumber;
     const endIso = new Date(row.EndDate).toISOString().slice(0, 10);
+    const paymentUrl = `${String(process.env.PUBLIC_APP_URL || 'http://localhost:5173').replace(/\/$/, '')}/passerelle-paiement`;
     const body =
       'Bonjour ' +
       (row.FirstName || '') +
@@ -46,7 +47,7 @@ async function queueRenewalReminders(pool) {
       row.DaysLeft +
       ' jour(s) (' +
       endIso +
-      ').';
+      '). Pour renouveler votre couverture, ouvrez votre espace ESNAS ou utilisez ce lien : ' + paymentUrl;
 
     const exists = await pool
       .request()
@@ -96,6 +97,28 @@ async function markExpiredPolicies(pool) {
   return result.rowsAffected?.[0] || 0;
 }
 
+async function expireStaleMobileMoney(pool) {
+  const result = await pool.request().query(`
+    UPDATE pay
+    SET Status = N'failed',
+        ProviderPayload = N'Demande Mobile Money expirée sans confirmation opérateur.',
+        UpdatedAt = SYSUTCDATETIME()
+    FROM Payments pay
+    WHERE LOWER(pay.GatewayUsed) LIKE N'%mobilemoney%'
+      AND pay.Status IN (N'pending', N'processing')
+      AND pay.CreatedAt < DATEADD(minute, -20, SYSUTCDATETIME());
+
+    UPDATE policy
+    SET Status = N'payment_expired', IsActive = 0, UpdatedAt = SYSUTCDATETIME()
+    FROM InsurancePolicies policy
+    JOIN Payments pay ON pay.PolicyID = policy.PolicyID
+    WHERE pay.Status = N'failed'
+      AND LOWER(pay.GatewayUsed) LIKE N'%mobilemoney%'
+      AND policy.Status = N'pending_payment';
+  `);
+  return result.rowsAffected?.[0] || 0;
+}
+
 export async function runAutomationOnce() {
   if (running) return { skipped: true };
   running = true;
@@ -104,6 +127,7 @@ export async function runAutomationOnce() {
     const pool = await poolPromise;
     const hasNotif = await ensureNotificationTable(pool);
     const expired = await markExpiredPolicies(pool);
+    const mobileMoneyExpired = await expireStaleMobileMoney(pool);
     const reminders = hasNotif ? await queueRenewalReminders(pool) : 0;
 
     try {
@@ -112,16 +136,16 @@ export async function runAutomationOnce() {
         action: 'automation.tick',
         entityType: 'system',
         entityId: null,
-        details: { expired, reminders, ms: Date.now() - started },
+        details: { expired, mobileMoneyExpired, reminders, ms: Date.now() - started },
       });
     } catch {
       // audit optionnel
     }
 
-    if (expired || reminders) {
-      console.log('[automation] expired=' + expired + ' reminders=' + reminders);
+    if (expired || mobileMoneyExpired || reminders) {
+      console.log('[automation] expired=' + expired + ' mobileMoneyExpired=' + mobileMoneyExpired + ' reminders=' + reminders);
     }
-    return { expired, reminders };
+    return { expired, mobileMoneyExpired, reminders };
   } catch (error) {
     console.error('[automation] error:', error.message);
     return { error: error.message };

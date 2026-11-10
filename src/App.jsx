@@ -23,6 +23,7 @@ import TestimonialsPage from './pages/TestimonialsPage';
 import BlogPreventionPage from './pages/Blog.jsx';       
 import DashboardPage from './pages/DashboardPage';
 import PartnersPage from './pages/PartnersPage';
+import PayPalReturnPage from './pages/PayPalReturnPage';
 
 // =========================================================================
 // 2. UTILITAIRES DE NAVIGATION & FLUIDITÉ (Dossier src/components/)
@@ -37,6 +38,7 @@ import PrivateRoute from './components/PrivateRoute';
 import ProfessionalSplashScreen from './components/ProfessionalSplashScreen';
 import SecureLogin from './components/SecureLogin';
 import SecureRegister from './components/SecureRegister';
+import PasswordResetPage from './components/PasswordResetPage';
 import AdminRoute from './components/AdminRoute';
 
 // =========================================================================
@@ -57,6 +59,7 @@ import SystemHealthDesk from './dashboard/SystemHealth';
 import ClaimsQueueDesk from './dashboard/ClaimsQueue';
 import HospitalVerifyPage from './pages/HospitalVerifyPage';
 import Organizations from './dashboard/Organizations';
+import Regions from './dashboard/Regions';
 
 // SOUS-COMPOSANT NÉCESSAIRE POUR INTERCEPTER LA LOCALISATION ET LE MODE WAIT
 const AnimatedRoutes = () => {
@@ -75,6 +78,8 @@ const AnimatedRoutes = () => {
         <Route path="/conformite-arca" element={<PageTransition><ComplianceArcaPage /></PageTransition>} />
         <Route path="/inscription-beneficiaire" element={<PageTransition><BeneficiaryRegistrationPage /></PageTransition>} />
         <Route path="/passerelle-paiement" element={<PageTransition><CheckoutPage /></PageTransition>} />
+        <Route path="/paiement/paypal/retour" element={<PageTransition><PayPalReturnPage /></PageTransition>} />
+        <Route path="/paiement/paypal/annule" element={<PageTransition><PayPalReturnPage /></PageTransition>} />
         <Route path="/urgences-contact" element={<PageTransition><ContactSupportPage /></PageTransition>} />
         <Route path="/temoignages" element={<PageTransition><TestimonialsPage /></PageTransition>} />
         <Route path="/guide-prevention" element={<PageTransition><BlogPreventionPage /></PageTransition>} />
@@ -85,6 +90,7 @@ const AnimatedRoutes = () => {
         {/* --- ACCÈS SÉCURISÉS --- */}
         <Route path="/login" element={<PageTransition><SecureLogin /></PageTransition>} />
         <Route path="/register" element={<PageTransition><SecureRegister /></PageTransition>} />
+        <Route path="/reset-password" element={<PageTransition><PasswordResetPage /></PageTransition>} />
         
         {/* --- ALIAS DE COMPATIBILITÉ --- */}
         <Route path="/services" element={<PageTransition><FormulesPage /></PageTransition>} />
@@ -123,6 +129,7 @@ const AnimatedRoutes = () => {
           <Route path="health" element={<SystemHealthDesk />} />
           <Route path="claims" element={<ClaimsQueueDesk />} />
           <Route path="organizations" element={<AdminRoute><Organizations /></AdminRoute>} />
+          <Route path="regions" element={<AdminRoute><Regions /></AdminRoute>} />
         </Route>
         
         <Route path="*" element={<PageTransition><Home /></PageTransition>} />

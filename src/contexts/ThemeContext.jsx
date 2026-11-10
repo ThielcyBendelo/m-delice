@@ -15,29 +15,20 @@ export const useTheme = () => {
 
 // Provider du thème
 export const ThemeProvider = ({ children }) => {
-  // Récupérer le thème depuis localStorage ou utiliser 'dark' par défaut
-  const [theme, setTheme] = useState(() => {
-    const savedTheme = localStorage.getItem('theme');
-    return savedTheme || 'dark';
-  });
+  const [theme] = useState('dark');
 
   // Appliquer le thème au document
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     document.documentElement.classList.toggle('dark', theme === 'dark');
-    localStorage.setItem('theme', theme);
+    localStorage.setItem('theme', 'dark');
 
     return () => document.documentElement.classList.remove('dark');
   }, [theme]);
 
-  // Fonction pour basculer le thème
-  const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === 'dark' ? 'light' : 'dark'));
-  };
-
   const value = {
     theme,
-    toggleTheme,
+    toggleTheme: () => {},
     isDark: theme === 'dark',
     isLight: theme === 'light',
   };

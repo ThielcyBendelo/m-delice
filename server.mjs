@@ -2,18 +2,23 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import fetch from 'node-fetch';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// Remplace par tes identifiants PayPal
-const PAYPAL_CLIENT_ID = 'bendelothielcy@gmail.com';
-const PAYPAL_SECRET = 'bendelo1996$$$$$';
-const PAYPAL_API = 'https://api-m.sandbox.paypal.com';
+const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
+const PAYPAL_SECRET = process.env.PAYPAL_SECRET;
+const PAYPAL_API = process.env.PAYPAL_API || 'https://api-m.sandbox.paypal.com';
 
 app.post('/api/payments', async (req, res) => {
   try {
+    if (!PAYPAL_CLIENT_ID || !PAYPAL_SECRET) {
+      return res.status(503).json({ error: 'Paiement PayPal non configure.' });
+    }
     const basicAuth = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_SECRET}`).toString('base64');
     const tokenRes = await fetch(`${PAYPAL_API}/v1/oauth2/token`, {
       method: 'POST',

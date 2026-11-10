@@ -70,6 +70,37 @@ const dashboardService = {
     return unwrap(response);
   },
 
+  async getRegions() {
+    const response = await secureAPIClient.get('/admin/regions');
+    return unwrap(response);
+  },
+
+  async getAgents() {
+    const response = await secureAPIClient.get('/admin/agents');
+    return unwrap(response);
+  },
+
+  async assignUserRegion(userId, regionId, active = true) {
+    const response = await secureAPIClient.put(
+      '/admin/users/' + encodeURIComponent(userId) + '/region',
+      { regionId, active }
+    );
+    return unwrap(response);
+  },
+
+  async createRegion(payload) {
+    const response = await secureAPIClient.post('/admin/regions', payload || {});
+    return unwrap(response);
+  },
+
+  async setRegionActive(regionId, active) {
+    const response = await secureAPIClient.patch(
+      '/admin/regions/' + encodeURIComponent(regionId) + '/active',
+      { active }
+    );
+    return unwrap(response);
+  },
+
   async verifyPolicy(policyNumber) {
     const response = await secureAPIClient.get('/admin/verify/policy/' + encodeURIComponent(policyNumber));
     return unwrap(response);

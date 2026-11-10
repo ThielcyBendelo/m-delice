@@ -40,13 +40,36 @@ const translations = {
   'RC Automobile': 'Motor Liability',
   'Scolarité': 'School',
   'Voyage': 'Travel',
+  'Vue d’ensemble': 'Overview',
+  'Vérification': 'Verification',
+  'Sinistres': 'Claims',
+  'Bénéficiaires': 'Beneficiaries',
+  'Souscripteurs': 'Policyholders',
+  'Paiements': 'Payments',
+  'Factures & quittances': 'Invoices & receipts',
+  'Analyses & statistiques': 'Analytics & statistics',
+  'Communications': 'Communications',
+  'Contrôle financier': 'Financial control',
+  'Organisations': 'Organizations',
+  'Régions & agents': 'Regions & agents',
+  'Santé du système': 'System health',
+  'Mon profil': 'My profile',
+  'Espace privé': 'Private space',
+  'Accès sécurisé ESNAS · Multi-pays': 'Secure ESNAS access · Multi-country',
+  'Accès': 'Access',
+  'Bienvenue': 'Welcome',
+  'Accès sécurisé': 'Secure access',
+  'Module': 'Module',
+  'Déconnexion': 'Sign out',
+  'Console de gestion': 'Management console',
+  'Espace assuré': 'Policyholder space',
 };
 
 const reverseTranslations = Object.fromEntries(
   Object.entries(translations).map(([french, english]) => [english, french])
 );
 
-function translateVisibleInterface(language, root = document.querySelector('[data-language-scope="navbar"]')) {
+function translateVisibleInterface(language, root = document.body) {
   if (!root) return;
   const dictionary = language === 'en' ? translations : reverseTranslations;
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);

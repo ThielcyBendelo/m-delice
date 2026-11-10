@@ -34,7 +34,8 @@ function describeTarget({ host, instance, database, trusted, port }) {
 
 async function connectTrusted({ host, instance, database, port }) {
   const sqlWin = (await import('mssql/msnodesqlv8.js')).default;
-  const server = instance ? `${host}\\${instance}` : host;
+  const useInstance = !!instance && !['localhost', '127.0.0.1'].includes(String(host).toLowerCase()) && !/^127\./.test(String(host));
+  const server = useInstance ? `${host}\\${instance}` : host;
 
   const config = {
     server,
@@ -60,13 +61,14 @@ async function connectTrusted({ host, instance, database, port }) {
 }
 
 async function connectSqlAuth({ host, instance, database, port }) {
+  const useInstance = !!instance && !['localhost', '127.0.0.1'].includes(String(host).toLowerCase()) && !/^127\./.test(String(host));
   const options = {
     encrypt: String(process.env.DB_ENCRYPT || 'false').toLowerCase() === 'true',
     trustServerCertificate: String(process.env.DB_TRUST_CERT || 'true').toLowerCase() !== 'false',
     enableArithAbort: true,
     connectTimeout: Number(process.env.DB_CONNECT_TIMEOUT || 30000),
   };
-  if (instance) options.instanceName = instance;
+  if (useInstance) options.instanceName = instance;
 
   const config = {
     user: process.env.DB_USER || 'sa',
@@ -104,29 +106,50 @@ async function connectOnce(label, serverOverride) {
   }
 }
 
-const poolPromise = connectOnce('primaire')
-  .catch(async (err) => {
-    const fallback = process.env.DB_SERVER_FALLBACK
-      || ((process.env.DB_SERVER || 'localhost') === 'localhost' ? '127.0.0.1' : null);
-    if (!fallback) throw err;
+let connectionPromise;
 
-    // Preserve instance for fallback
-    if (!process.env.DB_INSTANCE && process.env.DB_INSTANCE_FALLBACK) {
-      process.env.DB_INSTANCE = process.env.DB_INSTANCE_FALLBACK;
-    } else if (!process.env.DB_INSTANCE) {
-      process.env.DB_INSTANCE = 'SQLEXPRESS';
-    }
+function getPoolPromise() {
+  if (!connectionPromise) {
+    connectionPromise = connectOnce('primaire')
+      .catch(async (err) => {
+        const fallback = process.env.DB_SERVER_FALLBACK
+          || ((process.env.DB_SERVER || 'localhost') === 'localhost' ? '127.0.0.1' : null);
+        if (!fallback) throw err;
 
-    console.log(`Tentative fallback serveur -> ${fallback}`);
-    return connectOnce('fallback', fallback);
-  })
-  .catch((finalErr) => {
-    console.error('Echec critique SQL Server:', finalErr.message);
-    console.error('Astuce locale: DB_TRUSTED_CONNECTION=true + msnodesqlv8');
-    console.error('Astuce SQL auth: DB_TRUSTED_CONNECTION=false + DB_USER/DB_PASSWORD valides');
-    console.error('Tailscale: DB_SERVER=100.x.y.z ou hostname.ts.net');
-    throw finalErr;
-  });
+        // Preserve instance for fallback
+        if (!process.env.DB_INSTANCE && process.env.DB_INSTANCE_FALLBACK) {
+          process.env.DB_INSTANCE = process.env.DB_INSTANCE_FALLBACK;
+        } else if (!process.env.DB_INSTANCE) {
+          process.env.DB_INSTANCE = 'SQLEXPRESS';
+        }
+
+        console.log(`Tentative fallback serveur -> ${fallback}`);
+        return connectOnce('fallback', fallback);
+      })
+      .catch((finalErr) => {
+        connectionPromise = null;
+        console.error('Echec critique SQL Server:', finalErr.message);
+        console.error('Astuce locale: DB_TRUSTED_CONNECTION=true + msnodesqlv8');
+        console.error('Astuce SQL auth: DB_TRUSTED_CONNECTION=false + DB_USER/DB_PASSWORD valides');
+        console.error('Tailscale: DB_SERVER=100.x.y.z ou hostname.ts.net');
+        throw finalErr;
+      });
+  }
+
+  return connectionPromise;
+}
+
+const poolPromise = {
+  then(onFulfilled, onRejected) {
+    return getPoolPromise().then(onFulfilled, onRejected);
+  },
+  catch(onRejected) {
+    return getPoolPromise().catch(onRejected);
+  },
+  finally(onFinally) {
+    return getPoolPromise().finally(onFinally);
+  },
+};
 
 function buildDbConfig() {
   const { host, instance } = parseServer(process.env.DB_SERVER, process.env.DB_INSTANCE);

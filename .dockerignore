@@ -1,0 +1,16 @@
+node_modules
+dist
+.git
+.gitignore
+.env
+*.env
+server/.env
+server/uploads/*
+logs
+*.log
+.vscode
+.idea
+Dockerfile*
+docker-compose*.yml
+README*
+*.md

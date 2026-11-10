@@ -4,7 +4,11 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import auditService from '../services/auditService.js';
+import { getPhoneVerificationService } from '../services/phoneVerificationService.js';
+import notificationService from '../services/notificationService.js';
+import { hashSecurityToken } from '../middleware/securityMiddleware.js';
 
 const AVATAR_MAX_BYTES = 1.5 * 1024 * 1024;
 const AVATAR_MIME = {
@@ -36,6 +40,7 @@ function publicUser(user) {
     authProvider: user.AuthProvider || 'local',
     avatarUrl: user.AvatarUrl || null,
     isActive: user.IsActive !== false && user.IsActive !== 0,
+    phoneVerified: user.PhoneVerifiedAt != null || user.PhoneVerificationRequired !== true,
   };
 }
 
@@ -81,6 +86,19 @@ function parseImageDataUrl(dataUrl) {
   return { ext, buffer, mime };
 }
 
+function validPassword(password) {
+  const value = String(password || '');
+  return value.length >= 8 && value.length <= 128
+    && /[A-Z]/.test(value)
+    && /[a-z]/.test(value)
+    && /\d/.test(value);
+}
+
+function validEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(email || '').trim())
+    && String(email || '').length <= 255;
+}
+
 function removeLocalAvatarFile(avatarUrl) {
   if (!avatarUrl || typeof avatarUrl !== 'string') return;
   if (!avatarUrl.startsWith('/uploads/avatars/')) return;
@@ -114,6 +132,11 @@ async function verifyGoogleIdToken(idToken) {
     err.code = 'INVALID';
     throw err;
   }
+  if (!validEmail(payload.email)) {
+    const err = new Error('L adresse email Google n est pas valide.');
+    err.code = 'INVALID_EMAIL';
+    throw err;
+  }
   if (payload.email_verified !== true) {
     const err = new Error('Email Google non verifie.');
     err.code = 'UNVERIFIED';
@@ -142,14 +165,22 @@ async function verifyGoogleIdToken(idToken) {
 
 const authController = {
   async register(req, res) {
-    const { lastName, firstName, email, password, role, country, phone } = req.body || {};
+    const { lastName, firstName, email, password, role, country, phone, phoneCountryCode, phoneCountryIso } = req.body || {};
 
-    if (!lastName || !firstName || !email || !password) {
-      return res.status(400).json({ success: false, message: 'Veuillez remplir tous les champs obligatoires.' });
+    if (!lastName || !firstName || !email || !password || !phone) {
+      return res.status(400).json({ success: false, message: 'Nom, prenom, email, mot de passe et telephone sont obligatoires.' });
     }
-    if (String(password).length < 6) {
-      return res.status(400).json({ success: false, message: 'Mot de passe : 6 caracteres minimum.' });
+    if (!validEmail(email)) {
+      return res.status(400).json({ success: false, message: 'Saisissez une adresse email valide, par exemple nom@domaine.com.' });
     }
+    if (!validPassword(password)) {
+      return res.status(400).json({ success: false, message: 'Mot de passe : 8 caractères, une majuscule, une minuscule et un chiffre minimum.' });
+    }
+    const parsedPhone = parsePhoneNumberFromString(String(phone || ''), String(phoneCountryIso || '').toUpperCase());
+    if (!parsedPhone || !parsedPhone.isValid() || String(parsedPhone.countryCallingCode) !== String(phoneCountryCode || '')) {
+      return res.status(400).json({ success: false, message: 'Le numero de telephone ne correspond pas au pays et a son indicatif.' });
+    }
+    const normalizedPhone = parsedPhone.number;
 
     const safeRole = ['Diaspora', 'Client', 'Partner', 'Hospital'].includes(role) ? role : 'Diaspora';
 
@@ -174,14 +205,16 @@ const authController = {
         .input('PasswordHash', sql.NVarChar, hashedPassword)
         .input('UserRole', sql.NVarChar, safeRole)
         .input('Country', sql.NVarChar, country || 'France')
-        .input('Phone', sql.NVarChar, phone || null)
+        .input('Phone', sql.NVarChar, normalizedPhone)
+        .input('PhoneCountryCode', sql.NVarChar, parsedPhone.countryCallingCode)
         .query(`
-          INSERT INTO Users (LastName, FirstName, Email, PasswordHash, UserRole, CountryOfResidence, Phone, AuthProvider)
+          INSERT INTO Users (LastName, FirstName, Email, PasswordHash, UserRole, CountryOfResidence, Phone, PhoneCountryCode, AuthProvider, PhoneVerificationRequired)
           OUTPUT INSERTED.*
-          VALUES (@LastName, @FirstName, @Email, @PasswordHash, @UserRole, @Country, @Phone, 'local')
+          VALUES (@LastName, @FirstName, @Email, @PasswordHash, @UserRole, @Country, @Phone, @PhoneCountryCode, 'local', 1)
         `);
 
       const user = inserted.recordset[0];
+      const phoneVerification = await getPhoneVerificationService().createChallenge(user.UserID, user.Phone, { callingCode: phoneCountryCode });
       await auditService.log({
         actorUserId: user.UserID,
         action: 'auth.register',
@@ -189,8 +222,22 @@ const authController = {
         entityId: user.UserID,
         ipAddress: req.ip,
       });
+      await notificationService.notifyAuthRegistered({
+        userId: user.UserID,
+        email: user.Email,
+        firstName: user.FirstName,
+      });
 
-      return res.status(201).json({ success: true, message: 'Compte cree avec succes.', user: publicUser(user) });
+      return res.status(201).json({
+        success: true,
+        message: 'Profil créé. Un code de vérification a été envoyé par SMS. Votre compte sera activé après validation des informations.',
+        user: publicUser(user),
+        phoneVerification: {
+          challengeId: phoneVerification.challengeId,
+          maskedPhone: phoneVerification.maskedPhone,
+          expiresAt: phoneVerification.expiresAt,
+        },
+      });
     } catch (error) {
       console.error('register:', error);
       // Fallback si colonnes Google pas encore migrees
@@ -218,6 +265,39 @@ const authController = {
         }
       }
       return res.status(500).json({ success: false, message: 'Erreur technique lors de l ecriture en base.' });
+    }
+  },
+
+  async verifyPhone(req, res) {
+    const userId = Number(req.body?.userId);
+    const challengeId = req.body?.challengeId;
+    const code = req.body?.code;
+    if (!Number.isInteger(userId) || !challengeId || !code) {
+      return res.status(400).json({ success: false, message: 'Identifiant utilisateur, challenge et code requis.' });
+    }
+    try {
+      const result = await getPhoneVerificationService().verifyChallenge(userId, challengeId, code);
+      if (!result.valid) return res.status(400).json({ success: false, message: 'Code SMS invalide, expire ou bloque.', reasonCode: result.reasonCode });
+      return res.status(200).json({ success: true, message: 'Numero de telephone verifie.' });
+    } catch (error) {
+      console.error('verifyPhone:', error);
+      return res.status(500).json({ success: false, message: 'Erreur lors de la verification du telephone.' });
+    }
+  },
+
+  async resendPhoneVerification(req, res) {
+    const userId = Number(req.body?.userId);
+    if (!Number.isInteger(userId)) return res.status(400).json({ success: false, message: 'Identifiant utilisateur requis.' });
+    try {
+      const pool = await poolPromise;
+      const result = await pool.request().input('UserID', sql.Int, userId).query('SELECT UserID, Phone FROM Users WHERE UserID = @UserID');
+      const user = result.recordset[0];
+      if (!user?.Phone) return res.status(404).json({ success: false, message: 'Numero de telephone introuvable.' });
+      const phoneVerification = await getPhoneVerificationService().createChallenge(user.UserID, user.Phone);
+      return res.status(200).json({ success: true, message: 'Nouveau code SMS envoye.', phoneVerification: { challengeId: phoneVerification.challengeId, maskedPhone: phoneVerification.maskedPhone, expiresAt: phoneVerification.expiresAt } });
+    } catch (error) {
+      console.error('resendPhoneVerification:', error);
+      return res.status(400).json({ success: false, message: error.message || 'Impossible de renvoyer le code SMS.' });
     }
   },
 
@@ -273,6 +353,12 @@ const authController = {
         entityId: user.UserID,
         ipAddress: req.ip,
       });
+      await notificationService.notifyAuthLogin({
+        userId: user.UserID,
+        email: user.Email,
+        firstName: user.FirstName,
+        provider: 'email et mot de passe',
+      });
 
       return res.status(200).json({
         success: true,
@@ -306,6 +392,9 @@ const authController = {
    */
   async google(req, res) {
     const credential = req.body?.credential || req.body?.idToken || req.body?.token;
+    const phone = req.body?.phone;
+    const phoneCountryCode = req.body?.phoneCountryCode;
+    const phoneCountryIso = String(req.body?.phoneCountryIso || '').toUpperCase();
     if (!credential) {
       return res.status(400).json({ success: false, message: 'credential Google manquant.' });
     }
@@ -319,6 +408,7 @@ const authController = {
       const avatarUrl = payload.picture || null;
 
       const pool = await poolPromise;
+      let phoneVerification = null;
 
       // 1) Lookup by GoogleSub
       let user = null;
@@ -342,6 +432,9 @@ const authController = {
       if (user) {
         if (user.IsActive === false || user.IsActive === 0) {
           return res.status(403).json({ success: false, message: 'Compte desactive.' });
+        }
+        if (user.PhoneVerificationRequired === true && !user.PhoneVerifiedAt) {
+          return res.status(403).json({ success: false, message: 'Vérifiez votre numéro de téléphone par SMS avant de vous connecter.' });
         }
         // Link GoogleSub if missing
         try {
@@ -367,6 +460,10 @@ const authController = {
         }
       } else {
         // Create user Google
+        const parsedPhone = parsePhoneNumberFromString(String(phone || ''), phoneCountryIso);
+        if (!parsedPhone || !parsedPhone.isValid() || String(parsedPhone.countryCallingCode) !== String(phoneCountryCode || '')) {
+          return res.status(400).json({ success: false, message: 'Pour créer un compte Google, fournissez un numéro valide correspondant à son pays.' });
+        }
         const randomPass = crypto.randomBytes(32).toString('hex');
         const hash = await bcrypt.hash(randomPass, 10);
         try {
@@ -377,36 +474,41 @@ const authController = {
             .input('PasswordHash', sql.NVarChar, hash)
             .input('UserRole', sql.NVarChar, 'Diaspora')
             .input('Country', sql.NVarChar, 'France')
+            .input('Phone', sql.NVarChar, parsedPhone.number)
+            .input('PhoneCountryCode', sql.NVarChar, parsedPhone.countryCallingCode)
             .input('GoogleSub', sql.NVarChar, googleId)
             .input('AvatarUrl', sql.NVarChar, avatarUrl)
             .query(`
               INSERT INTO Users
-                (LastName, FirstName, Email, PasswordHash, UserRole, CountryOfResidence, AuthProvider, GoogleSub, AvatarUrl)
+                (LastName, FirstName, Email, PasswordHash, UserRole, CountryOfResidence, Phone, PhoneCountryCode, PhoneVerificationRequired, AuthProvider, GoogleSub, AvatarUrl)
               OUTPUT INSERTED.*
               VALUES
-                (@LastName, @FirstName, @Email, @PasswordHash, @UserRole, @Country, 'google', @GoogleSub, @AvatarUrl)
+                (@LastName, @FirstName, @Email, @PasswordHash, @UserRole, @Country, @Phone, @PhoneCountryCode, 1, 'google', @GoogleSub, @AvatarUrl)
             `);
           user = inserted.recordset[0];
+              phoneVerification = await getPhoneVerificationService().createChallenge(user.UserID, user.Phone, { callingCode: parsedPhone.countryCallingCode });
         } catch (createErr) {
           // Fallback without google columns
           if (String(createErr.message || '').includes('Invalid column') || String(createErr.message || '').includes('AuthProvider')) {
-            const inserted = await pool.request()
-              .input('LastName', sql.NVarChar, lastName)
-              .input('FirstName', sql.NVarChar, firstName)
-              .input('Email', sql.NVarChar, email)
-              .input('PasswordHash', sql.NVarChar, hash)
-              .input('UserRole', sql.NVarChar, 'Diaspora')
-              .input('Country', sql.NVarChar, 'France')
-              .query(`
-                INSERT INTO Users (LastName, FirstName, Email, PasswordHash, UserRole, CountryOfResidence)
-                OUTPUT INSERTED.*
-                VALUES (@LastName, @FirstName, @Email, @PasswordHash, @UserRole, @Country)
-              `);
-            user = inserted.recordset[0];
+            return res.status(503).json({ success: false, message: 'La vérification téléphone Google nécessite la migration de sécurité du compte. Contactez l administrateur.' });
           } else {
             throw createErr;
           }
         }
+      }
+
+      if (phoneVerification) {
+        return res.status(202).json({
+          success: true,
+          requiresPhoneVerification: true,
+          user: publicUser(user),
+          phoneVerification: {
+            challengeId: phoneVerification.challengeId,
+            maskedPhone: phoneVerification.maskedPhone,
+            expiresAt: phoneVerification.expiresAt,
+          },
+          message: 'Identité Google validée. Un code SMS est requis pour terminer la création du compte.',
+        });
       }
 
       const token = signToken(user);
@@ -416,6 +518,12 @@ const authController = {
         entityType: 'user',
         entityId: user.UserID,
         ipAddress: req.ip,
+      });
+      await notificationService.notifyAuthLogin({
+        userId: user.UserID,
+        email: user.Email,
+        firstName: user.FirstName,
+        provider: 'Google',
       });
 
       return res.status(200).json({
@@ -429,7 +537,98 @@ const authController = {
       if (error.code === 'CONFIG') {
         return res.status(503).json({ success: false, message: error.message });
       }
-      return res.status(401).json({ success: false, message: error.message || 'Echec authentification Google.' });
+      if (error.code === 'UNVERIFIED' || error.code === 'INVALID_EMAIL') {
+        return res.status(400).json({ success: false, message: 'Cette adresse Google ne peut pas être utilisée : elle doit être réelle et vérifiée par Google.' });
+      }
+      if (error.code === 'DOMAIN_NOT_ALLOWED') {
+        return res.status(403).json({ success: false, message: 'Le domaine de cette adresse Google n est pas autorisé pour ESNAS.' });
+      }
+      return res.status(401).json({ success: false, message: 'Google n a pas pu valider cette identité. Réessayez avec un compte Google vérifié.' });
+    }
+  },
+
+  async requestPasswordReset(req, res) {
+    const email = String(req.body?.email || '').trim().toLowerCase();
+    const generic = { success: true, message: 'Si cette adresse existe, un lien de réinitialisation a été envoyé.' };
+    if (!email || !email.includes('@') || email.length > 255) return res.status(200).json(generic);
+
+    try {
+      const pool = await poolPromise;
+      const result = await pool.request()
+        .input('Email', sql.NVarChar(255), email)
+        .query('SELECT TOP (1) UserID, Email, FirstName FROM Users WHERE Email = @Email AND IsActive = 1');
+      const user = result.recordset[0];
+      if (!user) return res.status(200).json(generic);
+
+      const rawToken = crypto.randomBytes(32).toString('hex');
+      const tokenHash = hashSecurityToken(rawToken);
+      const tokenId = crypto.randomUUID();
+      const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
+      await pool.request()
+        .input('UserID', sql.Int, user.UserID)
+        .query('UPDATE PasswordResetTokens SET UsedAt = COALESCE(UsedAt, SYSUTCDATETIME()) WHERE UserID = @UserID AND UsedAt IS NULL');
+      await pool.request()
+        .input('TokenID', sql.UniqueIdentifier, tokenId)
+        .input('UserID', sql.Int, user.UserID)
+        .input('TokenHash', sql.Char(64), tokenHash)
+        .input('ExpiresAt', sql.DateTime2, expiresAt)
+        .query('INSERT INTO PasswordResetTokens (PasswordResetTokenID, UserID, TokenHash, ExpiresAt) VALUES (@TokenID, @UserID, @TokenHash, @ExpiresAt)');
+
+      const appUrl = String(process.env.PUBLIC_APP_URL || 'http://localhost:5173').replace(/\/$/, '');
+      const resetUrl = `${appUrl}/reset-password?token=${encodeURIComponent(rawToken)}`;
+      await notificationService.enqueue({
+        userId: user.UserID,
+        channel: 'email',
+        templateKey: 'password_reset',
+        recipient: user.Email,
+        subject: 'Réinitialisation de votre mot de passe ESNAS',
+        body: `Bonjour ${user.FirstName || ''},\n\nUtilisez ce lien dans les 30 minutes : ${resetUrl}\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez cet email.`,
+        relatedEntityType: 'user',
+        relatedEntityId: user.UserID,
+      });
+      return res.status(200).json(generic);
+    } catch (error) {
+      console.error('requestPasswordReset:', error);
+      return res.status(200).json(generic);
+    }
+  },
+
+  async resetPassword(req, res) {
+    const token = String(req.body?.token || '').trim();
+    const password = String(req.body?.password || '');
+    if (!/^[a-f0-9]{64}$/i.test(token) || !validPassword(password)) {
+      return res.status(400).json({ success: false, message: 'Jeton ou mot de passe invalide.' });
+    }
+    try {
+      const pool = await poolPromise;
+      const tokenHash = hashSecurityToken(token);
+      const result = await pool.request()
+        .input('TokenHash', sql.Char(64), tokenHash)
+        .query(`SELECT TOP (1) t.*, u.IsActive FROM PasswordResetTokens t JOIN Users u ON u.UserID = t.UserID WHERE t.TokenHash = @TokenHash`);
+      const reset = result.recordset[0];
+      if (!reset || reset.UsedAt || reset.IsActive === false || new Date(reset.ExpiresAt) <= new Date()) {
+        return res.status(400).json({ success: false, message: 'Lien invalide ou expiré.' });
+      }
+      const passwordHash = await bcrypt.hash(password, 12);
+      const transaction = new sql.Transaction(pool);
+      await transaction.begin();
+      try {
+        await new sql.Request(transaction)
+          .input('UserID', sql.Int, reset.UserID)
+          .input('PasswordHash', sql.NVarChar(255), passwordHash)
+          .query('UPDATE Users SET PasswordHash = @PasswordHash, AuthProvider = N\'local\', UpdatedAt = SYSUTCDATETIME() WHERE UserID = @UserID');
+        await new sql.Request(transaction)
+          .input('TokenID', sql.UniqueIdentifier, reset.PasswordResetTokenID)
+          .query('UPDATE PasswordResetTokens SET UsedAt = SYSUTCDATETIME() WHERE PasswordResetTokenID = @TokenID AND UsedAt IS NULL');
+        await transaction.commit();
+      } catch (error) {
+        await transaction.rollback();
+        throw error;
+      }
+      return res.status(200).json({ success: true, message: 'Mot de passe réinitialisé avec succès.' });
+    } catch (error) {
+      console.error('resetPassword:', error);
+      return res.status(500).json({ success: false, message: 'Impossible de réinitialiser le mot de passe.' });
     }
   },
 
@@ -526,10 +725,10 @@ const authController = {
     const newPassword = req.body?.newPassword;
     const confirmPassword = req.body?.confirmPassword;
 
-    if (!newPassword || String(newPassword).length < 6) {
+    if (!newPassword || !validPassword(newPassword)) {
       return res.status(400).json({
         success: false,
-        message: 'Le nouveau mot de passe doit contenir au moins 6 caracteres.',
+        message: 'Le nouveau mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre.',
       });
     }
     if (confirmPassword != null && String(confirmPassword) !== String(newPassword)) {
