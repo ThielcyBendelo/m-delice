@@ -5,6 +5,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { ThemeProvider } from './contexts/ThemeContext.jsx';
 import { LanguageProvider } from './contexts/LanguageContext.jsx';
+import WhatsAppSupportModal from './components/WhatsAppSupportModal';
 
 // =========================================================================
 // 1. PORTAIL PUBLIC : VITRINE & TUNNELS (Dossier src/pages/)
@@ -166,6 +167,8 @@ const App = () => {
             <ScrollToTop />
             <AnimatedRoutes />
           </Suspense>
+                  {/* Bouton flottant & Modale de Consultation / Support WhatsApp */}
+        <WhatsAppSupportModal phoneNumber="243829054350" />
         </div>
       )}
       </LanguageProvider>

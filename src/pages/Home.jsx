@@ -113,127 +113,139 @@ export default function Home() {
       <NavbarSecured />
 
       {/* ================= 1. SECTION HERO ================= */}
-      <section className="hero-section relative overflow-hidden border-b border-slate-800 bg-[#090d16] pt-24 text-white sm:pt-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-5 overflow-x-auto border-b border-slate-800 pb-2 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-            <div className="flex gap-2 pb-1">
-              {products.map((item, index) => {
-                const Icon = item.icon;
-                const active = index === activeProduct;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => setActiveProduct(index)}
-                    className={`flex min-w-[200px] sm:min-w-[240px] flex-1 items-center gap-3 border-b-2 px-3 py-3 text-left transition ${active ? 'border-[#00A3E0] bg-[#111827]' : 'border-transparent hover:bg-[#111827]'}`}
-                  >
-                    <span className="grid h-8 w-8 shrink-0 place-items-center" style={{ color: active ? item.color : '#64748b', backgroundColor: active ? `${item.color}18` : '#111827' }}>
-                      <Icon size={14} />
-                    </span>
-                    <span className="truncate">
-                      <strong className="block text-xs font-black text-white truncate">{item.label}</strong>
-                      <small className="mt-0.5 block text-[10px] text-slate-500 truncate">{item.eyebrow}</small>
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        <div className="mx-auto grid min-h-[560px] max-w-7xl items-center gap-8 px-4 pb-8 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-14 lg:px-8 lg:pb-12">
-          <div className="relative z-10 py-10 lg:py-16">
-            <Motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-              <span className="hero-kicker hidden border-l-2 border-[#00A3E0] bg-[#111827] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-[#CE1126] shadow-sm lg:inline-flex">
-                Protection accessible en RDC, en Afrique et partout dans le monde
+      <section className="hero-section relative overflow-hidden border-b border-slate-800 bg-[#090d16] pt-16 text-white sm:pt-20">
+  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    {/* Barre d'onglets avec espacement bas réduit (mb-2 au lieu de mb-5) */}
+    <div className="mb-2 overflow-x-auto border-b border-slate-800 pb-1.5 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex gap-2 pb-1">
+        {products.map((item, index) => {
+          const Icon = item.icon;
+          const active = index === activeProduct;
+          return (
+            <button
+              key={item.id}
+              onClick={() => setActiveProduct(index)}
+              className={`flex min-w-[200px] sm:min-w-[240px] flex-1 items-center gap-3 border-b-2 px-3 py-2.5 text-left transition ${
+                active ? 'border-[#00A3E0] bg-[#111827]' : 'border-transparent hover:bg-[#111827]'
+              }`}
+            >
+              <span
+                className="grid h-8 w-8 shrink-0 place-items-center"
+                style={{
+                  color: active ? item.color : '#64748b',
+                  backgroundColor: active ? `${item.color}18` : '#111827',
+                }}
+              >
+                <Icon size={14} />
               </span>
+              <span className="truncate">
+                <strong className="block text-xs font-black text-white truncate">{item.label}</strong>
+                <small className="mt-0.5 block text-[10px] text-slate-500 truncate">{item.eyebrow}</small>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  </div>
 
-              <h1 className="mt-6 hidden max-w-xl text-4xl font-black leading-[0.98] tracking-tight text-white sm:text-6xl lg:block">
-                Protégez ceux qui comptent, <span className="text-[#00A3E0]">où qu’ils vivent.</span>
-              </h1>
+  {/* Grille alignée en haut sur desktop (lg:items-start, pt-2, min-h réduit) */}
+  <div className="mx-auto grid max-w-7xl items-center gap-4 px-4 pb-8 pt-2 sm:px-6 lg:min-h-[440px] lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:gap-12 lg:px-8 lg:pb-8 lg:pt-3">
+    {/* Colonne Gauche : Titre, Description et Boutons remontés */}
+    <div className="relative z-10 py-4 lg:py-2">
+      <Motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <span className="hero-kicker hidden border-l-2 border-[#00A3E0] bg-[#111827] px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-[#CE1126] shadow-sm lg:inline-flex">
+          Protection accessible en RDC, en Afrique et partout dans le monde
+        </span>
 
-              <p className="mt-6 hidden max-w-xl text-base leading-7 text-slate-300 sm:text-lg lg:block">
-                ESNAS simplifie l’assurance pour vous et vos proches : choisissez une couverture, payez depuis votre pays et suivez chaque étape depuis un seul espace
-              </p>
+        <h1 className="mt-3 hidden max-w-xl text-4xl font-black leading-[0.98] tracking-tight text-white sm:text-5xl xl:text-6xl lg:block">
+          Protégez ceux qui comptent, <span className="text-[#00A3E0]">où qu’ils vivent.</span>
+        </h1>
 
-              {/* ================= BLOC IMAGE VERSION MOBILE UNIQUEMENT ================= */}
-              <div className="relative mt-1 min-h-[300px] overflow-hidden bg-[#07111f] shadow-2xl shadow-black/30 sm:min-h-[380px] lg:hidden">
-                <AnimatePresence mode="wait">
-                  <Motion.img
-                    key={product.id}
-                    src={product.image}
-                    alt={product.label}
-                    initial={{ opacity: 0, scale: 1.03 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.45 }}
-                    className="h-[320px] w-full object-cover sm:h-[400px]"
-                  />
-                </AnimatePresence>
-                <div className="absolute inset-0 bg-gradient-to-t from-[#090d16] via-[#090d16]/40 to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4">
-                  <span className="inline-flex items-center gap-2 bg-black/70 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white backdrop-blur-md">
-                    <ProductIcon style={{ color: product.color }} /> {product.eyebrow}
-                  </span>
-                  <h2 className="mt-2 text-xl font-black text-white">{product.title}</h2>
-                </div>
-              </div>
+        <p className="mt-4 hidden max-w-xl text-base leading-6 text-slate-300 lg:block">
+          ESNAS simplifie l’assurance pour vous et vos proches : choisissez une couverture, payez depuis votre pays et suivez chaque étape depuis un seul espace
+        </p>
 
-              {/* ================= BOUTONS D'ACTION (OUVRE LA MODALE) ================= */}
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Motion.button
-                  whileHover={{ y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => setIsProtectionsOpen(true)}
-                  className="inline-flex items-center justify-center gap-3 bg-[#07111f] border border-slate-800 hover:border-[#CE1126] hover:bg-[#CE1126] px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-white shadow-lg shadow-slate-900/15 transition"
-                >
-                  Découvrir les protections <FaArrowRight size={12} />
-                </Motion.button>
-
-                <button
-                  onClick={() => navigate('/simulateur')}
-                  className="inline-flex items-center justify-center border border-slate-700 bg-transparent px-6 py-4 text-xs font-black uppercase tracking-[0.16em] text-white transition hover:border-[#00A3E0] hover:text-[#00A3E0]"
-                >
-                  Simuler un tarif
-                </button>
-              </div>
-            </Motion.div>
-          </div>
-
-          {/* ================= BLOC IMAGE VERSION DESKTOP UNIQUEMENT ================= */}
-          <div className="relative hidden min-h-[480px] overflow-hidden bg-[#07111f] shadow-2xl shadow-black/40 lg:block">
-            <AnimatePresence mode="wait">
-              <Motion.img
-                key={product.id}
-                src={product.image}
-                alt={product.label}
-                initial={{ opacity: 0, scale: 1.03 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
-                className="h-[520px] w-full object-cover"
-              />
-            </AnimatePresence>
-            <div className="absolute inset-0 bg-gradient-to-t from-[#090d16] via-[#090d16]/35 to-transparent" />
-            <div className="absolute bottom-6 left-6 right-6 border border-white/10 bg-[#090d16]/85 p-6 backdrop-blur-md">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: product.color }}>
-                    {product.eyebrow}
-                  </span>
-                  <h2 className="mt-1 text-2xl font-black text-white">{product.title}</h2>
-                  <p className="mt-2 text-xs leading-relaxed text-slate-300">{product.description}</p>
-                </div>
-                <button
-                  onClick={() => setIsProtectionsOpen(true)}
-                  className="shrink-0 bg-white px-4 py-3 text-[11px] font-black uppercase tracking-wider text-slate-950 transition hover:bg-[#00A3E0]"
-                >
-                  Détails
-                </button>
-              </div>
-            </div>
+        {/* ================= BLOC IMAGE VERSION MOBILE UNIQUEMENT ================= */}
+        <div className="relative mt-1 min-h-[300px] overflow-hidden bg-[#07111f] shadow-2xl shadow-black/30 sm:min-h-[380px] lg:hidden">
+          <AnimatePresence mode="wait">
+            <Motion.img
+              key={product.id}
+              src={product.image}
+              alt={product.label}
+              initial={{ opacity: 0, scale: 1.03 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.45 }}
+              className="h-[320px] w-full object-cover sm:h-[400px]"
+            />
+          </AnimatePresence>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#090d16] via-[#090d16]/40 to-transparent" />
+          <div className="absolute bottom-4 left-4 right-4">
+            <span className="inline-flex items-center gap-2 bg-black/70 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white backdrop-blur-md">
+              <ProductIcon style={{ color: product.color }} /> {product.eyebrow}
+            </span>
+            <h2 className="mt-2 text-xl font-black text-white">{product.title}</h2>
           </div>
         </div>
-      </section>
+
+        {/* ================= BOUTONS D'ACTION (REMONTÉS) ================= */}
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+          <Motion.button
+            whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setIsProtectionsOpen(true)}
+            className="inline-flex items-center justify-center gap-3 bg-[#07111f] border border-slate-800 hover:border-[#CE1126] hover:bg-[#CE1126] px-6 py-3.5 text-xs font-black uppercase tracking-[0.16em] text-white shadow-lg shadow-slate-900/15 transition"
+          >
+            Découvrir les protections <FaArrowRight size={12} />
+          </Motion.button>
+
+          <button
+            onClick={() => navigate('/simulateur')}
+            className="inline-flex items-center justify-center border border-slate-700 bg-transparent px-6 py-3.5 text-xs font-black uppercase tracking-[0.16em] text-white transition hover:border-[#00A3E0] hover:text-[#00A3E0]"
+          >
+            Simuler un tarif
+          </button>
+        </div>
+      </Motion.div>
+    </div>
+
+    {/* ================= BLOC IMAGE VERSION DESKTOP UNIQUEMENT ================= */}
+    <div className="relative hidden lg:flex lg:items-center lg:justify-center overflow-hidden bg-[#07111f] border border-slate-800/80 shadow-2xl shadow-black/50 rounded-none">
+      <AnimatePresence mode="wait">
+        <Motion.img
+          key={product.id}
+          src={product.image}
+          alt={product.label}
+          initial={{ opacity: 0, scale: 1.02 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.45 }}
+          className="w-full h-[380px] xl:h-[410px] object-contain bg-[#07111f]"
+        />
+      </AnimatePresence>
+
+      <div className="absolute inset-0 bg-gradient-to-t from-[#090d16] via-[#090d16]/35 to-transparent" />
+      <div className="absolute bottom-4 left-4 right-4 border border-white/10 bg-[#090d16]/90 p-5 backdrop-blur-md">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: product.color }}>
+              {product.eyebrow}
+            </span>
+            <h2 className="mt-0.5 text-xl font-black text-white">{product.title}</h2>
+            <p className="mt-1 text-xs leading-relaxed text-slate-300 line-clamp-2">{product.description}</p>
+          </div>
+          <button
+            onClick={() => setIsProtectionsOpen(true)}
+            className="shrink-0 bg-white px-4 py-2.5 text-[11px] font-black uppercase tracking-wider text-slate-950 transition hover:bg-[#00A3E0]"
+          >
+            Détails
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
       <Footer />
 
       {/* ================= MODALE CARROUSEL DES PROTECTIONS ================= */}
