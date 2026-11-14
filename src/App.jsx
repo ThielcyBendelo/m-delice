@@ -24,6 +24,7 @@ import BlogPreventionPage from './pages/Blog.jsx';
 import DashboardPage from './pages/DashboardPage';
 import PartnersPage from './pages/PartnersPage';
 import PayPalReturnPage from './pages/PayPalReturnPage';
+import PacksCataloguePage from './pages/PacksCataloguePage';
 
 // =========================================================================
 // 2. UTILITAIRES DE NAVIGATION & FLUIDITÉ (Dossier src/components/)
@@ -104,6 +105,8 @@ const AnimatedRoutes = () => {
         <Route path="/contact" element={<PageTransition><ContactSupportPage /></PageTransition>} />
         <Route path="/blog" element={<PageTransition><BlogPreventionPage /></PageTransition>} />
         <Route path="/dashboard-page" element={<PageTransition><DashboardPage /></PageTransition>} />
+        <Route path="/packs" element={<PageTransition><PacksCataloguePage /></PageTransition>} />
+        <Route path="/offers" element={<PageTransition><PacksCataloguePage /></PageTransition>} />
 
         {/* =========================================================================
             4. ESPACE PRIVÉ ET GESTION (Layout Admin avec contrôle d'accès)
