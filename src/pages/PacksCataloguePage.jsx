@@ -13,6 +13,7 @@ import {
   FaCheckCircle,
   FaInfoCircle,
   FaFilter,
+  FaArrowLeft, 
   FaTimes,
   FaChevronRight,
   FaLayerGroup,
@@ -668,285 +669,327 @@ const PacksCataloguePage = () => {
     navigate('/souscription', { state: { selectedPack: pack } });
   };
 
-  return (
-    <div className="min-h-screen bg-[#090d16] text-white flex flex-col font-sans selection:bg-[#CE1126] selection:text-white pb-20 lg:pb-0">
+
+ return (
+<div className="min-h-screen bg-[#090d16] text-white flex flex-col font-sans selection:bg-[#CE1126] selection:text-white pb-20 lg:pb-0">
+  
+    {/* ================= EN-TÊTE FINTECH COMPACT & STRUCTURÉ ================= */}
+  <header className="relative bg-[#090d16] border-b border-slate-800/80 pt-5 sm:pt-8 pb-5 px-4 sm:px-6">
+    <div className="max-w-7xl mx-auto">
       
-      {/* ================= EN-TÊTE FINTECH SOMBRE ================= */}
-      <header className="relative bg-[#090d16] border-b border-slate-900 pt-24 pb-8 px-4 sm:px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="space-y-3">
-              <span className="inline-block px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-[#CE1126] bg-[#CE1126]/10 border border-[#CE1126]/30 border-l-4 border-l-[#CE1126] rounded-none">
-                Écosystème Numérique des Assurances
-              </span>
-              <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight uppercase leading-none">
-                Catalogue des <span className="text-[#CE1126]">Offres & Packs</span>
-              </h1>
-              <p className="text-slate-400 text-sm sm:text-base max-w-2xl font-medium">
-                Explorez nos 6 branches d’assurance et 30 solutions dédiées aux particuliers, familles, diaspora et entreprises.
-              </p>
-            </div>
+      {/* Ligne supérieure : Retour à gauche | Explorer les offres à droite (Mobile) & Badge (Desktop) */}
+      <div className="flex items-center justify-between gap-2 mb-4 md:mb-5">
+        
+        {/* Bouton Retour (Coin gauche) */}
+        <button
+          onClick={() => navigate(-1)}
+          className="group inline-flex items-center gap-2 px-3 py-2 bg-[#111827] hover:bg-slate-800 border border-slate-800 hover:border-slate-600 text-slate-300 hover:text-white text-[11px] font-bold uppercase tracking-wider transition-all rounded-none shrink-0 focus:outline-none"
+        >
+          <FaArrowLeft size={11} className="text-[#CE1126] transition-transform group-hover:-translate-x-1" />
+          <span></span>
+        </button>
 
-            {/* Bouton Mobile rapide intégré sous le texte */}
-            <div className="lg:hidden w-full sm:w-auto">
+        {/* Bouton Explorer les offres (Coin droit sur Mobile & Tablette) */}
+        <button
+          onClick={() => setIsMobileMenuOpen(true)}
+          className="lg:hidden inline-flex items-center justify-center gap-2 px-3.5 py-2 bg-white hover:bg-slate-100 text-black font-black uppercase text-[10px] sm:text-[11px] tracking-wider rounded-none active:scale-[0.99] border border-white shadow-md transition-all truncate focus:outline-none"
+        >
+          <FaShieldAlt size={12} className="text-[#CE1126] shrink-0" />
+          <span className="truncate">Explorer ({currentCategoryObj.label})</span>
+        </button>
+
+        {/* Badge Écosystème (Visible uniquement sur Desktop à droite) */}
+        <span className="hidden lg:inline-block px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-[#CE1126] bg-[#CE1126]/10 border border-[#CE1126]/30 border-l-2 border-l-[#CE1126]">
+          Écosystème Numérique des Assurances
+        </span>
+      </div>
+
+      {/* Bloc Titre + Description (Masqué sur mobile, affiché sur ordinateur) */}
+      <div className="hidden md:block space-y-1.5 max-w-2xl">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight uppercase leading-tight">
+          Catalogue des <span className="text-[#CE1126]">Offres & Packs</span>
+        </h1>
+        <p className="text-slate-400 text-xs sm:text-sm leading-relaxed font-normal">
+          Explorez nos 6 branches d’assurance et 30 solutions dédiées aux particuliers, familles, diaspora et entreprises.
+        </p>
+      </div>
+
+      {/* ================= BARRE D'ONGLETS CATÉGORIES (RESPONSIVE) ================= */}
+      <div className="hidden md:block md:mt-6 pt-3 md:pt-4 border-t border-slate-800/80">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+          {CATEGORIES_DATA.map((cat) => {
+            const isActive = activeCategory === cat.id && !searchQuery;
+            return (
               <button
-                onClick={() => setIsMobileMenuOpen(true)}
-                className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-white text-black font-black uppercase text-[11px] tracking-widest rounded-none active:scale-95 border border-white shadow-xl focus:outline-none"
+                key={cat.id}
+                onClick={() => handleSelectCategory(cat.id)}
+                className={`group flex items-center gap-2 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] whitespace-nowrap transition-all border rounded-none focus:outline-none ${
+                  isActive
+                    ? 'border-[#CE1126] bg-[#CE1126] text-white shadow-sm'
+                    : 'border-slate-800 bg-[#111827]/90 text-slate-400 hover:border-slate-600 hover:text-white hover:bg-[#161f33]'
+                }`}
               >
-                <FaFilter size={12} className="text-[#CE1126]" />
-                <span>Explorer les offres ({currentCategoryObj.label}) ↑</span>
+                <span className={`text-xs transition-colors ${isActive ? 'text-white' : 'text-[#CE1126] group-hover:text-white'}`}>
+                  {cat.icon}
+                </span>
+                <span>{cat.label}</span>
+                <span
+                  className={`ml-1 px-1.5 py-0.5 text-[9px] font-black transition-colors ${
+                    isActive
+                      ? 'bg-black/30 text-white'
+                      : 'bg-slate-950 text-slate-500 group-hover:text-slate-300'
+                  }`}
+                >
+                  {cat.packs.length}
+                </span>
               </button>
-            </div>
-          </div>
-
-          {/* ================= BARRE DE CATÉGORIES DESKTOP (6 BRANCHES) ================= */}
-          <div className="hidden lg:flex mt-8 w-full overflow-x-auto no-scrollbar border-t border-slate-900 pt-6">
-            <div className="flex gap-3 whitespace-nowrap">
-              {CATEGORIES_DATA.map((cat) => {
-                const isActive = activeCategory === cat.id && !searchQuery;
-                return (
-                  <button
-                    key={cat.id}
-                    onClick={() => handleSelectCategory(cat.id)}
-                    className={`flex items-center gap-2.5 px-5 py-3 text-[11px] font-black uppercase tracking-[0.15em] transition-all border-2 rounded-none focus:outline-none ${
-                      isActive
-                        ? 'border-[#CE1126] bg-[#CE1126] text-white shadow-lg'
-                        : 'border-slate-800 bg-[#111827] text-slate-300 hover:border-white hover:text-white'
-                    }`}
-                  >
-                    <span className={isActive ? 'text-white' : 'text-[#CE1126]'}>
-                      {cat.icon}
-                    </span>
-                    <span>{cat.label}</span>
-                    <span className={`ml-1 px-1.5 py-0.5 text-[9px] font-black ${
-                      isActive ? 'bg-black/30 text-white' : 'bg-slate-950 text-slate-400'
-                    }`}>
-                      {cat.packs.length}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+            );
+          })}
         </div>
-      </header>
+      </div>
 
-      {/* ================= CONTENEUR PRINCIPAL : SIDEBAR + VUE DÉTAILLÉE ================= */}
-      <div className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    </div>
+  </header>
+
+            {/* ================= CONTENEUR PRINCIPAL : SIDEBAR COLLÉE À GAUCHE + VUE DÉTAILLÉE ================= */}
+      <div className="flex-grow w-full flex flex-col lg:flex-row items-stretch">
+        
+        {/* ====================================================================
+            COLONNE GAUCHE (320px fixes) : SIDEBAR COMPACTE PLEINE HAUTEUR
+           ==================================================================== */}
+        <aside className="hidden lg:flex lg:w-80 xl:w-[340px] shrink-0 flex-col bg-[#0d1320] border-r border-slate-800/90 lg:sticky lg:top-0 lg:h-screen max-h-screen select-none">
           
-          {/* ====================================================================
-              COLONNE GAUCHE (4 cols) : SIDEBAR STYLE MESSAGERIE / FINTECH PRO
-             ==================================================================== */}
-          <aside className="hidden lg:flex lg:col-span-4 flex-col bg-[#111827] border border-slate-800 rounded-none overflow-hidden sticky top-24 shadow-2xl">
-            {/* En-tête Sidebar + Recherche instantanée */}
-            <div className="p-4 border-b border-slate-800 bg-[#090d16] space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-black uppercase tracking-[0.2em] text-white flex items-center gap-2">
-                  <FaLayerGroup className="text-[#CE1126]" />
-                  {searchQuery ? 'Résultats de recherche' : `Offres : ${currentCategoryObj.label}`}
+          {/* En-tête Sidebar + Recherche compacte */}
+          <div className="p-3 border-b border-slate-800/90 bg-[#090d16] space-y-2.5 shrink-0">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-200 flex items-center gap-1.5 truncate">
+                <FaLayerGroup className="text-[#CE1126] shrink-0" size={11} />
+                <span className="truncate">
+                  {searchQuery ? 'Recherche' : currentCategoryObj.label}
                 </span>
-                <span className="text-[10px] font-bold text-slate-400 bg-slate-900 px-2 py-0.5 border border-slate-800">
-                  {sidebarPacks.length} packs
-                </span>
-              </div>
-
-              {/* Barre de recherche style messagerie */}
-              <div className="relative">
-                <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Rechercher un pack, une garantie..."
-                  className="w-full bg-[#111827] border border-slate-800 focus:border-[#CE1126] text-white text-xs pl-9 pr-8 py-2.5 rounded-none focus:outline-none placeholder:text-slate-500"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
-                  >
-                    <FaTimes size={12} />
-                  </button>
-                )}
-              </div>
+              </span>
+              <span className="text-[9px] font-black text-slate-400 bg-slate-900 px-1.5 py-0.5 border border-slate-800 shrink-0">
+                {sidebarPacks.length} offres
+              </span>
             </div>
 
-            {/* Liste verticale des 5 sous-catégories (liens cliquables) */}
-            <div className="divide-y divide-slate-800/80 max-h-[540px] overflow-y-auto">
-              {sidebarPacks.length > 0 ? (
-                sidebarPacks.map((pack) => {
-                  const isSelected = activePack.id === pack.id;
-                  return (
-                    <button
-                      key={pack.id}
-                      onClick={() => handleSelectPack(pack)}
-                      className={`w-full text-left p-4 transition-all flex items-start justify-between gap-3 rounded-none focus:outline-none ${
-                        isSelected
-                          ? 'bg-[#CE1126]/15 border-l-4 border-l-[#CE1126]'
-                          : 'hover:bg-slate-900/80 border-l-4 border-l-transparent'
-                      }`}
-                    >
-                      <div className="flex items-start gap-3 min-w-0">
-                        <div className={`w-10 h-10 shrink-0 flex items-center justify-center border rounded-none mt-0.5 ${
-                          isSelected
-                            ? 'bg-[#CE1126] border-[#CE1126] text-white'
-                            : 'bg-[#090d16] border-slate-800 text-[#CE1126]'
-                        }`}>
-                          {pack.icon}
-                        </div>
-
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-2">
-                            <h4 className={`text-xs font-black uppercase truncate ${
-                              isSelected ? 'text-white' : 'text-slate-200'
-                            }`}>
-                              {pack.name}
-                            </h4>
-                            {pack.isPopular && (
-                              <span className="shrink-0 w-2 h-2 bg-[#CE1126] rounded-full" title="Le plus choisi" />
-                            )}
-                          </div>
-                          <p className="text-[11px] text-slate-400 truncate mt-0.5">
-                            {pack.tagline}
-                          </p>
-                          <div className="flex items-center gap-2 mt-1.5">
-                            <span className="text-[11px] font-black text-white">
-                              {pack.price} USD
-                            </span>
-                            <span className="text-[9px] uppercase text-slate-500 font-bold">
-                              / {pack.period}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <FaChevronRight
-                        size={11}
-                        className={`shrink-0 mt-3 transition-transform ${
-                          isSelected ? 'text-[#CE1126] translate-x-1' : 'text-slate-600'
-                        }`}
-                      />
-                    </button>
-                  );
-                })
-              ) : (
-                <div className="p-8 text-center text-slate-500 text-xs">
-                  Aucune offre ne correspond à « {searchQuery} ».
-                </div>
+            {/* Barre de recherche compacte */}
+            <div className="relative">
+              <FaSearch className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500" size={11} />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Filtrer un pack ou garantie..."
+                className="w-full bg-[#111827] border border-slate-800 focus:border-[#CE1126] text-white text-[11px] pl-8 pr-7 py-2 rounded-none focus:outline-none placeholder:text-slate-500 transition-colors"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                >
+                  <FaTimes size={11} />
+                </button>
               )}
             </div>
+          </div>
 
-            {/* Pied de sidebar : Assistance rapide */}
-            <div className="p-4 bg-[#090d16] border-t border-slate-800 flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <FaHeadset className="text-[#CE1126]" size={16} />
-                <div>
-                  <p className="text-[10px] font-black uppercase text-white">Besoin d’un conseil ?</p>
-                  <p className="text-[10px] text-slate-400">Un expert vous répond en direct</p>
-                </div>
+          {/* Liste verticale des packs (Scrollable indépendamment jusqu'en bas) */}
+          <div className="flex-grow overflow-y-auto divide-y divide-slate-800/60 custom-scrollbar">
+            {sidebarPacks.length > 0 ? (
+              sidebarPacks.map((pack) => {
+                const isSelected = activePack.id === pack.id;
+                return (
+                  <button
+                    key={pack.id}
+                    onClick={() => handleSelectPack(pack)}
+                    className={`w-full text-left px-3.5 py-2.5 transition-all flex items-center justify-between gap-2.5 rounded-none focus:outline-none group ${
+                      isSelected
+                        ? 'bg-[#CE1126]/15 border-l-[3px] border-l-[#CE1126]'
+                        : 'hover:bg-slate-900/70 border-l-[3px] border-l-transparent'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      {/* Icône compacte 32x32 */}
+                      <div
+                        className={`w-8 h-8 shrink-0 flex items-center justify-center border rounded-none text-xs transition-colors ${
+                          isSelected
+                            ? 'bg-[#CE1126] border-[#CE1126] text-white'
+                            : 'bg-[#090d16] border-slate-800 text-[#CE1126] group-hover:border-slate-700'
+                        }`}
+                      >
+                        {pack.icon}
+                      </div>
+
+                      {/* Infos condensées */}
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <h4
+                            className={`text-[11px] font-black uppercase tracking-wide truncate ${
+                              isSelected ? 'text-white' : 'text-slate-200 group-hover:text-white'
+                            }`}
+                          >
+                            {pack.name}
+                          </h4>
+                          {pack.isPopular && (
+                            <span
+                              className="shrink-0 w-1.5 h-1.5 bg-[#CE1126] rounded-full"
+                              title="Populaire"
+                            />
+                          )}
+                        </div>
+                        <p className="text-[10px] text-slate-400 truncate leading-tight mt-0.5">
+                          {pack.tagline}
+                        </p>
+                        <div className="flex items-baseline gap-1 mt-1">
+                          <span className="text-[11px] font-black text-white">
+                            {pack.price} USD
+                          </span>
+                          <span className="text-[9px] uppercase text-slate-500 font-semibold">
+                            / {pack.period}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <FaChevronRight
+                      size={10}
+                      className={`shrink-0 transition-transform ${
+                        isSelected
+                          ? 'text-[#CE1126] translate-x-0.5'
+                          : 'text-slate-600 group-hover:text-slate-400'
+                      }`}
+                    />
+                  </button>
+                );
+              })
+            ) : (
+              <div className="p-6 text-center text-slate-500 text-[11px]">
+                Aucune offre trouvée pour « {searchQuery} ».
               </div>
-              <a
-                href="https://wa.me"
-                target="_blank"
-                rel="noreferrer"
-                className="px-3 py-1.5 bg-white text-black text-[10px] font-black uppercase tracking-wider hover:bg-[#CE1126] hover:text-white transition-colors"
-              >
-                WhatsApp
-              </a>
-            </div>
-          </aside>
+            )}
+          </div>
 
-          {/* ====================================================================
-              COLONNE DROITE (8 cols) : AFFICHAGE DÉTAILLÉ DU PACK SÉLECTIONNÉ
-             ==================================================================== */}
-          <main className="lg:col-span-8 space-y-8">
+          {/* Pied de sidebar compact : Assistance WhatsApp toujours visible en bas */}
+          <div className="p-3 bg-[#090d16] border-t border-slate-800/90 flex items-center justify-between gap-2 shrink-0">
+            <div className="flex items-center gap-2 min-w-0">
+              <FaHeadset className="text-[#CE1126] shrink-0" size={14} />
+              <div className="min-w-0">
+                <p className="text-[10px] font-black uppercase text-white truncate">
+                  Besoin d’un conseil ?
+                </p>
+                <p className="text-[9px] text-slate-400 truncate">
+                  Réponse directe en RDC
+                </p>
+              </div>
+            </div>
+            <a
+              href="https://wa.me"
+              target="_blank"
+              rel="noreferrer"
+              className="shrink-0 px-2.5 py-1.5 bg-white text-black text-[9px] font-black uppercase tracking-wider hover:bg-[#CE1126] hover:text-white transition-colors"
+            >
+              WhatsApp
+            </a>
+          </div>
+        </aside>
+
+                 {/* ====================================================================
+            COLONNE DROITE : AFFICHAGE DÉTAILLÉ DU PACK SÉLECTIONNÉ
+           ==================================================================== */}
+        <main className="flex-grow min-w-0 px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
+          <div className="max-w-4xl mx-auto">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activePack.id}
-                initial={{ opacity: 0, y: 15 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.25 }}
-                className={`bg-[#111827] border flex flex-col justify-between relative shadow-2xl rounded-none ${
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className={`bg-[#111827] border flex flex-col justify-between relative shadow-xl rounded-none ${
                   activePack.isPopular
                     ? 'border-2 border-[#CE1126]'
                     : 'border-slate-800'
                 }`}
               >
-                {/* Badge "Le plus choisi" */}
+                {/* Badge "Le plus choisi" compact */}
                 {activePack.isPopular && (
-                  <span className="absolute -top-3.5 right-6 bg-[#CE1126] text-white text-[10px] uppercase font-black tracking-widest px-4 py-1.5 shadow-lg rounded-none z-10">
+                  <span className="absolute -top-3 right-5 bg-[#CE1126] text-white text-[9px] uppercase font-black tracking-widest px-3 py-1 shadow-md rounded-none z-10">
                     Le plus choisi
                   </span>
                 )}
 
                 {/* En-tête de la fiche détaillée */}
-                <div className="p-6 md:p-10 border-b border-slate-800 bg-gradient-to-br from-[#111827] to-[#090d16]">
-                  <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-                    <div className="flex items-center gap-4">
-                      <div className="w-14 h-14 bg-slate-950 border border-slate-800 flex items-center justify-center text-[#CE1126] rounded-none shadow-md">
+                <div className="p-4 sm:p-6 border-b border-slate-800 bg-gradient-to-br from-[#111827] to-[#090d16]">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                    
+                    {/* Icône + Catégorie + Accroche */}
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-11 h-11 shrink-0 bg-slate-950 border border-slate-800 flex items-center justify-center text-[#CE1126] text-base rounded-none shadow-sm">
                         {activePack.icon}
                       </div>
                       <div>
-                        <span className="text-[10px] font-black text-white uppercase tracking-widest bg-[#CE1126] px-3 py-1 rounded-none">
+                        <span className="inline-block text-[9px] font-black text-white uppercase tracking-widest bg-[#CE1126] px-2.5 py-0.5 rounded-none">
                           {activePack.category}
                         </span>
-                        <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-2">
+                        <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider mt-1.5">
                           {activePack.tagline}
                         </p>
                       </div>
                     </div>
 
-                    {/* Bloc Tarifaire Blanc Contrasté */}
-                    <div className="bg-white text-black px-6 py-4 border-l-4 border-l-[#CE1126] shadow-lg">
-                      <span className="block text-[9px] font-black uppercase tracking-widest text-slate-500">
+                    {/* Bloc Tarifaire Blanc Contrasté (Compact) */}
+                    <div className="bg-white text-black px-4 py-2.5 border-l-4 border-l-[#CE1126] shadow-md self-start sm:self-auto shrink-0">
+                      <span className="block text-[8px] font-black uppercase tracking-widest text-slate-500">
                         Prime à partir de
                       </span>
-                      <div className="flex items-baseline gap-1.5">
-                        <span className="text-3xl md:text-4xl font-black tracking-tighter text-black">
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-2xl sm:text-3xl font-black tracking-tight text-black">
                           {activePack.price} USD
                         </span>
-                        <span className="text-xs font-black uppercase text-[#CE1126]">
+                        <span className="text-[10px] font-black uppercase text-[#CE1126]">
                           / {activePack.period}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <h2 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tight mb-3">
+                  {/* Titre & Description proportionnés */}
+                  <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight mb-1.5">
                     {activePack.name}
                   </h2>
-                  <p className="text-slate-300 text-sm md:text-base leading-relaxed">
+                  <p className="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-3xl">
                     {activePack.description}
                   </p>
-                  </div>
+                </div>
+
                 {/* Corps : Plafond & Liste complète des garanties */}
-                <div className="p-6 md:p-10 space-y-8">
+                <div className="p-4 sm:p-6 space-y-5">
+                  
                   {/* Encart Plafond de couverture */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-black uppercase tracking-wider text-white bg-[#CE1126]/10 px-5 py-4 border border-[#CE1126]/30 border-l-4 border-l-[#CE1126] rounded-none">
-                    <div className="flex items-center gap-2.5 text-[#CE1126]">
-                      <FaInfoCircle size={16} />
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] font-black uppercase tracking-wider text-white bg-[#CE1126]/10 px-4 py-3 border border-[#CE1126]/30 border-l-4 border-l-[#CE1126] rounded-none">
+                    <div className="flex items-center gap-2 text-[#CE1126]">
+                      <FaInfoCircle size={14} className="shrink-0" />
                       <span>Plafond de couverture garanti</span>
                     </div>
-                    <span className="text-sm md:text-base text-white font-black">
+                    <span className="text-xs sm:text-sm text-white font-black">
                       {activePack.coverageLimit}
                     </span>
                   </div>
 
                   {/* Grille des garanties incluses */}
                   <div>
-                    <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-5">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-3">
                       Garanties & Services Inclus dans ce pack
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                       {activePack.guarantees.map((item, i) => (
                         <div
                           key={i}
-                          className="p-4 bg-[#090d16] border border-slate-800/90 flex items-start gap-3.5 hover:border-slate-700 transition-colors"
+                          className="px-3.5 py-2.5 bg-[#090d16] border border-slate-800/90 flex items-start gap-2.5 hover:border-slate-700 transition-colors"
                         >
-                          <FaCheckCircle className="text-[#CE1126] shrink-0 mt-0.5" size={15} />
-                          <span className="text-xs md:text-sm text-slate-200 font-medium leading-snug">
+                          <FaCheckCircle className="text-[#CE1126] shrink-0 mt-0.5" size={13} />
+                          <span className="text-xs text-slate-200 font-medium leading-snug">
                             {item}
                           </span>
                         </div>
@@ -955,110 +998,42 @@ const PacksCataloguePage = () => {
                   </div>
 
                   {/* Bandeau réassurance écosystème */}
-                  <div className="grid grid-cols-3 gap-3 pt-4 border-t border-slate-800/80 text-center">
-                    <div className="p-3 bg-[#090d16] border border-slate-800">
-                      <span className="block text-xs font-black text-white uppercase">Attestation QR</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-4 border-t border-slate-800/80 text-center">
+                    <div className="p-2.5 bg-[#090d16] border border-slate-800/80">
+                      <span className="block text-[11px] font-black text-white uppercase">Attestation QR</span>
                       <span className="text-[10px] text-slate-400">Émission immédiate</span>
                     </div>
-                    <div className="p-3 bg-[#090d16] border border-slate-800">
-                      <span className="block text-xs font-black text-white uppercase">Paiement Hybride</span>
+                    <div className="p-2.5 bg-[#090d16] border border-slate-800/80">
+                      <span className="block text-[11px] font-black text-white uppercase">Paiement Hybride</span>
                       <span className="text-[10px] text-slate-400">Carte & Mobile Money</span>
                     </div>
-                    <div className="p-3 bg-[#090d16] border border-slate-800">
-                      <span className="block text-xs font-black text-white uppercase">Diaspora & Local</span>
+                    <div className="p-2.5 bg-[#090d16] border border-slate-800/80">
+                      <span className="block text-[11px] font-black text-white uppercase">Diaspora & Local</span>
                       <span className="text-[10px] text-slate-400">Souscription à distance</span>
                     </div>
                   </div>
                 </div>
 
-                {/* ================= VOTRE BOUTON DE REDIRECTION EXACT ================= */}
-                <div className="p-6 md:p-8 pt-0">
+                {/* ================= BOUTON DE REDIRECTION ================= */}
+                <div className="px-4 sm:px-6 pb-5 pt-1">
                   <button
                     onClick={() => handleSubscription(activePack)}
-                    className={`w-full py-4 md:py-5 font-black uppercase text-[10px] md:text-[11px] tracking-[0.25em] shadow-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2 rounded-none border-2 focus:outline-none ${
+                    className={`w-full py-3.5 sm:py-4 font-black uppercase text-[11px] tracking-[0.18em] shadow-lg transition-all active:scale-[0.99] flex items-center justify-center gap-2 rounded-none border-2 focus:outline-none ${
                       activePack.isPopular
                         ? 'bg-[#CE1126] border-[#CE1126] text-white hover:bg-transparent hover:text-white'
                         : 'bg-white border-white text-black hover:bg-transparent hover:text-white'
                     }`}
                   >
-                    <FaShieldAlt size={11} /> Souscrire pour ma famille
+                    <FaShieldAlt size={12} />
+                    <span>Souscrire pour ma famille</span>
                   </button>
                 </div>
+
               </motion.div>
             </AnimatePresence>
-
-            {/* ================= AUTRES PACKS DE LA MÊME CATÉGORIE (ACCÈS RAPIDE) ================= */}
-            <section className="pt-4">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
-                  Autres formules dans « {currentCategoryObj.label} »
-                </h3>
-                <span className="text-[10px] font-bold text-slate-500 uppercase">
-                  5 offres disponibles
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {currentCategoryObj.packs
-                  .filter((p) => p.id !== activePack.id)
-                  .map((otherPack) => (
-                    <button
-                      key={otherPack.id}
-                      onClick={() => handleSelectPack(otherPack)}
-                      className="text-left p-5 bg-[#111827] border border-slate-800 hover:border-[#CE1126] transition-all flex items-center justify-between group rounded-none"
-                    >
-                      <div>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-[#CE1126]">
-                          {otherPack.price} USD / {otherPack.period}
-                        </span>
-                        <h4 className="text-sm font-black text-white uppercase mt-1 group-hover:text-[#CE1126] transition-colors">
-                          {otherPack.name}
-                        </h4>
-                        <p className="text-xs text-slate-400 mt-0.5 line-clamp-1">
-                          {otherPack.tagline}
-                        </p>
-                      </div>
-                      <FaArrowRight className="text-slate-600 group-hover:text-white group-hover:translate-x-1 transition-all shrink-0 ml-3" />
-                    </button>
-                  ))}
-              </div>
-            </section>
-          </main>
-        </div>
+          </div>
+        </main>
       </div>
-
-      {/* ========================================================================
-          BARRE DE NAVIGATION INFÉRIEURE MOBILE (STYLE CAPTURE MOBILE)
-         ======================================================================== */}
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-50 bg-[#090d16]/95 backdrop-blur-md border-t border-slate-800 px-2 py-2">
-        <div className="flex items-center justify-around">
-          {CATEGORIES_DATA.slice(0, 4).map((cat) => {
-            const isActive = activeCategory === cat.id;
-            return (
-              <button
-                key={cat.id}
-                onClick={() => {
-                  handleSelectCategory(cat.id);
-                  setIsMobileMenuOpen(true);
-                }}
-                className={`flex flex-col items-center justify-center py-1.5 px-2 text-[9px] font-black uppercase tracking-wider transition-colors ${
-                  isActive ? 'text-[#CE1126]' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                <span className="text-base mb-1">{cat.icon}</span>
-                <span className="truncate max-w-[65px]">{cat.label}</span>
-              </button>
-            );
-          })}
-          <button
-            onClick={() => setIsMobileMenuOpen(true)}
-            className="flex flex-col items-center justify-center py-1.5 px-3 bg-[#CE1126] text-white text-[9px] font-black uppercase tracking-wider"
-          >
-            <FaLayerGroup className="text-base mb-1" />
-            <span>Toutes (6)</span>
-          </button>
-        </div>
-      </nav>
 
       {/* ========================================================================
           MOBILE : MENU DÉROULANT PLEIN ÉCRAN (BENTO FULLSCREEN DRAWER ONYX)

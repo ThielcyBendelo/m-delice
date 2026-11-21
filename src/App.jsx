@@ -6,6 +6,8 @@ import { AnimatePresence } from 'framer-motion';
 import { ThemeProvider } from './contexts/ThemeContext.jsx';
 import { LanguageProvider } from './contexts/LanguageContext.jsx';
 import WhatsAppSupportModal from './components/WhatsAppSupportModal';
+import BottomLiquidNav from './components/BottomLiquidNav';
+import { NavigationProvider } from './contexts/NavigationContext';
 
 // =========================================================================
 // 1. PORTAIL PUBLIC : VITRINE & TUNNELS (Dossier src/pages/)
@@ -139,6 +141,7 @@ const AnimatedRoutes = () => {
         <Route path="*" element={<PageTransition><Home /></PageTransition>} />
       </Routes>
     </AnimatePresence>
+    
   );
 };
 
@@ -148,6 +151,7 @@ const App = () => {
   return (
     <ThemeProvider>
       <LanguageProvider>
+        <NavigationProvider>
       {!splashDone && (
         <ProfessionalSplashScreen onComplete={() => setSplashDone(true)} />
       )}
@@ -167,10 +171,12 @@ const App = () => {
             <ScrollToTop />
             <AnimatedRoutes />
           </Suspense>
+            <BottomLiquidNav />
                   {/* Bouton flottant & Modale de Consultation / Support WhatsApp */}
         <WhatsAppSupportModal phoneNumber="243829054350" />
         </div>
       )}
+       </NavigationProvider>
       </LanguageProvider>
     </ThemeProvider>
   );

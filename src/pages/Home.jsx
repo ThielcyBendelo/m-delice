@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion as Motion } from 'framer-motion';
 import NavbarSecured from '../components/NavbarSecured';
-import Footer from '../components/Footer';
-import ProtectionsModal from '../components/ProtectionsModal';
+// import Footer from '../components/Footer';
+// import ProtectionsModal from '../components/ProtectionsModal';
 import { 
   FaShieldAlt, FaArrowRight, FaHeartbeat, FaCar, FaGraduationCap, 
   FaPlaneDeparture, FaUsers 
@@ -191,14 +191,12 @@ export default function Home() {
 
         {/* ================= BOUTONS D'ACTION (REMONTÉS) ================= */}
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-          <Motion.button
-            whileHover={{ y: -2 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setIsProtectionsOpen(true)}
+          < button
+            onClick={() => navigate('/packs')}  
             className="inline-flex items-center justify-center gap-3 bg-[#07111f] border border-slate-800 hover:border-[#CE1126] hover:bg-[#CE1126] px-6 py-3.5 text-xs font-black uppercase tracking-[0.16em] text-white shadow-lg shadow-slate-900/15 transition"
           >
-            Découvrir les protections <FaArrowRight size={12} />
-          </Motion.button>
+            Découvrir les catalogues <FaArrowRight size={12} />
+          </ button>
 
           <button
             onClick={() => navigate('/simulateur')}
@@ -246,13 +244,7 @@ export default function Home() {
     </div>
   </div>
 </section>
-      <Footer />
-
-      {/* ================= MODALE CARROUSEL DES PROTECTIONS ================= */}
-      <ProtectionsModal
-        isOpen={isProtectionsOpen}
-        onClose={() => setIsProtectionsOpen(false)}
-      />
+      {/* <Footer /> */}
     </div>
   );
 }

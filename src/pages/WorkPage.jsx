@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import NavbarSecured from '../components/NavbarSecured';
-import Footer from '../components/Footer';
+// import NavbarSecured from '../components/NavbarSecured';
+// import Footer from '../components/Footer';
 import notificationService from '../services/notificationService';
 import { calculateInsuranceQuote, COVERAGE_OPTIONS } from '../utils/insurancePricing';
 import { 
@@ -40,34 +40,8 @@ export default function WorkPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 flex flex-col antialiased font-sans">
-      <NavbarSecured />
-     {/* ================= 1. EN-TÊTE SIMULATEUR PREMIUM (VERSION SOMBRE ONYX) ================= */}
-<header className="relative flex flex-col bg-[#090d16] overflow-hidden border-b border-slate-900 rounded-none">
-  <div className="relative z-20 max-w-6xl mx-auto px-4 pt-24 pb-8 sm:pt-28 sm:pb-10 text-center flex flex-col items-center w-full">
-    <motion.div
-      initial={{ opacity: 0, y: 15 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="space-y-3 sm:space-y-4 w-full flex flex-col items-center"
-    >
-      {/* Badge Outil - Fond de surface sombre, angles droits stricts */}
-      <span className="px-4 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-[#CE1126] bg-[#CE1126]/10 border border-[#CE1126]/20 border-l-2 border-l-[#CE1126] rounded-none inline-block">
-        Outil d'Aide à la Décision
-      </span>
-
-      {/* Titre Blanc Éclatant : MASQUÉ SUR MOBILE */}
-      <h1 className="hidden md:block text-4xl md:text-6xl font-black text-white tracking-tight leading-none uppercase">
-        Tarificateur <span className="text-[#CE1126] italic normal-case">En Ligne</span>
-      </h1>
-
-      {/* Description Gris Argent Scannable : MASQUÉE SUR MOBILE */}
-      <p className="hidden md:block max-w-3xl mx-auto text-[#94a3b8] text-sm md:text-lg leading-relaxed font-semibold">
-        Calculez instantanément le montant de la prime pour votre famille en RDC. Obtenez un devis transparent et traçable en quelques clics.
-      </p>
-    </motion.div>
-  </div>
-</header>
+    <div className="min-h-screen bg-white text-slate-900 flex pt-19 flex-col antialiased font-sans">
+      {/* <NavbarSecured /> */}
 
 {/* ================= 2. CORE INTERFACE DE CALCUL (VERSION SOMBRE ONYX) ================= */}
 <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 pt-4 pb-12 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start bg-[#090d16]">
@@ -264,7 +238,7 @@ export default function WorkPage() {
 </main>
 
 {/* ================= PIED DE PAGE ÉPURÉ ESNAs ================= */}
-<Footer />
+{/* <Footer /> */}
 
 </div>
   );
