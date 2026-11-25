@@ -30,33 +30,34 @@ const BottomLiquidNav = () => {
     if (
       location.pathname.startsWith('/dashboard') ||
       location.pathname === '/login' ||
-      location.pathname === '/register'
+      location.pathname === '/register' ||
+      location.pathname === '/work'
     ) {
       return null;
     }
 
-  return (
+    return (
     <AnimatePresence>
       {!isNavbarOpen && (
         <motion.div
-          initial={{ y: 100, opacity: 0 }}
+          initial={{ y: 80, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-          className="fixed bottom-4 inset-x-0 z-40 px-4 flex justify-center pointer-events-none lg:hidden"
+          exit={{ y: 80, opacity: 0 }}
+          transition={{ type: 'spring', stiffness: 320, damping: 30 }}
+          className="fixed bottom-0 inset-x-0 z-50 w-full lg:hidden"
         >
           <nav
             aria-label="Navigation rapide"
-            className="pointer-events-auto relative flex items-center justify-between gap-1 sm:gap-2 px-2.5 py-1 rounded-full 
-                       bg-[#090d16]/70 backdrop-blur-2xl backdrop-saturate-150
-                       border border-white/15 
-                       shadow-[0_20px_40px_rgba(0,0,0,0.75),inset_0_1px_1px_rgba(255,255,255,0.28),inset_0_-1px_2px_rgba(0,0,0,0.5)]
-                       max-w-md w-full overflow-hidden"
+            className="relative flex items-stretch justify-between w-full rounded-none
+                       bg-[#090d16]/90 backdrop-blur-2xl backdrop-saturate-150
+                       border-t border-white/15
+                       shadow-[0_-10px_30px_rgba(0,0,0,0.75),inset_0_1px_0_rgba(255,255,255,0.18)]
+                       pb-[env(safe-area-inset-bottom)]"
           >
-            {/* Reflet lumineux supérieur (Effet Liquid Glass) */}
-            <div 
+            {/* Ligne lumineuse supérieure pleine largeur */}
+            <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-x-6 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent"
+              className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent"
             />
 
             {NAV_ITEMS.map((item) => {
@@ -69,26 +70,30 @@ const BottomLiquidNav = () => {
               return (
                 <button
                   key={item.id}
+                  type="button"
                   onClick={() => navigate(item.path)}
-                  className={`relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-full transition-colors duration-200 focus:outline-none group ${
-                    isActive ? 'text-white' : 'text-slate-300/80 hover:text-white'
+                  className={`relative flex-1 flex flex-col items-center justify-center py-2.5 px-1 rounded-none transition-colors duration-200 focus:outline-none group ${
+                    isActive ? 'text-white' : 'text-slate-400 hover:text-white'
                   }`}
                 >
+                  {/* Fond actif rectangulaire avec indicateur supérieur rouge */}
                   {isActive && (
                     <motion.div
-                      layoutId="liquidGlassActivePill"
+                      layoutId="liquidGlassActiveRect"
                       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                      className="absolute inset-0 rounded-full bg-gradient-to-b from-[#CE1126] to-[#990b1b] 
-                                 border border-white/25
-                                 shadow-[0_4px_15px_rgba(206,17,38,0.55),inset_0_1px_1px_rgba(255,255,255,0.4)]"
+                      className="absolute inset-0 rounded-none bg-gradient-to-b from-[#CE1126] to-[#8f0a19]
+                                 border-t-2 border-white
+                                 shadow-[inset_0_1px_1px_rgba(255,255,255,0.35)]"
                     />
                   )}
 
                   <div className="relative z-10 flex flex-col items-center gap-1">
                     <Icon
-                      size={15}
+                      size={16}
                       className={`transition-transform duration-200 ${
-                        isActive ? 'text-white scale-110' : 'text-slate-300 group-hover:scale-105 group-hover:text-white'
+                        isActive
+                          ? 'text-white scale-110'
+                          : 'text-slate-400 group-hover:scale-105 group-hover:text-white'
                       }`}
                     />
                     <span className="text-[9.5px] font-black uppercase tracking-wider leading-none">

@@ -1,14 +1,35 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { insurancePacks } from '../data/insurancePacks';
 // import NavbarSecured from '../components/NavbarSecured';
 // import Footer from '../components/Footer';
 import notificationService from '../services/notificationService';
 import { calculateInsuranceQuote, COVERAGE_OPTIONS } from '../utils/insurancePricing';
-import { 
-  FaCalculator, FaShieldAlt, FaHeartbeat, FaCar, 
-  FaGraduationCap, FaUsers, FaArrowRight, FaInfoCircle, FaCheckCircle, FaPlaneDeparture, 
-  FaHardHat, FaHome, FaThList, FaHeadset, FaLock
+import {
+  FaCalculator,
+  FaShieldAlt,
+  FaHeartbeat,
+  FaCar,
+  FaGraduationCap,
+  FaUsers,
+  FaArrowRight,
+  FaInfoCircle,
+  FaCheckCircle,
+  FaPlaneDeparture,
+  FaHardHat,
+  FaHome,
+  FaBuilding,
+  FaHandsHelping,
+  FaStore,
+  FaTruck,
+  FaSeedling,
+  FaBriefcase,
+  FaTools,
+  FaMobileAlt,
+  FaThList,
+  FaHeadset,
+  FaLock
 } from 'react-icons/fa';
 
 export default function WorkPage() {
@@ -25,16 +46,62 @@ export default function WorkPage() {
       notificationService.success("Simulation enregistrée !");
     }
 
-    const simulatedPack = {
-      id: insuranceType === 'health' ? 1 : insuranceType === 'auto' ? 2 : 4,
-      name: `Pack ${insuranceType.charAt(0).toUpperCase() + insuranceType.slice(1)} - ${coverageLevel.toUpperCase()}`,
-      price: quote.monthlyPrice,
-      branch: quote.branch,
-      insuranceType,
-      coverageLevel,
-      beneficiariesCount: quote.beneficiariesCount,
-      coverageLimit: quote.coverageLimit
-    };
+    // 1. Tables de correspondance avec la nomenclature de insurancePacks.js
+const CATEGORY_MAP = {
+  health: 'sante',
+  auto: 'auto',
+  student: 'scolaire',
+  voyage: 'voyage',
+  habitation: 'habitation',
+  collective: 'collectives',
+  work_accident: 'prevoyance',
+  obseques: 'obseques',
+  pme: 'pme',
+  transport: 'transport',
+  agricole: 'agricole',
+  rc_pro: 'rc_pro',
+  chantier: 'chantier',
+  micro: 'micro',
+  cyber: 'cyber'
+};
+
+const TIER_INDEX_MAP = {
+  essentiel: 1,
+  standard: 2,
+  confort: 3,
+  plus: 4,
+  famille: 5,
+  senior: 6,
+  pro: 7,
+  premium: 8,
+  gold: 9,
+  prestige: 10
+};
+
+// 2. Construction cohérente de simulatedPack
+const mappedCategory = CATEGORY_MAP[insuranceType] || insuranceType;
+const tierNumber = TIER_INDEX_MAP[coverageLevel.toLowerCase()] || 1;
+const packId = `${mappedCategory}-${tierNumber}`;
+
+// Optionnel : récupère les vraies données du pack depuis insurancePacks si importé
+const matchedCatalogPack = typeof insurancePacks !== 'undefined'
+  ? insurancePacks.find((p) => p.id === packId)
+  : null;
+
+const simulatedPack = {
+  id: packId, // ✅ Ex: "sante-3", "auto-8", "scolaire-1" (cohérent avec insurancePacks.js)
+  categoryId: mappedCategory,
+  category: matchedCatalogPack?.category || quote.branch,
+  name: matchedCatalogPack?.name || `Pack ${mappedCategory.charAt(0).toUpperCase() + mappedCategory.slice(1)} ${coverageLevel.charAt(0).toUpperCase() + coverageLevel.slice(1)}`,
+  price: quote.monthlyPrice,
+  branch: quote.branch,
+  insuranceType,
+  coverageLevel,
+  beneficiariesCount: quote.beneficiariesCount,
+  coverageLimit: quote.coverageLimit,
+  guarantees: matchedCatalogPack?.guarantees || []
+};
+
 
     navigate('/inscription-beneficiaire', { state: { selectedPack: simulatedPack } });
   };
@@ -118,15 +185,23 @@ export default function WorkPage() {
                 </span>
               </div>
               
-              <div className="flex overflow-x-auto snap-x snap-mandatory gap-2 pb-1 sm:grid sm:grid-cols-3 sm:gap-2 sm:overflow-visible sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                {[
-                  { id: 'health', label: 'Santé / Médical', icon: <FaHeartbeat /> },
-                  { id: 'auto', label: 'RC Automob', icon: <FaCar /> },
-                  { id: 'student', label: 'Scolarité', icon: <FaGraduationCap /> },
-                  { id: 'voyage', label: 'Voyage', icon: <FaPlaneDeparture /> },
-                  { id: 'collective', label: 'Collective & Mutuelle', icon: <FaUsers /> },
-                  { id: 'work_accident', label: 'Accidents Travail', icon: <FaHardHat /> },
-                  { id: 'habitation', label: 'Habitation Pro', icon: <FaHardHat /> }
+              <div className="flex overflow-x-auto snap-x snap-mandatory gap-1 pb-1 sm:grid sm:grid-cols-5 sm:gap-1 sm:overflow-visible sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          {[
+  { id: 'health', label: 'Santé / Médical', icon: <FaHeartbeat /> },
+  { id: 'auto', label: 'RC Automob', icon: <FaCar /> },
+  { id: 'student', label: 'Scolarité', icon: <FaGraduationCap /> },
+  { id: 'voyage', label: 'Voyage', icon: <FaPlaneDeparture /> },
+  { id: 'collective', label: 'Collective & Mutuelle', icon: <FaUsers /> },
+  { id: 'work_accident', label: 'Accidents Travail', icon: <FaHardHat /> },
+  { id: 'habitation', label: 'Habitation Pro', icon: <FaBuilding /> },
+  { id: 'obseques', label: 'Obsèques & Rapatriement', icon: <FaHandsHelping /> },
+  { id: 'pme', label: 'Multirisque PME', icon: <FaStore /> },
+  { id: 'transport', label: 'Transport & Fret', icon: <FaTruck /> },
+  { id: 'agricole', label: 'Agricole & Élevage', icon: <FaSeedling /> },
+  { id: 'rc_pro', label: 'RC Professionnelle', icon: <FaBriefcase /> },
+  { id: 'chantier', label: 'Chantier & BTP', icon: <FaTools /> },
+  { id: 'micro', label: 'Micro-Assurance', icon: <FaMobileAlt /> },
+  { id: 'cyber', label: 'Cyber-Risques', icon: <FaLock /> }
                 ].map((type) => (
                   <button
                     key={type.id}
@@ -185,9 +260,16 @@ export default function WorkPage() {
               </label>
               <div className="grid grid-cols-3 gap-2">
                 {[
-                  { id: 'essentiel', title: 'Essentiel', desc: 'Couverture basique' },
-                  { id: 'confort', title: 'Confort', desc: 'Équilibre soins / prix' },
-                  { id: 'premium', title: 'Premium', desc: 'Plafonds étendus ARCA' }
+  { id: 'essentiel', title: 'Essentiel', desc: 'Couverture basique' },
+  { id: 'standard', title: 'Standard', desc: 'Formule populaire au quotidien' },
+  { id: 'confort', title: 'Confort', desc: 'Équilibre soins / prix' },
+  { id: 'plus', title: 'Plus', desc: 'Garanties étendues et franchise réduite' },
+  { id: 'famille', title: 'Famille', desc: 'Protection multi-bénéficiaires RDC' },
+  { id: 'senior', title: 'Senior', desc: 'Suivi renforcé et assistance dédiée' },
+  { id: 'pro', title: 'Pro', desc: 'Adapté aux indépendants et PME' },
+  { id: 'premium', title: 'Premium', desc: 'Plafonds étendus ARCA' },
+  { id: 'gold', title: 'Gold', desc: 'Tiers payant VIP et carence zéro' },
+  { id: 'prestige', title: 'Prestige', desc: 'Couverture intégrale 100 %' }
                 ].map((lvl) => {
                   const isSelected = coverageLevel === lvl.id;
                   return (

@@ -218,7 +218,6 @@ if (!selectedPack) {
   </form>
 </motion.div>
 </main>
-
       <Footer />
     </div>
   );
