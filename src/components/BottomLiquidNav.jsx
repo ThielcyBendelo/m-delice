@@ -25,6 +25,15 @@ const BottomLiquidNav = () => {
   if (location.pathname.startsWith('/admin') || location.pathname.startsWith('/regions')) {
     return null;
   }
+  
+    // Masquer si le menu mobile est ouvert, ou sur le dashboard / pages d'authentification
+    if (
+      location.pathname.startsWith('/dashboard') ||
+      location.pathname === '/login' ||
+      location.pathname === '/register'
+    ) {
+      return null;
+    }
 
   return (
     <AnimatePresence>
@@ -38,7 +47,7 @@ const BottomLiquidNav = () => {
         >
           <nav
             aria-label="Navigation rapide"
-            className="pointer-events-auto relative flex items-center justify-between gap-1 sm:gap-2 px-2.5 py-2 rounded-full 
+            className="pointer-events-auto relative flex items-center justify-between gap-1 sm:gap-2 px-2.5 py-1 rounded-full 
                        bg-[#090d16]/70 backdrop-blur-2xl backdrop-saturate-150
                        border border-white/15 
                        shadow-[0_20px_40px_rgba(0,0,0,0.75),inset_0_1px_1px_rgba(255,255,255,0.28),inset_0_-1px_2px_rgba(0,0,0,0.5)]

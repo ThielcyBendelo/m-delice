@@ -6,7 +6,8 @@ import notificationService from '../services/notificationService';
 import TurnstileField from './TurnstileField';
 import {
   FaShieldAlt, FaEnvelope, FaArrowRight, FaSpinner, FaGoogle,
-  FaGlobe, FaChevronDown, FaPhone, FaCheckCircle, FaEye, FaEyeSlash, FaKey
+  FaGlobe, FaChevronDown, FaPhone, FaCheckCircle, FaEye, FaEyeSlash, FaKey,
+  FaHome, FaLock
 } from 'react-icons/fa';
 
 const GIS_SRC = 'https://accounts.google.com/gsi/client';
@@ -63,9 +64,9 @@ function PasswordStrength({ password }) {
   return (
     <div className="mt-1" aria-live="polite">
       <div className="flex h-1 gap-1">
-        {[0, 1, 2, 3, 4].map((item) => <span key={item} className={`flex-1 ${item < score ? colors[score] : 'bg-slate-700'}`} />)}
+        {[0, 1, 2, 3, 4].map((item) => <span key={item} className={`flex-1 ${item < score ? colors[score] : 'bg-slate-200'}`} />)}
       </div>
-      <span className="text-[9px] text-slate-400">Force : {labels[score]}</span>
+      <span className="text-[9px] text-slate-500 font-semibold">Force : {labels[score]}</span>
     </div>
   );
 }
@@ -89,9 +90,6 @@ export default function SecureRegister() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [registrationStatus, setRegistrationStatus] = useState('');
-  const turnstileTokenRef = useRef('');
-  const registrationDataRef = useRef({ formData, phoneCountryIso });
-  const googleBtnRef = useRef(null);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -103,11 +101,10 @@ export default function SecureRegister() {
     phoneCountryCode: '33',
     phone: ''
   });
+  const turnstileTokenRef = useRef('');
+  const registrationDataRef = useRef({ formData, phoneCountryIso });
+  const googleBtnRef = useRef(null);
 
-  const updateTurnstileToken = useCallback((token) => {
-    turnstileTokenRef.current = token;
-    setTurnstileToken(token);
-  }, []);
 
   registrationDataRef.current = { formData, phoneCountryIso };
 
@@ -294,232 +291,311 @@ export default function SecureRegister() {
     }
   };
 
-  return (
-    <div className="min-h-dvh bg-[#090d16] flex items-center justify-center px-3 py-4 relative overflow-x-hidden overflow-y-auto font-sans">
-      <div className="absolute inset-0 bg-[radial-gradient(#CE1126_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.05] z-10" />
+    return (
+    <div className="min-h-dvh bg-white text-slate-900 flex flex-col justify-between px-4 py-5 sm:px-6 sm:py-8 relative overflow-x-hidden overflow-y-auto font-sans">
+      {/* ================= FOND RIPPLEGRID ANIMÉ (VERSION CLAIRE) ================= */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
+        {/* Grille quadrillée claire */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              'linear-gradient(to right, rgba(15, 23, 42, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(15, 23, 42, 0.05) 1px, transparent 1px)',
+            backgroundSize: '36px 36px',
+            maskImage: 'radial-gradient(ellipse 75% 65% at 50% 50%, #000 35%, transparent 100%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 75% 65% at 50% 50%, #000 35%, transparent 100%)'
+          }}
+        />
 
-      <div className="relative z-20 w-full max-w-[620px] bg-[#111827] p-4 sm:p-6 shadow-[0_30px_100px_rgba(0,0,0,0.8)] border border-slate-800 flex flex-col rounded-none animate-fadeIn">
-        <div className="text-center mb-4">
-          <div className="w-10 h-10 bg-[#CE1126] text-white flex items-center justify-center mx-auto mb-2 shadow-lg rounded-none">
-            <FaShieldAlt size={20} />
-          </div>
-          <h1 className="text-2xl font-black uppercase tracking-tighter text-white leading-none">
-            ESNA<span className="text-[#CE1126]">s DRC</span>
+        {/* Halo lumineux central subtil */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[360px] h-[360px] sm:w-[620px] sm:h-[620px] rounded-full bg-[#CE1126]/[0.05] blur-3xl" />
+
+        {/* Ondes concentriques Ripple */}
+        <div
+          className="ripple-wave w-[300px] h-[300px] sm:w-[500px] sm:h-[500px]"
+          style={{ borderColor: 'rgba(206, 17, 38, 0.22)' }}
+        />
+        <div
+          className="ripple-wave w-[480px] h-[480px] sm:w-[760px] sm:h-[760px]"
+          style={{ animationDelay: '2.3s', borderColor: 'rgba(0, 163, 224, 0.22)' }}
+        />
+        <div
+          className="ripple-wave w-[660px] h-[660px] sm:w-[1000px] sm:h-[1000px]"
+          style={{ animationDelay: '4.6s', borderColor: 'rgba(206, 17, 38, 0.16)' }}
+        />
+      </div>
+
+      {/* ================= BARRE SUPÉRIEURE COMPACTE ================= */}
+      <div className="relative z-20 w-full max-w-[600px] mx-auto mb-4 sm:mb-6 flex items-center justify-between">
+        <button
+          type="button"
+          onClick={() => navigate('/')}
+          className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 hover:text-slate-900 text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer"
+        >
+          <FaHome size={11} className="text-[#CE1126]" />
+          <span>Accueil</span>
+        </button>
+
+        <span className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.18em] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          Inscription ARCA SSL
+        </span>
+      </div>
+
+      {/* ================= CARTE PRINCIPALE D'INSCRIPTION ================= */}
+      <div className="relative z-20 w-full max-w-[600px] mx-auto my-auto bg-white/95 backdrop-blur-xl px-5 py-6 sm:px-8 sm:py-8 shadow-[0_25px_70px_rgba(15,23,42,0.10)] border border-slate-200 flex flex-col rounded-none">
+        {/* En-tête Brand (Sans icône) */}
+        <div className="text-center mb-5 sm:mb-6">
+          <h1 className="text-2xl sm:text-[26px] font-black uppercase tracking-tighter text-slate-900 leading-none">
+            ESNA<span className="text-[#CE1126] lowercase">s</span>{' '}
+            <span className="text-slate-500 font-extrabold">DRC</span>
           </h1>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mt-3">
-            Creation de Compte Diaspora
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mt-2">
+            Création de Compte Diaspora & Local
           </p>
-          {registrationStatus && <p className="mt-3 text-[10px] font-semibold leading-relaxed text-[#CE1126]" aria-live="polite">{registrationStatus}</p>}
-        </div>
-
-        <div className="mb-3 flex flex-col items-center gap-2">
-          <div ref={googleBtnRef} className="w-full flex justify-center min-h-[44px]" />
-          {!googleReady && (
-            <button
-              type="button"
-              disabled
-              className="w-full flex items-center justify-center gap-3 py-3 border border-slate-800 text-slate-500 bg-[#090d16] text-sm font-bold cursor-not-allowed"
-            >
-              <FaGoogle /> S&apos;inscrire avec Google
-              {!googleClientId && (
-                <span className="text-[9px] uppercase text-slate-600">(non configure)</span>
-              )}
-            </button>
+          {registrationStatus && (
+            <p className="mt-3 text-[11px] font-bold leading-relaxed text-[#CE1126] bg-red-50 border border-red-200 px-3 py-2" aria-live="polite">
+              {registrationStatus}
+            </p>
           )}
         </div>
 
-        <div className="relative flex py-1 items-center mb-3">
-          <div className="flex-grow border-t border-slate-800" />
-          <span className="flex-shrink mx-4 text-[9px] font-black text-slate-500 uppercase tracking-widest">Ou par formulaire</span>
-          <div className="flex-grow border-t border-slate-800" />
-        </div>
+        {/* Bouton Google */}
+        {!phoneVerification && (
+          <>
+            <div className="mb-4 flex flex-col items-center gap-2">
+              <div ref={googleBtnRef} className="w-full flex justify-center min-h-[44px]" />
+              {!googleReady && (
+                <button
+                  type="button"
+                  disabled
+                  className="w-full flex items-center justify-center gap-2.5 py-2.5 border border-slate-200 text-slate-400 bg-slate-50 text-xs font-bold cursor-not-allowed"
+                >
+                  <FaGoogle />
+                  <span>S&apos;inscrire avec Google</span>
+                  {!googleClientId && (
+                    <span className="text-[9px] uppercase text-slate-400">(non configuré)</span>
+                  )}
+                </button>
+              )}
+            </div>
 
-        <form onSubmit={handleFormSubmit} className="space-y-3">
+            {/* Séparateur */}
+            <div className="relative flex items-center mb-5">
+              <div className="flex-grow border-t border-slate-200" />
+              <span className="flex-shrink mx-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                Ou par formulaire
+              </span>
+              <div className="flex-grow border-t border-slate-200" />
+            </div>
+          </>
+        )}
+
+        {/* Formulaire */}
+        <form onSubmit={handleFormSubmit} className="space-y-4">
           <TurnstileField onToken={updateTurnstileToken} />
+
+          {/* ÉTAPE VÉRIFICATION SMS */}
           {phoneVerification ? (
-            <div className="space-y-4 text-center">
+            <div className="space-y-4 text-center py-2">
               <FaCheckCircle className="mx-auto text-emerald-500" size={36} />
-              <h2 className="text-lg font-black uppercase text-white">Verifiez votre telephone</h2>
-              <p className="text-xs leading-relaxed text-slate-400">
-                Saisissez le code a 6 chiffres envoye par SMS au numero {phoneVerification.maskedPhone}.
+              <h2 className="text-lg font-black uppercase text-slate-900">
+                Vérifiez votre téléphone
+              </h2>
+              <p className="text-xs leading-relaxed text-slate-500 max-w-sm mx-auto">
+                Saisissez le code à 6 chiffres envoyé par SMS au numéro <strong className="text-slate-900">{phoneVerification.maskedPhone}</strong>.
               </p>
               <input
-                type="text" inputMode="numeric" autoComplete="one-time-code" maxLength="6"
-                value={verificationCode} onChange={function (e) { setVerificationCode(e.target.value.replace(/\D/g, '')); }}
-                placeholder="000000" required
-                className="w-full border border-slate-800 bg-[#090d16] px-3 py-3 text-center text-xl font-black tracking-[0.5em] outline-none focus:border-[#CE1126] text-white rounded-none placeholder-slate-600"
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength="6"
+                value={verificationCode}
+                onChange={function (e) { setVerificationCode(e.target.value.replace(/\D/g, '')); }}
+                placeholder="000000"
+                required
+                className="w-full border border-slate-300 bg-slate-50 px-3 py-3 text-center text-xl font-black tracking-[0.5em] outline-none focus:border-[#CE1126] focus:bg-white text-slate-900 rounded-none placeholder-slate-400"
               />
             </div>
-          ) : null}
-          {!phoneVerification ? (
-          <>
-          <div className="grid grid-cols-2 gap-2 sm:gap-3">
-            <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Nom</label>
-              <input
-                type="text" name="lastName" required value={formData.lastName} onChange={handleInputChange}
-                placeholder="Mbuyi"
-                className="w-full border border-slate-800 bg-[#090d16] px-3 py-2.5 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none uppercase placeholder-slate-600"
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Prenom</label>
-              <input
-                type="text" name="firstName" required value={formData.firstName} onChange={handleInputChange}
-                placeholder="Jean"
-                className="w-full border border-slate-800 bg-[#090d16] px-3 py-2.5 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none placeholder-slate-600"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
-              <FaGlobe size={10} className="text-[#CE1126]" /> Pays de residence
-            </label>
-            <div className="relative">
-              <select
-                name="country" value={formData.country} onChange={function (e) {
-                  var selected = countries.find(function (item) { return item.name === e.target.value; });
-                  setFormData(function (prev) { return Object.assign({}, prev, { country: selected.name, countryIso: selected.code }); });
-                }}
-                className="w-full border border-slate-800 bg-[#090d16] px-3 py-2.5 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none appearance-none cursor-pointer"
-              >
-                {countries.map(function (c) {
-                  return <option key={c.code} value={c.name} className="bg-[#111827]">{c.flag} {c.name}</option>;
-                })}
-              </select>
-              <FaChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" size={10} />
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
-              <FaPhone size={10} className="text-[#CE1126]" /> Telephone
-            </label>
-            <div className="grid grid-cols-[minmax(150px,0.9fr)_1fr] gap-2">
-              <select
-                name="phoneCountryCode"
-                value={phoneCountryIso}
-                onChange={function (e) {
-                  var selected = countries.find(function (item) { return item.code === e.target.value; });
-                  setPhoneCountryIso(selected.code);
-                  setFormData(function (prev) { return Object.assign({}, prev, { phoneCountryCode: selected.callingCode }); });
-                }}
-                className="w-full border border-slate-800 bg-[#090d16] px-2 py-2.5 text-sm font-bold outline-none focus:border-[#CE1126] text-white rounded-none"
-                aria-label="Pays et indicatif téléphonique"
-              >
-                {countries.map(function (item) {
-                  return <option key={item.code} value={item.code} className="bg-[#111827]">{item.flag} {item.name} ({item.prefix})</option>;
-                })}
-              </select>
-              <input
-                type="tel" name="phone" required value={formData.phone} onChange={handleInputChange}
-                placeholder={phoneCountryIso === 'CD' ? '81 234 5678' : 'Numero national'}
-                inputMode="tel"
-                className="w-full border border-slate-800 bg-[#090d16] px-3 py-2.5 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none placeholder-slate-600"
-              />
-            </div>
-            <p className="text-[9px] text-slate-500">{flagForCountry(phoneCountryIso)} {countryNames.of(phoneCountryIso)} : saisissez uniquement le numero national. Le format sera verifie avant inscription.</p>
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
-              <FaEnvelope size={10} className="text-[#CE1126]" /> Email
-            </label>
-            <input
-              type="email" name="email" required value={formData.email} onChange={handleInputChange}
-              placeholder="jean.mbuyi@gmail.com"
-              className="w-full border border-slate-800 bg-[#090d16] px-3 py-2.5 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none placeholder-slate-600"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-2 sm:gap-3">
-            <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2"><FaKey size={10} className="text-[#CE1126]" /> Mot de passe</label>
-              <div className="relative">
-              <input
-                type={showPassword ? 'text' : 'password'} name="password" required value={formData.password} onChange={handleInputChange}
-                placeholder="8 caracteres minimum" autoComplete="new-password"
-                className="w-full border border-slate-800 bg-[#090d16] px-3 py-2.5 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none placeholder-slate-600"
-              />
-                <button type="button" onClick={function () { setShowPassword(function (value) { return !value; }); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500" aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}>{showPassword ? <FaEyeSlash /> : <FaEye />}</button>
+          ) : (
+            <>
+              {/* Nom & Prénom */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div className="space-y-1.5">
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-slate-600">
+                    Nom
+                  </label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    required
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    placeholder="MBUYI"
+                    className="w-full border border-slate-300 bg-slate-50/70 px-3.5 py-2.5 sm:py-3 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-white text-slate-900 rounded-none uppercase placeholder-slate-400"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-slate-600">
+                    Prénom
+                  </label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    required
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    placeholder="Jean"
+                    className="w-full border border-slate-300 bg-slate-50/70 px-3.5 py-2.5 sm:py-3 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-white text-slate-900 rounded-none placeholder-slate-400"
+                  />
+                </div>
               </div>
-              {formData.password && <PasswordStrength password={formData.password} />}
-            </div>
-            <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Confirmation</label>
-              <div className="relative">
-              <input
-                type={showConfirmPassword ? 'text' : 'password'} name="confirmPassword" required value={formData.confirmPassword} onChange={handleInputChange}
-                placeholder="Retapez le mot de passe" autoComplete="new-password"
-                className="w-full border border-slate-800 bg-[#090d16] px-3 py-2.5 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none placeholder-slate-600"
-              />
-                <button type="button" onClick={function () { setShowConfirmPassword(function (value) { return !value; }); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500" aria-label={showConfirmPassword ? 'Masquer la confirmation' : 'Afficher la confirmation'}>{showConfirmPassword ? <FaEyeSlash /> : <FaEye />}</button>
+
+              {/* Pays de résidence */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 flex items-center gap-1.5">
+                  <FaGlobe size={11} className="text-[#CE1126]" /> Pays de résidence
+                </label>
+                <div className="relative">
+                  <select
+                    name="country"
+                    value={formData.country}
+                    onChange={function (e) {
+                      var selected = countries.find(function (item) { return item.name === e.target.value; });
+                      setFormData(function (prev) { return Object.assign({}, prev, { country: selected.name, countryIso: selected.code }); });
+                    }}
+                    className="w-full border border-slate-300 bg-slate-50/70 px-3.5 py-2.5 sm:py-3 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-white text-slate-900 rounded-none appearance-none cursor-pointer"
+                  >
+                    {countries.map(function (c) {
+                      return <option key={c.code} value={c.name} className="bg-white text-slate-900">{c.flag} {c.name}</option>;
+                    })}
+                  </select>
+                  <FaChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={11} />
+                </div>
               </div>
-            </div>
-          </div>
 
-          <button type="button" onClick={function () {
-            var generated = generatePassword();
-            setFormData(function (prev) { return Object.assign({}, prev, { password: generated, confirmPassword: generated }); });
-            setShowPassword(true);
-            setShowConfirmPassword(true);
-          }} className="text-[10px] font-bold uppercase tracking-widest text-[#CE1126] hover:text-white">
-            Generer un mot de passe securise
-          </button>
+              {/* Téléphone avec indicatif */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 flex items-center gap-1.5">
+                  <FaPhone size={11} className="text-[#CE1126]" /> Téléphone / WhatsApp
+                </label>
+                  <select
+                    name="phoneCountryCode"
+                    value={phoneCountryIso}
+                    onChange={function (e) {
+                      var selected = countries.find(function (item) { return item.code === e.target.value; });
+                      setPhoneCountryIso(selected.code);
+                      setFormData(function (prev) { return Object.assign({}, prev, { phoneCountryCode: selected.callingCode }); });
+                    }}
+                    className="w-full border border-slate-300 bg-slate-50/70 px-2.5 py-2.5 sm:py-3 text-xs sm:text-sm font-bold outline-none focus:border-[#CE1126] focus:bg-white text-slate-900 rounded-none cursor-pointer"
+                    aria-label="Pays et indicatif téléphonique"
+                  >
+                    {countries.map(function (item) {
+                      return <option key={item.code} value={item.code} className="bg-white text-slate-900">{item.flag} {item.name} ({item.prefix})</option>;
+                    })}
+                  </select>
+                  <input
+                    type="tel"
+                    name="phone"
+                    required
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    placeholder={phoneCountryIso === 'CD' ? '81 234 5678' : 'Numéro national'}
+                    inputMode="tel"
+                    className="w-full border border-slate-300 bg-slate-50/70 px-3.5 py-2.5 sm:py-3 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-white text-slate-900 rounded-none placeholder-slate-400"
+                  />
+                </div>
+                <p className="text-[10px] text-slate-500">
+                  {flagForCountry(phoneCountryIso)} {countryNames.of(phoneCountryIso)} : saisissez uniquement le numéro national.
+                </p>
 
-          <div className="pt-1">
+              {/* Email */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 flex items-center gap-1.5">
+                  <FaEnvelope size={11} className="text-[#CE1126]" /> Adresse Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  autoComplete="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="votre@email.com"
+                  className="w-full border border-slate-300 bg-slate-50/70 px-3.5 py-2.5 sm:py-3 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-white text-slate-900 rounded-none placeholder-slate-400"
+                />
+              </div>
+
+              {/* Mot de passe */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 flex items-center gap-1.5">
+                  <FaLock size={11} className="text-[#CE1126]" /> Mot de passe
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    required
+                    autoComplete="new-password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    placeholder="Minimum 8 caractères"
+                    className="w-full border border-slate-300 bg-slate-50/70 pl-3.5 pr-10 py-2.5 sm:py-3 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-white text-slate-900 rounded-none placeholder-slate-400"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1.5 cursor-pointer"
+                  >
+                    {showPassword ? <FaEyeSlash size={14} /> : <FaEye size={14} />}
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Bouton de validation */}
+          <div className="pt-2">
             <button
-              type="submit" disabled={isLoading}
-              className="w-full py-3 bg-white text-black font-black uppercase text-[10px] tracking-[0.2em] transition-all active:scale-95 disabled:opacity-30 flex items-center justify-center gap-3 shadow-xl rounded-none hover:bg-[#CE1126] hover:text-white"
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 sm:py-3.5 bg-[#CE1126] hover:bg-[#a80d1e] text-white font-black uppercase text-[11px] tracking-[0.18em] transition-all active:scale-[0.99] disabled:opacity-40 flex items-center justify-center gap-2.5 shadow-md rounded-none cursor-pointer"
             >
               {isLoading ? (
                 <FaSpinner className="animate-spin" size={14} />
               ) : (
                 <>
-                  <span>Creer mon compte</span>
-                  <FaArrowRight size={10} />
+                  <span>{phoneVerification ? 'Valider le code SMS' : 'Créer mon compte'}</span>
+                  <FaArrowRight size={11} />
                 </>
               )}
             </button>
           </div>
-          </>
-          ) : null}
-          {phoneVerification ? (
-            <div className="pt-1">
-              <button
-                type="button" disabled={isLoading}
-                onClick={async function () {
-                  setIsLoading(true);
-                  var resent = await authService.resendPhoneVerification(phoneVerification.userId);
-                  setIsLoading(false);
-                  if (resent.success) {
-                    setPhoneVerification(function (prev) { return Object.assign({}, prev, resent.phoneVerification); });
-                    notificationService.success('Nouveau code SMS envoye.');
-                  } else notificationService.error(resent.error);
-                }}
-                className="w-full py-3 border border-slate-700 text-slate-300 font-black uppercase text-[10px] tracking-[0.2em] hover:border-[#CE1126] hover:text-white disabled:opacity-40"
-              >
-                Renvoyer le code SMS
-              </button>
-            </div>
-          ) : null}
         </form>
 
-        <div className="mt-3 pt-3 border-t border-slate-800 text-center">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-            Deja membre ?
-            <span
-              onClick={function () { navigate('/login'); }}
-              className="text-[#CE1126] cursor-pointer hover:text-red-500 pl-2 underline underline-offset-4"
+        {/* Lien vers Connexion */}
+        <div className="mt-6 pt-4 border-t border-slate-200 text-center">
+          <p className="text-[11px] font-semibold text-slate-500">
+            Déjà inscrit sur ESNAs ?
+            <button
+              type="button"
+              onClick={() => navigate('/login')}
+              className="text-slate-900 hover:text-[#CE1126] font-black uppercase tracking-wider text-[10px] pl-2 underline underline-offset-4 transition-colors cursor-pointer"
             >
               Se connecter
-            </span>
+            </button>
           </p>
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#00A3E0] via-[#CE1126] to-[#FDD100] opacity-30" />
+      {/* ================= PIED DISCRET & LISERÉ RDC ================= */}
+      <div className="relative z-20 text-center mt-5 sm:mt-6 pb-2">
+        <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">
+          ESNAs RDC • Écosystème Numérique des Assurances
+        </p>
+      </div>
+      <div className="fixed bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#00A3E0] via-[#CE1126] to-[#FDD100] opacity-80 z-30" />
     </div>
   );
 }

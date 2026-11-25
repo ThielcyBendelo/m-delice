@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import NavbarSecured from '../components/NavbarSecured';
 // import Footer from '../components/Footer';
 import claimService from '../services/claimService.js';
 import notificationService from '../services/notificationService';
-// 🟢 CORRIGÉ : Inclusion explicite de FaCheckCircle et de toutes les icônes requises pour le formulaire
 import { 
   FaShieldAlt, FaCalendarAlt, FaUser, FaClipboardList, 
   FaMoneyBillWave, FaPhoneAlt, FaEnvelope, FaExclamationTriangle,
-  FaCheckCircle 
+  FaCheckCircle, FaHome, FaCalculator, FaClock, FaFileMedical, FaArrowRight
 } from 'react-icons/fa';
 
-
 export default function ClaimsDeclarationPage() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     policyNumber: '',
     insuredName: '',
@@ -58,258 +58,324 @@ export default function ClaimsDeclarationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 flex flex-col antialiased font-sans">
-      <NavbarSecured />
-
-{/* ================= CENTRE DE DECLARATION DE SINISTRE (VERSION SOMBRE ONYX) ================= */}
-<main className="flex-grow mx-auto max-w-7xl px-4 sm:px-6 py-24 w-full bg-[#090d16]">
-  
-  {/* En-tête de page moderne */}
-  <div className="mb-16 md:mb-20 text-center flex flex-col items-center">
-    <motion.div 
-      initial={{ opacity: 0, y: 15 }}
-      animate={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      className="mb-6 inline-flex items-center gap-2 px-4 py-1.5 bg-[#111827] text-[#CE1126] text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] border border-slate-800 rounded-none shadow-sm"
-    >
-      <FaExclamationTriangle className="animate-pulse" /> Centre de Sinistre Digital
-    </motion.div>
-    
-    {/* Titre : MASQUÉ SUR MOBILE, VISIBLE SUR DESKTOP */}
-    <h1 className="hidden md:block text-3xl md:text-7xl font-black tracking-tighter text-white uppercase leading-none mb-6">
-      Déclaration de <span className="text-[#CE1126] italic normal-case">Sinistre</span>
-    </h1>
-    
-    {/* Description : MASQUÉE SUR MOBILE, VISIBLE SUR DESKTOP */}
-    <p className="hidden md:block max-w-3xl text-base md:text-lg text-[#94a3b8] font-semibold leading-relaxed">
-      Remplissez ce formulaire pour activer votre prise en charge immédiate. Nos experts ARCA analysent votre dossier sous 24 à 48 heures.
-    </p>
-  </div>
-
-  {/* Grille de mise en page réactive */}
-  <div className="grid gap-12 lg:grid-cols-[2fr_1fr] items-start w-full">
-    
-    {/* Formulaire Principal (Style Luxe Bento Sombre) */}
-    <motion.form 
-      onSubmit={handleSubmit}
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="space-y-8 bg-[#111827] p-6 md:p-10 border border-slate-800 rounded-none shadow-xl text-left"
-    >
-      {/* Ligne 1 : Numéro de police & Nom de l'Assuré */}
-      <div className="grid gap-6 md:gap-10 sm:grid-cols-2">
-        <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 flex items-center gap-2">
-            <FaShieldAlt className="text-[#CE1126]" size={12} /> Numéro de police
-          </label>
-          <input
-            name="policyNumber"
-            value={formData.policyNumber}
-            onChange={handleChange}
-            type="text"
-            placeholder="EX : DRC-2026-045"
-            className="w-full border-b-2 border-slate-800 bg-transparent py-3 text-lg font-bold outline-none transition focus:border-[#CE1126] focus:placeholder-transparent text-white rounded-none placeholder-slate-600"
-            required
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 flex items-center gap-2">
-            <FaUser className="text-[#CE1126]" size={12} /> Nom de l'Assuré
-          </label>
-          <input
-            name="insuredName"
-            value={formData.insuredName}
-            onChange={handleChange}
-            type="text"
-            placeholder="Nom complet du bénéficiaire"
-            className="w-full border-b-2 border-slate-800 bg-transparent py-3 text-lg font-bold outline-none transition focus:border-[#CE1126] focus:placeholder-transparent text-white rounded-none placeholder-slate-600"
-            required
-          />
-        </div>
-      </div>
-
-      {/* Ligne 2 : Date du sinistre & Branche Concernée */}
-      <div className="grid gap-6 md:gap-10 sm:grid-cols-2">
-        <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 flex items-center gap-2">
-            <FaCalendarAlt className="text-[#CE1126]" size={12} /> Date du sinistre
-          </label>
-          <input
-            name="incidentDate"
-            value={formData.incidentDate}
-            onChange={handleChange}
-            type="date"
-            className="w-full border-b-2 border-slate-800 bg-transparent py-3 text-lg font-bold outline-none transition focus:border-[#CE1126] text-white rounded-none cursor-pointer"
-            required
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 flex items-center gap-2">
-            <FaClipboardList className="text-[#CE1126]" size={12} /> Branche Concernée
-          </label>
-          <div className="relative">
-            <select
-              name="incidentType"
-              value={formData.incidentType}
-              onChange={handleChange}
-              className="w-full border-b-2 border-slate-800 bg-[#090d16] py-4 text-lg font-bold outline-none transition focus:border-[#CE1126] appearance-none cursor-pointer text-white rounded-none"
-              required
+    <div className="min-h-screen bg-[#090d16] text-white flex flex-col antialiased font-sans">
+      
+      {/* ================= 1. MINI NAVBAR CONTEXTUELLE (MOBILE & DESKTOP) ================= */}
+      <header className="sticky top-0 z-50 bg-[#090d16]/95 backdrop-blur-md border-b border-slate-800/90">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 h-12 sm:h-14 flex items-center justify-between gap-2">
+          
+          {/* Gauche : Retour Home + Titre */}
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              title="Retour à l'accueil"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 bg-[#111827] hover:bg-[#CE1126] border border-slate-800 hover:border-[#CE1126] text-slate-300 hover:text-white transition-colors duration-200 rounded-none shrink-0 cursor-pointer"
             >
-              <option value="" className="bg-[#111827] text-slate-500">Sélectionnez le type</option>
-              <option value="sante" className="bg-[#111827] text-white">Assurance Santé</option>
-              <option value="auto" className="bg-[#111827] text-white">Responsabilité Civile Auto</option>
-              <option value="habitation" className="bg-[#111827] text-white">Incendie / Habitation</option>
-              <option value="autre" className="bg-[#111827] text-white">Autres risques techniques</option>
-            </select>
+              <FaHome className="text-xs sm:text-sm" />
+              <span className="hidden sm:inline text-[10px] font-black uppercase tracking-widest">
+                Accueil
+              </span>
+            </button>
+
+            <div className="h-4 w-[1px] bg-slate-800 shrink-0" />
+
+            <div className="flex items-center gap-2 truncate">
+              <FaExclamationTriangle className="text-[#CE1126] text-xs sm:text-sm shrink-0" />
+              <h1 className="text-xs sm:text-sm font-black uppercase tracking-wider text-white truncate">
+                Sinistre <span className="text-slate-400 font-bold hidden md:inline">| Déclaration & Prise en charge</span>
+              </h1>
+            </div>
           </div>
+
+          {/* Droite : Navigation rapide contextuelle */}
+          <nav className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <Link
+              to="/work"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-300 hover:text-white bg-[#111827] hover:bg-slate-800 border border-slate-800 transition-colors rounded-none"
+            >
+              <FaCalculator className="text-[#CE1126] text-xs" />
+              <span className="hidden xs:inline">Simulateur</span>
+            </Link>
+
+            <a
+              href="tel:+243000000000"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-black uppercase tracking-wider text-white bg-[#CE1126]/20 hover:bg-[#CE1126] border border-[#CE1126]/50 transition-colors rounded-none"
+            >
+              <FaPhoneAlt className="text-xs animate-pulse" />
+              <span>Urgence 24/7</span>
+            </a>
+          </nav>
+
         </div>
-      </div>
+      </header>
 
-                       {/* Montant Estimé */}
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 flex items-center gap-2">
-                <FaMoneyBillWave className="text-[#CE1126]" size={12} /> Montant Estimé (Facultatif)
-              </label>
-              <input
-                name="amount"
-                value={formData.amount}
-                onChange={handleChange}
-                type="text"
-                placeholder="Ex : 500 USD"
-                className="w-full border-b-2 border-slate-800 bg-transparent py-3 text-lg font-bold outline-none transition focus:border-[#CE1126] focus:placeholder-transparent text-white rounded-none placeholder-slate-600"
-              />
+      {/* ================= 2. CENTRE DE DÉCLARATION DE SINISTRE (COMPACT) ================= */}
+      <main className="flex-grow mx-auto max-w-7xl px-3 sm:px-6 py-4 sm:py-6 w-full"> 
+        
+        {/* En-tête compact */}
+        <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-800/80 pb-3 sm:pb-4">
+          <div>
+            <motion.div 
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-1.5 inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-[#111827] text-[#CE1126] text-[9px] sm:text-[10px] font-black uppercase tracking-[0.18em] border border-slate-800 rounded-none"
+            >
+              <FaExclamationTriangle className="text-[10px]" /> Centre de Sinistre Digital
+            </motion.div>
+            <h2 className="text-lg sm:text-2xl md:text-3xl font-black tracking-tight text-white uppercase leading-none">
+              Déclaration de <span className="text-[#CE1126]">Sinistre</span>
+            </h2>
+          </div>
+          
+          <p className="text-[11px] sm:text-xs text-slate-400 font-medium max-w-md sm:text-right leading-snug">
+            Activez votre prise en charge immédiate. Analyse par nos experts ARCA sous <span className="text-white font-bold">24 à 48 heures</span>.
+          </p>
+        </div>
+
+        {/* Grille principale : Formulaire (Col 7) + Assistance & Suivi (Col 5) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-start w-full">
+          
+          {/* BLOC GAUCHE : FORMULAIRE PRINCIPAL (COL 7) */}
+          <motion.form 
+            onSubmit={handleSubmit}
+            initial={{ opacity: 0, x: -15 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="lg:col-span-7 space-y-4 bg-[#111827] p-4 sm:p-5 border border-slate-800 rounded-none shadow-xl text-left"
+          >
+            {/* Ligne 1 : Numéro de police & Nom de l'Assuré */}
+            <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 flex items-center gap-1.5">
+                  <FaShieldAlt className="text-[#CE1126]" size={11} /> Numéro de police *
+                </label>
+                <input
+                  name="policyNumber"
+                  value={formData.policyNumber}
+                  onChange={handleChange}
+                  type="text"
+                  placeholder="EX : DRC-2026-045"
+                  className="w-full border border-slate-800 bg-[#090d16] px-3 py-2 text-xs sm:text-sm font-bold outline-none transition focus:border-[#CE1126] text-white rounded-none placeholder-slate-600"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 flex items-center gap-1.5">
+                  <FaUser className="text-[#CE1126]" size={11} /> Nom de l'Assuré *
+                </label>
+                <input
+                  name="insuredName"
+                  value={formData.insuredName}
+                  onChange={handleChange}
+                  type="text"
+                  placeholder="Nom complet du bénéficiaire"
+                  className="w-full border border-slate-800 bg-[#090d16] px-3 py-2 text-xs sm:text-sm font-bold outline-none transition focus:border-[#CE1126] text-white rounded-none placeholder-slate-600"
+                  required
+                />
+              </div>
             </div>
 
-            {/* Circonstances du Sinistre (Textarea Bento Sombre) */}
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 flex items-center gap-2">
-                Circonstances du Sinistre
-              </label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                rows="4"
-                placeholder="Décrivez précisément les faits..."
-                className="w-full border border-slate-800 bg-[#090d16] p-5 text-base font-semibold outline-none transition focus:border-[#CE1126] text-white rounded-none placeholder-slate-600 shadow-inner"
-                required
-              />
+            {/* Ligne 2 : Date du sinistre & Branche Concernée */}
+            <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 flex items-center gap-1.5">
+                  <FaCalendarAlt className="text-[#CE1126]" size={11} /> Date du sinistre *
+                </label>
+                <input
+                  name="incidentDate"
+                  value={formData.incidentDate}
+                  onChange={handleChange}
+                  type="date"
+                  className="w-full border border-slate-800 bg-[#090d16] px-3 py-2 text-xs sm:text-sm font-bold outline-none transition focus:border-[#CE1126] text-white rounded-none cursor-pointer"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 flex items-center gap-1.5">
+                  <FaClipboardList className="text-[#CE1126]" size={11} /> Branche Concernée *
+                </label>
+                <select
+                  name="incidentType"
+                  value={formData.incidentType}
+                  onChange={handleChange}
+                  className="w-full border border-slate-800 bg-[#090d16] px-3 py-2 text-xs sm:text-sm font-bold outline-none transition focus:border-[#CE1126] cursor-pointer text-white rounded-none"
+                  required
+                >
+                  <option value="" className="bg-[#111827] text-slate-500">Sélectionnez le type</option>
+                  <option value="sante" className="bg-[#111827] text-white">Assurance Santé / Médical</option>
+                  <option value="auto" className="bg-[#111827] text-white">Responsabilité Civile Auto</option>
+                  <option value="habitation" className="bg-[#111827] text-white">Incendie / Habitation</option>
+                  <option value="scolaire" className="bg-[#111827] text-white">Assurance Scolarité</option>
+                  <option value="voyage" className="bg-[#111827] text-white">Assurance Voyage</option>
+                  <option value="autre" className="bg-[#111827] text-white">Autres risques techniques</option>
+                </select>
+              </div>
             </div>
 
-            {/* Contacts : Téléphone & Email */}
-            <div className="grid gap-6 md:gap-10 sm:grid-cols-2">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 flex items-center gap-2">
-                  <FaPhoneAlt className="text-[#CE1126]" size={12} /> Contact Téléphone
+            {/* Ligne 3 : Montant Estimé & Téléphone */}
+            <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 flex items-center gap-1.5">
+                  <FaMoneyBillWave className="text-[#CE1126]" size={11} /> Montant Estimé (USD)
+                </label>
+                <input
+                  name="amount"
+                  value={formData.amount}
+                  onChange={handleChange}
+                  type="text"
+                  placeholder="Ex : 250 USD (Facultatif)"
+                  className="w-full border border-slate-800 bg-[#090d16] px-3 py-2 text-xs sm:text-sm font-bold outline-none transition focus:border-[#CE1126] text-white rounded-none placeholder-slate-600"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 flex items-center gap-1.5">
+                  <FaPhoneAlt className="text-[#CE1126]" size={11} /> Téléphone / WhatsApp *
                 </label>
                 <input
                   name="contactPhone"
                   value={formData.contactPhone}
                   onChange={handleChange}
                   type="tel"
-                  placeholder="+243 ..."
-                  className="w-full border-b-2 border-slate-800 bg-transparent py-3 text-lg font-bold outline-none transition focus:border-[#CE1126] text-white rounded-none placeholder-slate-600"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 flex items-center gap-2">
-                  <FaEnvelope className="text-[#CE1126]" size={12} /> Adresse Email
-                </label>
-                <input
-                  name="contactEmail"
-                  value={formData.contactEmail}
-                  onChange={handleChange}
-                  type="email"
-                  placeholder="email@example.com"
-                  className="w-full border-b-2 border-slate-800 bg-transparent py-3 text-lg font-bold outline-none transition focus:border-[#CE1126] text-white rounded-none placeholder-slate-600"
+                  placeholder="+243 81 000 0000"
+                  className="w-full border border-slate-800 bg-[#090d16] px-3 py-2 text-xs sm:text-sm font-bold outline-none transition focus:border-[#CE1126] text-white rounded-none placeholder-slate-600"
                   required
                 />
               </div>
             </div>
 
-            {/* Action finale : Bouton de validation rectangulaire blanc et rouge inversé */}
-            <div className="pt-4">
-              <button
-                type="submit"
-                disabled={isSubmitting || submittedClaim}
-                className="w-full sm:w-auto px-12 py-5 bg-white text-black font-black uppercase text-[10px] md:text-[11px] tracking-[0.25em] shadow-xl hover:bg-[#CE1126] hover:text-white transition-all duration-300 rounded-none active:scale-[0.98] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSubmitting ? 'Envoi en cours...' : submittedClaim ? 'Déclaration enregistrée' : 'Soumettre la déclaration'}
-              </button>
+            {/* Ligne 4 : Email de suivi */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 flex items-center gap-1.5">
+                <FaEnvelope className="text-[#CE1126]" size={11} /> Email de notification (Facultatif)
+              </label>
+              <input
+                name="contactEmail"
+                value={formData.contactEmail}
+                onChange={handleChange}
+                type="email"
+                placeholder="assure@exemple.cd"
+                className="w-full border border-slate-800 bg-[#090d16] px-3 py-2 text-xs sm:text-sm font-bold outline-none transition focus:border-[#CE1126] text-white rounded-none placeholder-slate-600"
+              />
             </div>
-            {submittedClaim && (
-              <div className="border border-emerald-500/40 bg-emerald-500/10 p-5 text-emerald-300" role="status">
-                <p className="text-xs font-black uppercase tracking-wider">Dossier créé : {submittedClaim.claimNumber}</p>
-                <p className="mt-2 text-sm">Votre déclaration a été transmise. Solde disponible : {submittedClaim.remainingLimit ?? 'en cours de calcul'} USD.</p>
-              </div>
-            )}
+
+            {/* Ligne 5 : Circonstances du sinistre */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 flex items-center gap-1.5">
+                <FaFileMedical className="text-[#CE1126]" size={11} /> Circonstances & Détails *
+              </label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                rows={3}
+                placeholder="Décrivez brièvement le lieu, l'heure et les faits constatés..."
+                className="w-full border border-slate-800 bg-[#090d16] p-3 text-xs sm:text-sm font-medium outline-none transition focus:border-[#CE1126] text-white rounded-none placeholder-slate-600 resize-none"
+                required
+              />
+            </div>
+
+            {/* Bouton de soumission */}
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full py-3 px-4 bg-[#CE1126] hover:bg-[#a80d1e] disabled:opacity-50 text-white font-black text-[11px] uppercase tracking-[0.16em] flex items-center justify-center gap-2 transition-all duration-200 shadow-lg rounded-none cursor-pointer"
+            >
+              <span>{isSubmitting ? 'Transmission en cours...' : 'Transmettre la déclaration'}</span>
+              {!isSubmitting && <FaArrowRight className="text-xs" />}
+            </button>
           </motion.form>
 
-                 {/* Aside : Assistance & Rappel Légal (VERSION SOMBRE ONYX) - MASQUÉ SUR MOBILE, VISIBLE SUR DESKTOP */}
-<motion.aside 
-  initial={{ opacity: 0, x: 30 }}
-  animate={{ opacity: 1, x: 0 }}
-  className="hidden md:block bg-[#111827] p-8 md:p-12 text-white shadow-2xl space-y-12 relative overflow-hidden border border-slate-800 rounded-none text-left"
-  /* 🟢 'hidden md:block' masque le volet sur mobile et l'affiche sur desktop */
->
-  <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/5 blur-3xl rounded-none pointer-events-none" />
-  
-  <div className="space-y-4">
-    <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] text-[#CE1126]">
-      Engagement ESNAs
-    </span>
-    <h2 className="text-3xl font-black tracking-tighter uppercase italic leading-none text-white">
-      Prise en charge <br /> Garantie.
-    </h2>
-    <p className="text-sm text-[#94a3b8] font-semibold leading-relaxed">
-      Chaque déclaration est traitée en priorité absolue pour garantir une réponse rapide à vos bénéficiaires.
-    </p>
-  </div>
+          {/* BLOC DROIT : RÉCAPITULATIF, STATUT & PROCÉDURE (COL 5 - STICKY) */}
+          <div className="lg:col-span-5 w-full space-y-4 lg:sticky lg:top-18">
+            
+            {/* Carte de confirmation immédiate si dossier soumis */}
+            {submittedClaim && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-emerald-950/40 border border-emerald-500/50 p-4 rounded-none space-y-2"
+              >
+                <div className="flex items-center gap-2 text-emerald-400 font-black text-xs uppercase tracking-wider">
+                  <FaCheckCircle className="text-sm shrink-0" />
+                  <span>Dossier Enregistré avec Succès</span>
+                </div>
+                <p className="text-[11px] text-slate-300 leading-relaxed">
+                  Référence de suivi : <strong className="text-white font-mono bg-slate-900 px-2 py-0.5 border border-slate-700">{submittedClaim.claimNumber}</strong>
+                </p>
+                <p className="text-[10px] text-emerald-300/80">
+                  Un gestionnaire vous contactera sur votre numéro WhatsApp/Téléphone sous peu.
+                </p>
+              </motion.div>
+            )}
 
-  {/* Liste des atouts de traçabilité */}
-  <div className="space-y-8">
-    {/* Atout 1 */}
-    <div className="flex gap-4 items-start">
-      <div className="w-10 h-10 bg-slate-950 border border-slate-800 flex items-center justify-center text-[#CE1126] rounded-none shrink-0 shadow-md">
-        <FaShieldAlt size={16} />
-      </div>
-      <div className="space-y-1">
-        <p className="text-sm font-black uppercase tracking-wider text-white">Traçabilité Totale</p>
-        <p className="text-xs text-slate-400 font-semibold leading-relaxed">
-          Recevez un numéro de dossier ARCA unique pour suivre l'évolution en temps réel.
-        </p>
-      </div>
-    </div>
+            {/* Carte Protocole de Prise en Charge */}
+            <motion.div
+              initial={{ opacity: 0, x: 15 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="bg-[#111827] border border-slate-800 rounded-none overflow-hidden shadow-xl"
+            >
+              <div className="bg-[#090d16] px-4 py-2.5 border-b border-slate-800 flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-300 flex items-center gap-2">
+                  <FaClock className="text-[#CE1126]" /> Protocole Express RDC
+                </span>
+                <span className="text-[9px] font-bold uppercase text-emerald-400">
+                  24h – 48h
+                </span>
+              </div>
 
-    {/* Atout 2 */}
-    <div className="flex gap-4 items-start">
-      <div className="w-10 h-10 bg-slate-950 border border-slate-800 flex items-center justify-center text-[#CE1126] rounded-none shrink-0 shadow-md">
-        <FaCheckCircle size={16} />
-      </div>
-      <div className="space-y-1">
-        <p className="text-sm font-black uppercase tracking-wider text-white">Tiers-Payant</p>
-        <p className="text-xs text-slate-400 font-semibold leading-relaxed">
-          Dans 80% des cas, aucun frais n'est déboursé par l'assuré en clinique partenaire.
-        </p>
-      </div>
-    </div>
-  </div>
+              <div className="p-4 space-y-3">
+                <div className="space-y-2.5 text-[11px] text-slate-300">
+                  <div className="flex items-start gap-2.5 bg-[#090d16] p-2.5 border border-slate-800/80">
+                    <span className="text-[10px] font-black text-[#CE1126] bg-[#CE1126]/10 px-1.5 py-0.5 border border-[#CE1126]/30">01</span>
+                    <div>
+                      <p className="font-bold text-white text-[11px]">Enregistrement Numérique</p>
+                      <p className="text-[10px] text-slate-400">Génération immédiate de votre numéro de sinistre.</p>
+                    </div>
+                  </div>
 
-  {/* Note réglementaire de bas de bloc */}
-  <div className="pt-6 border-t border-slate-800">
-    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest italic leading-relaxed">
-      * Sous réserve de conformité avec les conditions générales de votre contrat.
-    </p>
-  </div>
-</motion.aside>
+                  <div className="flex items-start gap-2.5 bg-[#090d16] p-2.5 border border-slate-800/80">
+                    <span className="text-[10px] font-black text-[#CE1126] bg-[#CE1126]/10 px-1.5 py-0.5 border border-[#CE1126]/30">02</span>
+                    <div>
+                      <p className="font-bold text-white text-[11px]">Justificatifs WhatsApp</p>
+                      <p className="text-[10px] text-slate-400">Transmettez photos, ordonnances ou constat amiable directement à l'expert.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5 bg-[#090d16] p-2.5 border border-slate-800/80">
+                    <span className="text-[10px] font-black text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 border border-emerald-500/30">03</span>
+                    <div>
+                      <p className="font-bold text-white text-[11px]">Règlement & Tiers-Payant</p>
+                      <p className="text-[10px] text-slate-400">Prise en charge hôpital/garage agréé ou remboursement Mobile Money.</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Encart Assistance Directe */}
+                <div className="pt-2 border-t border-slate-800 flex items-center justify-between gap-2">
+                  <div>
+                    <span className="text-[9px] uppercase tracking-wider text-slate-500 block font-bold">
+                      Assistance Sinistre Kinshasa / Provinces
+                    </span>
+                    <span className="text-xs font-black text-white">
+                      Ligne directe 24h/24
+                    </span>
+                  </div>
+                  <a
+                    href="tel:+243000000000"
+                    className="px-3 py-1.5 bg-slate-800 hover:bg-[#CE1126] text-white text-[10px] font-black uppercase tracking-wider transition-colors rounded-none flex items-center gap-1.5"
+                  >
+                    <FaPhoneAlt className="text-[10px]" /> Appeler
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          </div>
 
         </div>
       </main>
-      {/* <Footer /> */}
-    </div>
+      </div>
   );
 }

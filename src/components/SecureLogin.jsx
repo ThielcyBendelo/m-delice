@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
 import notificationService from '../services/notificationService';
-import { FaShieldAlt, FaArrowRight, FaSpinner, FaGoogle } from 'react-icons/fa';
+import { FaShieldAlt, FaArrowRight, FaSpinner, FaGoogle,  FaHome, FaEnvelope, FaLock, FaEye } from 'react-icons/fa';
 import TurnstileField from './TurnstileField';
 
 const GIS_SRC = 'https://accounts.google.com/gsi/client';
@@ -39,6 +39,8 @@ export default function SecureLogin() {
   const [turnstileToken, setTurnstileToken] = useState('');
   const turnstileTokenRef = useRef('');
   const googleBtnRef = useRef(null);
+  const [showPassword, setShowPassword] = useState(false);
+
 
   const updateTurnstileToken = useCallback((token) => {
     turnstileTokenRef.current = token;
@@ -158,116 +160,200 @@ export default function SecureLogin() {
     }
   };
 
-  return (
-    <div className="min-h-dvh bg-[#090d16] flex items-center justify-center px-3 py-4 relative overflow-x-hidden overflow-y-auto font-sans">
-      <div className="absolute inset-0 bg-[radial-gradient(#CE1126_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.05] z-10" />
+    return (
+    <div className="min-h-dvh bg-white text-slate-900 flex flex-col justify-between px-4 py-5 sm:px-6 sm:py-8 relative overflow-x-hidden overflow-y-auto font-sans">
+      {/* ================= FOND RIPPLEGRID ANIMÉ (VERSION CLAIRE) ================= */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
+        {/* Grille quadrillée claire */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              'linear-gradient(to right, rgba(15, 23, 42, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(15, 23, 42, 0.05) 1px, transparent 1px)',
+            backgroundSize: '36px 36px',
+            maskImage: 'radial-gradient(ellipse 75% 65% at 50% 50%, #000 35%, transparent 100%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 75% 65% at 50% 50%, #000 35%, transparent 100%)'
+          }}
+        />
 
-      <div className="relative z-20 w-full max-w-[420px] bg-[#111827] p-5 sm:p-7 shadow-[0_30px_100px_rgba(0,0,0,0.8)] border border-slate-800 flex flex-col rounded-none animate-fadeIn">
-        <div className="text-center mb-5">
-          <div className="w-10 h-10 bg-[#CE1126] text-white flex items-center justify-center mx-auto mb-3 shadow-lg rounded-none">
-            <FaShieldAlt size={20} />
-          </div>
-          <h1 className="text-2xl font-black uppercase tracking-tighter text-white leading-none">
-            ESNAs <span className="text-[#CE1126]">DRC</span>
+        {/* Halo lumineux central subtil */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] sm:w-[560px] sm:h-[560px] rounded-full bg-[#CE1126]/[0.05] blur-3xl" />
+
+        {/* Ondes concentriques Ripple */}
+        <div
+          className="ripple-wave w-[280px] h-[280px] sm:w-[460px] sm:h-[460px]"
+          style={{ borderColor: 'rgba(206, 17, 38, 0.22)' }}
+        />
+        <div
+          className="ripple-wave w-[440px] h-[440px] sm:w-[700px] sm:h-[700px]"
+          style={{ animationDelay: '2.3s', borderColor: 'rgba(0, 163, 224, 0.22)' }}
+        />
+        <div
+          className="ripple-wave w-[620px] h-[620px] sm:w-[940px] sm:h-[940px]"
+          style={{ animationDelay: '4.6s', borderColor: 'rgba(206, 17, 38, 0.16)' }}
+        />
+      </div>
+
+      {/* ================= BARRE SUPÉRIEURE COMPACTE ================= */}
+      <div className="relative z-20 w-full max-w-[440px] mx-auto mb-4 sm:mb-6 flex items-center justify-between">
+        <button
+          type="button"
+          onClick={() => navigate('/')}
+          className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 hover:text-slate-900 text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer"
+        >
+          <FaHome size={11} className="text-[#CE1126]" />
+          <span>Accueil</span>
+        </button>
+
+        <span className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.18em] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          Connexion SSL
+        </span>
+      </div>
+
+      {/* ================= CARTE PRINCIPALE D'AUTHENTIFICATION ================= */}
+      <div className="relative z-20 w-full max-w-[440px] mx-auto my-auto bg-white/95 backdrop-blur-xl px-5 py-6 sm:px-8 sm:py-8 shadow-[0_25px_70px_rgba(15,23,42,0.10)] border border-slate-200 flex flex-col rounded-none">
+        {/* En-tête Brand (Sans icône) */}
+        <div className="text-center mb-6">
+          <h1 className="text-2xl sm:text-[26px] font-black uppercase tracking-tighter text-slate-900 leading-none">
+            ESNA<span className="text-[#CE1126] lowercase">s</span>{' '}
+            <span className="text-slate-500 font-extrabold">DRC</span>
           </h1>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mt-3">
-            Authentification Securisee ARCA
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mt-2">
+            Authentification Sécurisée ARCA
           </p>
         </div>
 
-        <div className="mb-4 flex flex-col items-center gap-2">
+        {/* Bouton Google */}
+        <div className="mb-5 flex flex-col items-center gap-2">
           <div ref={googleBtnRef} className="w-full flex justify-center min-h-[44px]" />
           {!googleReady && (
             <button
               type="button"
               disabled
-              className="w-full flex items-center justify-center gap-3 py-3 border border-slate-800 text-slate-500 bg-[#090d16] text-sm font-bold cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2.5 py-2.5 border border-slate-200 text-slate-400 bg-slate-50 text-xs font-bold cursor-not-allowed"
               title={googleClientId ? 'Chargement Google...' : 'Configurez VITE_GOOGLE_CLIENT_ID / GOOGLE_CLIENT_ID'}
             >
-              <FaGoogle /> Continuer avec Google
+              <FaGoogle />
+              <span>Continuer avec Google</span>
               {!googleClientId && (
-                <span className="text-[9px] uppercase text-slate-600">(non configure)</span>
+                <span className="text-[9px] uppercase text-slate-400">(non configuré)</span>
               )}
             </button>
           )}
         </div>
 
-        <div className="relative flex py-1 items-center mb-4">
-          <div className="flex-grow border-t border-slate-800" />
-          <span className="flex-shrink mx-4 text-[9px] font-black text-slate-500 uppercase tracking-widest">
-            Ou via email
+        {/* Séparateur */}
+        <div className="relative flex items-center mb-5">
+          <div className="flex-grow border-t border-slate-200" />
+          <span className="flex-shrink mx-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">
+            Ou par identifiants
           </span>
-          <div className="flex-grow border-t border-slate-800" />
+          <div className="flex-grow border-t border-slate-200" />
         </div>
 
-        <form onSubmit={handleFormSubmit} className="space-y-3">
+        {/* Formulaire */}
+        <form onSubmit={handleFormSubmit} className="space-y-4">
           <TurnstileField onToken={updateTurnstileToken} />
-          <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Email</label>
-            <input
-              type="email"
-              name="email"
-              required
-              autoComplete="email"
-              value={credentials.email}
-              onChange={handleInputChange}
-              placeholder="votre@email.com"
-              className="w-full border border-slate-800 bg-[#090d16] px-3 py-2.5 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none placeholder-slate-600"
-            />
+
+          {/* Champ Email */}
+          <div className="space-y-1.5">
+            <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-slate-600">
+              Adresse Email
+            </label>
+            <div className="relative">
+              <FaEnvelope className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none" />
+              <input
+                type="email"
+                name="email"
+                required
+                autoComplete="email"
+                value={credentials.email}
+                onChange={handleInputChange}
+                placeholder="votre@email.com"
+                className="w-full border border-slate-300 bg-slate-50/70 pl-10 pr-3.5 py-2.5 sm:py-3 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-white text-slate-900 rounded-none placeholder-slate-400"
+              />
+            </div>
           </div>
 
-          <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Mot de passe</label>
-            <input
-              type="password"
-              name="password"
-              required
-              autoComplete="current-password"
-              value={credentials.password}
-              onChange={handleInputChange}
-              placeholder="••••••••"
-              className="w-full border border-slate-800 bg-[#090d16] px-3 py-2.5 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-[#0d1421] text-white rounded-none placeholder-slate-600"
-            />
+          {/* Champ Mot de passe avec œil */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-slate-600">
+                Mot de passe
+              </label>
+              <button
+                type="button"
+                onClick={() => navigate('/reset-password')}
+                className="text-[10px] font-bold text-slate-500 hover:text-[#CE1126] transition-colors cursor-pointer"
+              >
+                Oublié ?
+              </button>
+            </div>
+            <div className="relative">
+              <FaLock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none" />
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                required
+                autoComplete="current-password"
+                value={credentials.password}
+                onChange={handleInputChange}
+                placeholder="••••••••"
+                className="w-full border border-slate-300 bg-slate-50/70 pl-10 pr-10 py-2.5 sm:py-3 text-sm font-bold outline-none transition focus:border-[#CE1126] focus:bg-white text-slate-900 rounded-none placeholder-slate-400"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1.5 cursor-pointer"
+              >
+                {showPassword ? <FaEyeSlash size={14} /> : <FaEye size={14} />}
+              </button>
+            </div>
           </div>
 
-          <div className="text-right">
-            <button type="button" onClick={function () { navigate('/reset-password'); }} className="text-[10px] font-bold uppercase tracking-wider text-slate-400 underline underline-offset-4 hover:text-white">
-              Mot de passe oublié ?
-            </button>
-          </div>
-
-          <div className="pt-1">
+          {/* Bouton de connexion */}
+          <div className="pt-2">
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 bg-white text-black font-black uppercase text-[10px] tracking-[0.2em] transition-all active:scale-95 disabled:opacity-30 flex items-center justify-center gap-3 shadow-xl rounded-none hover:bg-[#CE1126] hover:text-white"
+              className="w-full py-3 sm:py-3.5 bg-[#CE1126] hover:bg-[#a80d1e] text-white font-black uppercase text-[11px] tracking-[0.18em] transition-all active:scale-[0.99] disabled:opacity-40 flex items-center justify-center gap-2.5 shadow-md rounded-none cursor-pointer"
             >
               {isLoading ? (
                 <FaSpinner className="animate-spin" size={14} />
               ) : (
                 <>
                   <span>Se connecter</span>
-                  <FaArrowRight size={10} />
+                  <FaArrowRight size={11} />
                 </>
               )}
             </button>
           </div>
         </form>
 
-        <div className="mt-4 pt-4 border-t border-slate-800 text-center">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+        {/* Lien vers Inscription */}
+        <div className="mt-6 pt-4 border-t border-slate-200 text-center">
+          <p className="text-[11px] font-semibold text-slate-500">
             Nouveau sur la plateforme ?
-            <span
-              onClick={function () { navigate('/register'); }}
-              className="text-[#CE1126] cursor-pointer hover:text-red-500 pl-2 underline underline-offset-4"
+            <button
+              type="button"
+              onClick={() => navigate('/register')}
+              className="text-slate-900 hover:text-[#CE1126] font-black uppercase tracking-wider text-[10px] pl-2 underline underline-offset-4 transition-colors cursor-pointer"
             >
-              Creer un compte
-            </span>
+              Créer un compte
+            </button>
           </p>
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#00A3E0] via-[#CE1126] to-[#FDD100] opacity-30" />
+      {/* ================= PIED DISCRET & LISERÉ RDC ================= */}
+      <div className="relative z-20 text-center mt-5 sm:mt-6 pb-2">
+        <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">
+          ESNAs RDC • Écosystème Numérique des Assurances
+        </p>
+      </div>
+      <div className="fixed bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#00A3E0] via-[#CE1126] to-[#FDD100] opacity-80 z-30" />
     </div>
   );
 }
